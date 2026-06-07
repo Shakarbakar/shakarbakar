@@ -1,0 +1,427 @@
+/*
+==================================================
+SHAKARBAKAR - SHARED STYLES
+==================================================
+
+This file contains styles used across multiple
+pages (login, register, and future pages).
+
+Theme: Dark football atmosphere with green
+action buttons and golden accents.
+
+==================================================
+*/
+
+/*
+==================================================
+BASE PAGE STYLES
+==================================================
+*/
+
+body {
+    margin: 0;
+    background: #0f172a;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/*
+==================================================
+LAYOUT
+==================================================
+*/
+
+.container {
+    max-width: 600px;
+    margin: 60px auto;
+    padding: 30px;
+}
+
+.card {
+    background: #1e293b;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+/*
+==================================================
+TYPOGRAPHY
+==================================================
+*/
+
+h1 {
+    text-align: center;
+    margin-top: 0;
+}
+
+p {
+    text-align: center;
+    color: #cbd5e1;
+}
+
+/*
+==================================================
+FORM INPUTS
+==================================================
+*/
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 15px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    box-sizing: border-box;
+    background: #0f172a;
+    color: white;
+    border: 1px solid #334155;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+    outline: none;
+    border-color: #facc15;
+}
+
+/*
+==================================================
+BUTTONS
+==================================================
+*/
+
+button,
+.btn-primary {
+    width: 100%;
+    padding: 15px;
+    background: #22c55e;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+button:hover,
+.btn-primary:hover {
+    background: #16a34a;
+}
+
+/*
+==================================================
+REMEMBER ME ROW
+==================================================
+*/
+
+.remember-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    margin-top: -10px;
+}
+
+.remember-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #cbd5e1;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.remember-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+/*
+==================================================
+LINKS
+==================================================
+*/
+
+.forgot-link {
+    color: #facc15;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.forgot-link:hover {
+    text-decoration: underline;
+}
+
+.auth-link {
+    text-align: center;
+    margin-top: 25px;
+    color: #cbd5e1;
+}
+
+.auth-link a {
+    color: #93c5fd;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.auth-link a:hover {
+    text-decoration: underline;
+}
+
+.home-link {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.home-link a {
+    color: #93c5fd;
+    text-decoration: none;
+}
+
+.home-link a:hover {
+    text-decoration: underline;
+}
+
+/*
+==================================================
+MESSAGES
+==================================================
+*/
+
+.message {
+    margin-top: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.success {
+    color: #22c55e;
+}
+
+.error {
+    color: #ef4444;
+}
+
+/*
+==================================================
+BONUS / HIGHLIGHT TEXT
+==================================================
+*/
+
+.bonus {
+    text-align: center;
+    margin-top: 20px;
+    color: #facc15;
+    font-weight: bold;
+}
+
+/*
+==================================================
+UTILITY
+==================================================
+*/
+
+.hidden {
+    display: none !important;
+}
+
+/*
+==================================================
+MARKETPLACE HEADER
+==================================================
+*/
+
+.marketplace-header {
+    text-align: center;
+    padding: 40px 20px 20px;
+}
+
+.marketplace-tagline {
+    color: #cbd5e1;
+    margin-bottom: 15px;
+}
+
+.user-bar {
+    background: #1e293b;
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.user-balance {
+    color: #facc15;
+    font-weight: bold;
+    margin-left: 15px;
+}
+
+.login-prompt {
+    color: #cbd5e1;
+    margin-top: 10px;
+}
+
+.login-prompt a {
+    color: #93c5fd;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+/*
+==================================================
+TEAMS GRID
+==================================================
+*/
+
+.marketplace-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.teams-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 15px;
+}
+
+.team-card {
+    background: #1e293b;
+    border: 2px solid #334155;
+    border-radius: 12px;
+    padding: 20px 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s;
+}
+
+.team-card:hover {
+    border-color: #facc15;
+    transform: translateY(-3px);
+}
+
+.team-card-owned {
+    border-color: #22c55e;
+}
+
+.team-card-flag {
+    font-size: 36px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.team-card-name {
+    font-size: 15px;
+    font-weight: bold;
+    color: white;
+}
+
+.team-card-owned-label {
+    display: block;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #22c55e;
+    font-weight: bold;
+}
+
+/*
+==================================================
+TEAM POPUP
+==================================================
+*/
+
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 100;
+}
+
+.team-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 101;
+    width: 90%;
+    max-width: 380px;
+}
+
+.team-popup-card {
+    background: #1e293b;
+    border: 2px solid #facc15;
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    position: relative;
+}
+
+.popup-close {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    background: none;
+    border: none;
+    color: #cbd5e1;
+    font-size: 20px;
+    cursor: pointer;
+    width: auto;
+    padding: 5px;
+}
+
+.popup-flag {
+    font-size: 56px;
+    margin-bottom: 10px;
+}
+
+.team-popup-card h2 {
+    margin: 0 0 20px;
+}
+
+.popup-row {
+    text-align: left;
+    margin: 10px 0;
+    color: #cbd5e1;
+    font-size: 15px;
+}
+
+.popup-label {
+    color: #94a3b8;
+}
+
+.popup-stars {
+    text-align: center;
+    color: #facc15;
+    font-size: 22px;
+    letter-spacing: 3px;
+}
+
+.popup-price {
+    color: #facc15;
+    font-weight: bold;
+}
+
+.popup-ownership {
+    font-weight: bold;
+    color: #22c55e;
+}
+
+.popup-ownership.available {
+    color: #cbd5e1;
+}
+
+.marketplace-footer {
+    padding-bottom: 40px;
+}
+
+#buyTeamButton:disabled {
+    background: #475569;
+    cursor: not-allowed;
+}

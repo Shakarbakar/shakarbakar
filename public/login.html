@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<!--
+==================================================
+LOGIN PAGE - SHAKARBAKAR
+==================================================
+
+This page lets existing users log in with their
+username or email and password.
+
+Uses shared CSS (style.css) and shared JS (app.js).
+
+==================================================
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Login - ShakarBakar</title>
+
+<!-- Shared stylesheet for all auth pages -->
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>Welcome Back</h1>
+
+        <p>
+            Log in to your ShakarBakar account.
+        </p>
+
+        <!-- USERNAME OR EMAIL -->
+        <input
+            id="identifier"
+            type="text"
+            placeholder="Username or Email"
+        >
+
+        <!-- PASSWORD -->
+        <input
+            id="password"
+            type="password"
+            placeholder="Password"
+        >
+
+        <!-- REMEMBER ME + FORGOT PASSWORD -->
+        <div class="remember-row">
+
+            <label class="remember-label">
+
+                <input
+                    id="rememberMe"
+                    type="checkbox"
+                >
+
+                Remember Me
+
+            </label>
+
+            <!-- Forgot password will be implemented in a future version -->
+            <a class="forgot-link" href="#">
+                Forgot Password?
+            </a>
+
+        </div>
+
+        <!-- LOGIN BUTTON -->
+        <button onclick="loginUser()">
+            Log In
+        </button>
+
+        <!-- RESULT MESSAGE -->
+        <div id="message" class="message"></div>
+
+        <!-- LINK TO REGISTER PAGE -->
+        <div class="auth-link">
+            Don't have an account?
+            <a href="register.html">Register Here</a>
+        </div>
+
+        <div class="home-link">
+            <a href="index.html">← Back to Home</a>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Shared JavaScript for login logic -->
+<script src="js/app.js"></script>
+
+</body>
+</html>
