@@ -29,17 +29,14 @@ GLOBAL SITE BACKGROUND
 GLOBAL SITE BACKGROUND
 ==================================================
 */
-
 body {
   margin: 0;
 
-  background-image:
-    linear-gradient(rgba(15, 23, 42, 0.1), rgba(15, 23, 42, 0.15)),
-    url("../images/stadium-background.jpg");
+  background-image: url("../images/stadium-background.jpg");
 
-  background-size: cover;
+  background-size: 100% auto;
 
-  background-position: center;
+  background-position: top center;
 
   background-attachment: fixed;
 
