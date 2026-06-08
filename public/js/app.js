@@ -276,14 +276,26 @@ function renderMarketplaceTeams() {
       '<div class="team-card-name">' +
       team.name +
       "</div>" +
-      '<div class="team-card-price">' +
+      '<div class="team-card-rarity">' +
+      (team.worldCupTitles >= 4
+        ? "👑 LEGENDARY"
+        : team.worldCupTitles >= 2
+          ? "🔥 ELITE"
+          : team.worldCupTitles >= 1
+            ? "⭐ STRONG"
+            : "⚽ UNDERDOG") +
+      "</div>" +
+      '<div class="team-card-price">💰 ' +
       team.price.toLocaleString() +
       " Bucks</div>" +
-      '<div class="team-card-chance">' +
+      '<div class="team-card-chance">🎯 ' +
       team.winningChance +
       "% Chance</div>" +
+      '<div class="team-card-titles">🏆 ' +
+      team.worldCupTitles +
+      " World Cup Titles</div>" +
       '<div class="team-card-stars">' +
-      (team.stars || "") +
+      (team.stars || "★") +
       "</div>" +
       ownedLabel;
 

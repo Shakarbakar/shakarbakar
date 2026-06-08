@@ -887,3 +887,46 @@ CARD HOVER EFFECT
 .team-card:hover {
   transform: translateY(-8px) scale(1.03);
 }
+/*
+==================================================
+MARKETPLACE V3
+==================================================
+
+Added:
+- Rarity badges
+- World Cup title display
+- Stronger hover effect
+- Better card appearance
+
+==================================================
+*/
+
+.team-card-rarity {
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #facc15;
+}
+
+.team-card-titles {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #e2e8f0;
+}
+
+.team-card:hover {
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: 0 0 25px rgba(250, 204, 21, 0.35);
+}
+
+.team-card-price {
+  font-size: 15px;
+}
+
+.team-card-chance {
+  font-weight: bold;
+}
+
+.team-card-flag {
+  font-size: 48px;
+}
