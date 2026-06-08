@@ -666,12 +666,85 @@ RESPONSIVE
     width: 100%;
   }
 }
-.team-brazil {
-  background: linear-gradient(180deg, #15803d, #166534);
-}
+/*
+==================================================
+ALL 48 TEAM COLOR THEMES
+==================================================
+
+Added for Marketplace V2.
+
+Every team receives its own visual identity.
+
+==================================================
+*/
 
 .team-argentina {
-  background: linear-gradient(180deg, #38bdf8, #0ea5e9);
+  background: linear-gradient(180deg, #4fc3f7, #0288d1);
+}
+
+.team-australia {
+  background: linear-gradient(180deg, #2e7d32, #f9a825);
+}
+
+.team-austria {
+  background: linear-gradient(180deg, #c62828, #ffffff);
+  color: #111;
+}
+
+.team-belgium {
+  background: linear-gradient(180deg, #111827, #facc15);
+}
+
+.team-bosnia-and-herzegovina {
+  background: linear-gradient(180deg, #1565c0, #facc15);
+}
+
+.team-brazil {
+  background: linear-gradient(180deg, #1b8f3a, #14532d);
+}
+
+.team-cabo-verde {
+  background: linear-gradient(180deg, #1565c0, #0f172a);
+}
+
+.team-canada {
+  background: linear-gradient(180deg, #dc2626, #991b1b);
+}
+
+.team-colombia {
+  background: linear-gradient(180deg, #facc15, #2563eb);
+}
+
+.team-congo-dr {
+  background: linear-gradient(180deg, #2563eb, #1e40af);
+}
+
+.team-cote-divoire {
+  background: linear-gradient(180deg, #f97316, #ea580c);
+}
+
+.team-croatia {
+  background: linear-gradient(180deg, #dc2626, #1d4ed8);
+}
+
+.team-curacao {
+  background: linear-gradient(180deg, #0ea5e9, #1e3a8a);
+}
+
+.team-czechia {
+  background: linear-gradient(180deg, #1d4ed8, #dc2626);
+}
+
+.team-ecuador {
+  background: linear-gradient(180deg, #facc15, #1d4ed8);
+}
+
+.team-egypt {
+  background: linear-gradient(180deg, #dc2626, #991b1b);
+}
+
+.team-england {
+  background: linear-gradient(180deg, #475569, #334155);
 }
 
 .team-france {
@@ -679,25 +752,129 @@ RESPONSIVE
 }
 
 .team-germany {
-  background: linear-gradient(180deg, #991b1b, #111827);
+  background: linear-gradient(180deg, #b91c1c, #111827);
 }
 
-.team-spain {
-  background: linear-gradient(180deg, #dc2626, #f59e0b);
+.team-ghana {
+  background: linear-gradient(180deg, #dc2626, #facc15);
+}
+
+.team-haiti {
+  background: linear-gradient(180deg, #2563eb, #dc2626);
+}
+
+.team-ir-iran {
+  background: linear-gradient(180deg, #15803d, #dc2626);
+}
+
+.team-iraq {
+  background: linear-gradient(180deg, #dc2626, #111827);
+}
+
+.team-japan {
+  background: linear-gradient(180deg, #ffffff, #dc2626);
+  color: #111;
+}
+
+.team-jordan {
+  background: linear-gradient(180deg, #dc2626, #111827);
+}
+
+.team-korea-republic {
+  background: linear-gradient(180deg, #ffffff, #dc2626);
+  color: #111;
+}
+
+.team-mexico {
+  background: linear-gradient(180deg, #15803d, #dc2626);
+}
+
+.team-morocco {
+  background: linear-gradient(180deg, #b91c1c, #166534);
+}
+
+.team-netherlands {
+  background: linear-gradient(180deg, #ea580c, #1d4ed8);
+}
+
+.team-new-zealand {
+  background: linear-gradient(180deg, #111827, #334155);
+}
+
+.team-norway {
+  background: linear-gradient(180deg, #dc2626, #1d4ed8);
+}
+
+.team-paraguay {
+  background: linear-gradient(180deg, #dc2626, #1d4ed8);
 }
 
 .team-portugal {
   background: linear-gradient(180deg, #166534, #991b1b);
 }
 
-.team-england {
-  background: linear-gradient(180deg, #475569, #334155);
+.team-qatar {
+  background: linear-gradient(180deg, #7c2d12, #4a044e);
 }
 
-.team-italy {
-  background: linear-gradient(180deg, #2563eb, #1e40af);
+.team-saudi-arabia {
+  background: linear-gradient(180deg, #15803d, #166534);
+}
+
+.team-scotland {
+  background: linear-gradient(180deg, #2563eb, #1d4ed8);
+}
+
+.team-senegal {
+  background: linear-gradient(180deg, #15803d, #facc15);
+}
+
+.team-south-africa {
+  background: linear-gradient(180deg, #15803d, #facc15);
+}
+
+.team-spain {
+  background: linear-gradient(180deg, #dc2626, #facc15);
+}
+
+.team-sweden {
+  background: linear-gradient(180deg, #2563eb, #facc15);
+}
+
+.team-switzerland {
+  background: linear-gradient(180deg, #dc2626, #991b1b);
+}
+
+.team-tunisia {
+  background: linear-gradient(180deg, #dc2626, #991b1b);
+}
+
+.team-turkiye {
+  background: linear-gradient(180deg, #dc2626, #991b1b);
+}
+
+.team-uruguay {
+  background: linear-gradient(180deg, #38bdf8, #0284c7);
+}
+
+.team-usa {
+  background: linear-gradient(180deg, #2563eb, #dc2626);
+}
+
+.team-uzbekistan {
+  background: linear-gradient(180deg, #38bdf8, #2563eb);
 }
 
 .team-default {
   background: linear-gradient(180deg, #22304a, #1e293b);
+}
+
+/*
+==================================================
+CARD HOVER EFFECT
+==================================================
+*/
+
+.team-card:hover {
+  transform: translateY(-8px) scale(1.03);
 }
