@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Arena Chat - ShakarBakar</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <style>
+      body {
+        margin: 0;
+        background-image: url("images/arena-background.jpg");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      .chat-page {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      .chat-title {
+        text-align: center;
+        font-size: 52px;
+        color: #fbbf24;
+        margin-bottom: 10px;
+      }
+
+      .chat-subtitle {
+        text-align: center;
+        color: #cbd5e1;
+        margin-bottom: 40px;
+      }
+
+      .chat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+      }
+
+      .chat-card {
+        background: rgba(15, 23, 42, 0.82);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 18px;
+        padding: 25px;
+        transition: all 0.25s ease;
+        cursor: pointer;
+      }
+
+      .chat-card:hover {
+        transform: translateY(-8px);
+        border-color: #fbbf24;
+        box-shadow: 0 0 25px rgba(251, 191, 36, 0.35);
+      }
+
+      .chat-card h2 {
+        margin-top: 0;
+        color: #fbbf24;
+      }
+
+      .chat-card p {
+        color: #cbd5e1;
+      }
+
+      .club-list {
+        margin-top: 15px;
+      }
+
+      .club-list div {
+        margin-bottom: 8px;
+      }
+
+      .home-link {
+        text-align: center;
+        margin-top: 30px;
+      }
+
+      .home-link a {
+        color: #93c5fd;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="chat-page">
+      <h1 class="chat-title">💬 ARENA CHAT HUB</h1>
+
+      <p class="chat-subtitle">
+        Meet players. Build friendships. Join communities.
+      </p>
+
+      <div class="chat-grid">
+        <div class="chat-card">
+          <h2>📢 Arena Lobby</h2>
+          <p>General football discussion for all players.</p>
+          <p>Enter Lobby →</p>
+        </div>
+
+        <div class="chat-card">
+          <h2>🌎 Player Directory</h2>
+          <p>Browse all registered players.</p>
+          <p>View Profile • Add Friend • Challenge</p>
+        </div>
+
+        <div class="chat-card">
+          <h2>🔍 Search Players</h2>
+          <p>Find players by username.</p>
+        </div>
+
+        <div class="chat-card">
+          <h2>👥 Friends List</h2>
+          <p>🟢 Online Friends</p>
+          <p>⚫ Offline Friends</p>
+          <p>View Friends →</p>
+        </div>
+
+        <div class="chat-card">
+          <h2>⭐ Favorite Friends</h2>
+          <p>Quick access to your closest football friends.</p>
+        </div>
+
+        <div class="chat-card">
+          <h2>📨 Friend Requests</h2>
+          <p>Accept or decline incoming requests.</p>
+        </div>
+
+        <div class="chat-card">
+          <h2>✉️ Private Messages</h2>
+          <p>Chat privately with approved friends.</p>
+        </div>
+
+        <div class="chat-card">
+          <h2>📨 Invite Friends</h2>
+          <p>Invite friends to join ShakarBakar.</p>
+        </div>
+
+        <div class="chat-card">
+          <h2>➕ Create Chat Room</h2>
+          <p>Create your own football discussion room.</p>
+        </div>
+
+        <div class="chat-card">
+          <h2>🌎 Join Chat Room</h2>
+          <p>Browse public chat rooms and join the conversation.</p>
+        </div>
+
+        <div class="chat-card">
+          <h2>🏆 Fan Club Chats</h2>
+
+          <div class="club-list">
+            <div>🇧🇷 Brazil Fan Club</div>
+            <div>🇦🇷 Argentina Fan Club</div>
+            <div>🇫🇷 France Fan Club</div>
+            <div>🇩🇪 Germany Fan Club</div>
+            <div>🇪🇸 Spain Fan Club</div>
+          </div>
+        </div>
+
+        <div class="chat-card">
+          <h2>⚔️ Find Duel Opponents</h2>
+          <p>Meet players and challenge them to Prediction Duels.</p>
+        </div>
+
+        <div class="chat-card">
+          <h2>📅 Upcoming Events</h2>
+          <p>View tournaments, watch parties, and community events.</p>
+        </div>
+
+        <div class="chat-card">
+          <h2>📢 Arena Announcements</h2>
+          <p>Official ShakarBakar news and updates.</p>
+        </div>
+
+        <div class="chat-card">
+          <h2>🛡️ Status</h2>
+          <p>🟢 Online</p>
+          <p>🟡 Away</p>
+          <p>🔴 Do Not Disturb</p>
+        </div>
+
+        <div class="chat-card">
+          <h2>🎯 Recent Activity</h2>
+          <p>John challenged Maria</p>
+          <p>Brazil Fan Club created a room</p>
+          <p>France Club reached 100 members</p>
+        </div>
+      </div>
+
+      <div class="home-link">
+        <a href="arena.html">← Back to Arena</a>
+      </div>
+
+      <div class="home-link">
+        <a href="index.html">← Back to Home</a>
+      </div>
+    </div>
+  </body>
+</html>
