@@ -31,20 +31,17 @@ GET LOGGED IN USER
 */
 
 function getLoggedInUser() {
+  const raw = localStorage.getItem(STORAGE_KEY);
 
-    const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) {
+    return null;
+  }
 
-    if (!raw) {
-        return null;
-    }
-
-    try {
-        return JSON.parse(raw);
-    }
-    catch (error) {
-        return null;
-    }
-
+  try {
+    return JSON.parse(raw);
+  } catch (error) {
+    return null;
+  }
 }
 
 /*
@@ -54,9 +51,7 @@ SAVE LOGGED IN USER
 */
 
 function saveLoggedInUser(user) {
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
 }
 
 /*
@@ -66,9 +61,7 @@ CLEAR LOGGED IN USER
 */
 
 function clearLoggedInUser() {
-
-    localStorage.removeItem(STORAGE_KEY);
-
+  localStorage.removeItem(STORAGE_KEY);
 }
 
 /*
@@ -82,176 +75,277 @@ Called on login.html.
 */
 
 async function loginUser() {
+  const identifier = document.getElementById("identifier").value;
 
-    const identifier =
-        document.getElementById("identifier").value;
+  const password = document.getElementById("password").value;
 
-    const password =
-        document.getElementById("password").value;
+  const message = document.getElementById("message");
 
-    const message =
-        document.getElementById("message");
+  if (!identifier.trim() || !password) {
+    message.className = "message error";
+    message.innerText = "Please enter your username or email and password";
 
-    if (!identifier.trim() || !password) {
+    return;
+  }
 
-        message.className = "message error";
-        message.innerText =
-            "Please enter your username or email and password";
+  try {
+    const response = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        identifier: identifier.trim(),
+        password: password,
+      }),
+    });
 
-        return;
+    const data = await response.json();
 
+    if (data.success) {
+      // Save user for marketplace and ownership
+      saveLoggedInUser(data.user);
+
+      message.className = "message success";
+
+      message.innerText =
+        "Login successful! Welcome, " +
+        data.user.username +
+        ". You have " +
+        data.user.bucksBalance.toLocaleString() +
+        " Bucks.";
+
+      // Redirect to marketplace after short delay
+      setTimeout(function () {
+        window.location.href = "marketplace.html";
+      }, 1500);
+    } else {
+      message.className = "message error";
+      message.innerText = data.message;
     }
-
-    try {
-
-        const response = await fetch("/api/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                identifier: identifier.trim(),
-                password: password
-            })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-
-            // Save user for marketplace and ownership
-            saveLoggedInUser(data.user);
-
-            message.className = "message success";
-
-            message.innerText =
-                "Login successful! Welcome, " +
-                data.user.username +
-                ". You have " +
-                data.user.bucksBalance.toLocaleString() +
-                " Bucks.";
-
-            // Redirect to marketplace after short delay
-            setTimeout(function () {
-                window.location.href = "marketplace.html";
-            }, 1500);
-
-        }
-        else {
-
-            message.className = "message error";
-            message.innerText = data.message;
-
-        }
-
-    }
-    catch (error) {
-
-        console.error(error);
-        message.className = "message error";
-        message.innerText = "Server error";
-
-    }
-
+  } catch (error) {
+    console.error(error);
+    message.className = "message error";
+    message.innerText = "Server error";
+  }
 }
 
 /*
 ==================================================
 MARKETPLACE — GLOBAL STATE
 ==================================================
+
+Marketplace V2
+
+Added:
+- Search
+- Sort
+- Price display
+- Winning chance display
+- Stars display
+- Country colors
+
+==================================================
 */
 
 let marketplaceTeams = [];
 let selectedTeamId = null;
+let filteredTeams = [];
+
+/*
+==================================================
+GET TEAM COLOR CLASS
+==================================================
+
+Returns a CSS class based on country.
+
+==================================================
+*/
+
+function getTeamColorClass(teamName) {
+  const colors = {
+    Brazil: "team-brazil",
+    Argentina: "team-argentina",
+    France: "team-france",
+    Germany: "team-germany",
+    Spain: "team-spain",
+    Portugal: "team-portugal",
+    England: "team-england",
+    Italy: "team-italy",
+  };
+
+  return colors[teamName] || "team-default";
+}
+
+/*
+==================================================
+RENDER MARKETPLACE
+==================================================
+
+Displays teams currently loaded.
+
+==================================================
+*/
+
+function renderMarketplaceTeams() {
+  const grid = document.getElementById("teamsGrid");
+
+  if (!grid) {
+    return;
+  }
+
+  grid.innerHTML = "";
+
+  filteredTeams.forEach(function (team) {
+    const card = document.createElement("div");
+
+    card.className = "team-card " + getTeamColorClass(team.name);
+
+    if (team.isOwned) {
+      card.classList.add("team-card-owned");
+    }
+
+    card.onclick = function () {
+      openTeamPopup(team._id);
+    };
+
+    let ownedLabel = "";
+
+    if (team.isOwned) {
+      ownedLabel = '<span class="team-card-owned-label">OWNED</span>';
+    }
+
+    card.innerHTML =
+      '<div class="team-card-flag">' +
+      team.flag +
+      "</div>" +
+      '<div class="team-card-name">' +
+      team.name +
+      "</div>" +
+      '<div class="team-card-price">' +
+      team.price.toLocaleString() +
+      " Bucks</div>" +
+      '<div class="team-card-chance">' +
+      team.winningChance +
+      "% Chance</div>" +
+      '<div class="team-card-stars">' +
+      (team.stars || "") +
+      "</div>" +
+      ownedLabel;
+
+    grid.appendChild(card);
+  });
+}
+
+/*
+==================================================
+SEARCH TEAMS
+==================================================
+*/
+
+function searchMarketplaceTeams() {
+  const searchInput = document.getElementById("teamSearch");
+
+  if (!searchInput) {
+    return;
+  }
+
+  const term = searchInput.value.toLowerCase();
+
+  filteredTeams = marketplaceTeams.filter(function (team) {
+    return team.name.toLowerCase().includes(term);
+  });
+
+  sortMarketplaceTeams();
+}
+
+/*
+==================================================
+SORT TEAMS
+==================================================
+*/
+
+function sortMarketplaceTeams() {
+  const sortSelect = document.getElementById("sortTeams");
+
+  if (!sortSelect) {
+    renderMarketplaceTeams();
+    return;
+  }
+
+  const sortValue = sortSelect.value;
+
+  if (sortValue === "price") {
+    filteredTeams.sort(function (a, b) {
+      return b.price - a.price;
+    });
+  } else if (sortValue === "chance") {
+    filteredTeams.sort(function (a, b) {
+      return b.winningChance - a.winningChance;
+    });
+  } else {
+    filteredTeams.sort(function (a, b) {
+      return a.name.localeCompare(b.name);
+    });
+  }
+
+  renderMarketplaceTeams();
+}
 
 /*
 ==================================================
 LOAD MARKETPLACE
 ==================================================
-
-Fetches all teams and builds the grid.
-Simple display: flag + name only.
-
-==================================================
 */
 
 async function loadMarketplace() {
+  const messageEl = document.getElementById("marketplaceMessage");
 
-    const grid = document.getElementById("teamsGrid");
-    const messageEl = document.getElementById("marketplaceMessage");
+  const user = getLoggedInUser();
 
-    if (!grid) {
-        return;
+  updateUserBar(user);
+
+  try {
+    let url = "/api/teams";
+
+    if (user && user.id) {
+      url += "?userId=" + user.id;
     }
 
-    const user = getLoggedInUser();
+    const response = await fetch(url);
 
-    updateUserBar(user);
+    const data = await response.json();
 
-    try {
+    if (!data.success) {
+      messageEl.className = "message error";
 
-        let url = "/api/teams";
+      messageEl.innerText = data.message;
 
-        if (user && user.id) {
-            url += "?userId=" + user.id;
-        }
-
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if (!data.success) {
-            messageEl.className = "message error";
-            messageEl.innerText = data.message || "Could not load teams";
-            return;
-        }
-
-        marketplaceTeams = data.teams;
-
-        grid.innerHTML = "";
-
-        marketplaceTeams.forEach(function (team) {
-
-            const card = document.createElement("div");
-
-            card.className = "team-card";
-
-            if (team.isOwned) {
-                card.classList.add("team-card-owned");
-            }
-
-            card.onclick = function () {
-                openTeamPopup(team._id);
-            };
-
-            let ownedLabel = "";
-
-            if (team.isOwned) {
-                ownedLabel =
-                    '<span class="team-card-owned-label">I own ' +
-                    team.name +
-                    "</span>";
-            }
-
-            card.innerHTML =
-                '<span class="team-card-flag">' +
-                team.flag +
-                "</span>" +
-                '<span class="team-card-name">' +
-                team.name +
-                "</span>" +
-                ownedLabel;
-
-            grid.appendChild(card);
-
-        });
-
-    }
-    catch (error) {
-
-        console.error(error);
-        messageEl.className = "message error";
-        messageEl.innerText = "Server error";
-
+      return;
     }
 
+    marketplaceTeams = data.teams;
+
+    filteredTeams = [...marketplaceTeams];
+
+    sortMarketplaceTeams();
+
+    const searchInput = document.getElementById("teamSearch");
+
+    const sortSelect = document.getElementById("sortTeams");
+
+    if (searchInput) {
+      searchInput.addEventListener("input", searchMarketplaceTeams);
+    }
+
+    if (sortSelect) {
+      sortSelect.addEventListener("change", sortMarketplaceTeams);
+    }
+  } catch (error) {
+    console.error(error);
+
+    messageEl.className = "message error";
+
+    messageEl.innerText = "Server error";
+  }
 }
 
 /*
@@ -261,33 +355,25 @@ UPDATE USER BAR
 */
 
 function updateUserBar(user) {
+  const userBar = document.getElementById("userBar");
+  const loginPrompt = document.getElementById("loginPrompt");
+  const greeting = document.getElementById("userGreeting");
+  const balance = document.getElementById("userBalance");
 
-    const userBar = document.getElementById("userBar");
-    const loginPrompt = document.getElementById("loginPrompt");
-    const greeting = document.getElementById("userGreeting");
-    const balance = document.getElementById("userBalance");
+  if (!userBar) {
+    return;
+  }
 
-    if (!userBar) {
-        return;
-    }
+  if (user && user.id) {
+    userBar.classList.remove("hidden");
+    loginPrompt.classList.add("hidden");
 
-    if (user && user.id) {
-
-        userBar.classList.remove("hidden");
-        loginPrompt.classList.add("hidden");
-
-        greeting.innerText = "Welcome, " + user.username;
-        balance.innerText =
-            user.bucksBalance.toLocaleString() + " Bucks";
-
-    }
-    else {
-
-        userBar.classList.add("hidden");
-        loginPrompt.classList.remove("hidden");
-
-    }
-
+    greeting.innerText = "Welcome, " + user.username;
+    balance.innerText = user.bucksBalance.toLocaleString() + " Bucks";
+  } else {
+    userBar.classList.add("hidden");
+    loginPrompt.classList.remove("hidden");
+  }
 }
 
 /*
@@ -297,63 +383,55 @@ OPEN TEAM POPUP
 */
 
 function openTeamPopup(teamId) {
+  const team = marketplaceTeams.find(function (t) {
+    return String(t._id) === String(teamId);
+  });
 
-    const team = marketplaceTeams.find(function (t) {
-        return String(t._id) === String(teamId);
-    });
+  if (!team) {
+    return;
+  }
 
-    if (!team) {
-        return;
-    }
+  selectedTeamId = teamId;
 
-    selectedTeamId = teamId;
+  document.getElementById("popupFlag").innerText = team.flag;
+  document.getElementById("popupName").innerText = team.name;
+  document.getElementById("popupBasePrice").innerText =
+    team.basePrice.toLocaleString() + " Bucks";
 
-    document.getElementById("popupFlag").innerText = team.flag;
-    document.getElementById("popupName").innerText = team.name;
-    document.getElementById("popupBasePrice").innerText =
-        team.basePrice.toLocaleString() + " Bucks";
+  const starsEl = document.getElementById("popupStars");
 
-    const starsEl = document.getElementById("popupStars");
+  if (team.stars) {
+    starsEl.innerText = team.stars;
+  } else {
+    starsEl.innerText = "—";
+  }
 
-    if (team.stars) {
-        starsEl.innerText = team.stars;
-    }
-    else {
-        starsEl.innerText = "—";
-    }
+  document.getElementById("popupPrice").innerText =
+    team.price.toLocaleString() + " Bucks";
 
-    document.getElementById("popupPrice").innerText =
-        team.price.toLocaleString() + " Bucks";
+  document.getElementById("popupQualification").innerText =
+    team.qualificationStatus;
 
-    document.getElementById("popupQualification").innerText =
-        team.qualificationStatus;
+  const ownershipEl = document.getElementById("popupOwnership");
+  const buyButton = document.getElementById("buyTeamButton");
 
-    const ownershipEl = document.getElementById("popupOwnership");
-    const buyButton = document.getElementById("buyTeamButton");
+  if (team.isOwned) {
+    ownershipEl.innerText = "I own " + team.name;
+    ownershipEl.classList.remove("available");
+    buyButton.disabled = true;
+    buyButton.innerText = "I own " + team.name;
+  } else {
+    ownershipEl.innerText = "Available";
+    ownershipEl.classList.add("available");
+    buyButton.disabled = false;
+    buyButton.innerText = "Buy Team";
+  }
 
-    if (team.isOwned) {
+  document.getElementById("popupMessage").innerText = "";
+  document.getElementById("popupMessage").className = "message";
 
-        ownershipEl.innerText = "I own " + team.name;
-        ownershipEl.classList.remove("available");
-        buyButton.disabled = true;
-        buyButton.innerText = "I own " + team.name;
-
-    }
-    else {
-
-        ownershipEl.innerText = "Available";
-        ownershipEl.classList.add("available");
-        buyButton.disabled = false;
-        buyButton.innerText = "Buy Team";
-
-    }
-
-    document.getElementById("popupMessage").innerText = "";
-    document.getElementById("popupMessage").className = "message";
-
-    document.getElementById("teamPopup").classList.remove("hidden");
-    document.getElementById("popupOverlay").classList.remove("hidden");
-
+  document.getElementById("teamPopup").classList.remove("hidden");
+  document.getElementById("popupOverlay").classList.remove("hidden");
 }
 
 /*
@@ -363,11 +441,9 @@ CLOSE TEAM POPUP
 */
 
 function closeTeamPopup() {
-
-    document.getElementById("teamPopup").classList.add("hidden");
-    document.getElementById("popupOverlay").classList.add("hidden");
-    selectedTeamId = null;
-
+  document.getElementById("teamPopup").classList.add("hidden");
+  document.getElementById("popupOverlay").classList.add("hidden");
+  selectedTeamId = null;
 }
 
 /*
@@ -381,95 +457,85 @@ Calls POST /api/ownership/buy
 */
 
 async function buyTeam() {
+  const user = getLoggedInUser();
+  const messageEl = document.getElementById("popupMessage");
+  const buyButton = document.getElementById("buyTeamButton");
 
-    const user = getLoggedInUser();
-    const messageEl = document.getElementById("popupMessage");
-    const buyButton = document.getElementById("buyTeamButton");
+  if (!user || !user.id) {
+    messageEl.className = "message error";
+    messageEl.innerText = "Please log in to buy a team.";
 
-    if (!user || !user.id) {
+    return;
+  }
 
-        messageEl.className = "message error";
-        messageEl.innerText = "Please log in to buy a team.";
+  if (!selectedTeamId) {
+    return;
+  }
 
-        return;
+  buyButton.disabled = true;
 
+  try {
+    const response = await fetch("/api/ownership/buy", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: user.id,
+        teamId: selectedTeamId,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      // Update stored user balance
+      user.bucksBalance = data.remainingBalance;
+      saveLoggedInUser(user);
+
+      updateUserBar(user);
+
+      messageEl.className = "message success";
+
+      messageEl.innerHTML =
+        "Success!<br><br>" +
+        "You now own " +
+        data.team.name +
+        ".<br><br>" +
+        "Remaining Balance:<br>" +
+        data.remainingBalance.toLocaleString() +
+        " Bucks";
+
+      buyButton.innerText = "I own " + data.team.name;
+
+      document.getElementById("popupOwnership").innerText =
+        "I own " + data.team.name;
+
+      document.getElementById("popupOwnership").classList.remove("available");
+
+      // Refresh grid so ownership shows on cards
+      await loadMarketplace();
+
+      // Re-open popup with updated team data
+      openTeamPopup(selectedTeamId);
+
+      // Restore success message after reload
+      document.getElementById("popupMessage").className = "message success";
+      document.getElementById("popupMessage").innerHTML =
+        "Success!<br><br>" +
+        "You now own " +
+        data.team.name +
+        ".<br><br>" +
+        "Remaining Balance:<br>" +
+        data.remainingBalance.toLocaleString() +
+        " Bucks";
+    } else {
+      messageEl.className = "message error";
+      messageEl.innerText = data.message;
+      buyButton.disabled = false;
     }
-
-    if (!selectedTeamId) {
-        return;
-    }
-
-    buyButton.disabled = true;
-
-    try {
-
-        const response = await fetch("/api/ownership/buy", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                userId: user.id,
-                teamId: selectedTeamId
-            })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-
-            // Update stored user balance
-            user.bucksBalance = data.remainingBalance;
-            saveLoggedInUser(user);
-
-            updateUserBar(user);
-
-            messageEl.className = "message success";
-
-            messageEl.innerHTML =
-                "Success!<br><br>" +
-                "You now own " + data.team.name + ".<br><br>" +
-                "Remaining Balance:<br>" +
-                data.remainingBalance.toLocaleString() +
-                " Bucks";
-
-            buyButton.innerText = "I own " + data.team.name;
-
-            document.getElementById("popupOwnership").innerText =
-                "I own " + data.team.name;
-
-            document.getElementById("popupOwnership").classList.remove("available");
-
-            // Refresh grid so ownership shows on cards
-            await loadMarketplace();
-
-            // Re-open popup with updated team data
-            openTeamPopup(selectedTeamId);
-
-            // Restore success message after reload
-            document.getElementById("popupMessage").className = "message success";
-            document.getElementById("popupMessage").innerHTML =
-                "Success!<br><br>" +
-                "You now own " + data.team.name + ".<br><br>" +
-                "Remaining Balance:<br>" +
-                data.remainingBalance.toLocaleString() +
-                " Bucks";
-
-        }
-        else {
-
-            messageEl.className = "message error";
-            messageEl.innerText = data.message;
-            buyButton.disabled = false;
-
-        }
-
-    }
-    catch (error) {
-
-        console.error(error);
-        messageEl.className = "message error";
-        messageEl.innerText = "Server error";
-        buyButton.disabled = false;
-
-    }
-
+  } catch (error) {
+    console.error(error);
+    messageEl.className = "message error";
+    messageEl.innerText = "Server error";
+    buyButton.disabled = false;
+  }
 }

@@ -666,3 +666,38 @@ RESPONSIVE
     width: 100%;
   }
 }
+.team-brazil {
+  background: linear-gradient(180deg, #15803d, #166534);
+}
+
+.team-argentina {
+  background: linear-gradient(180deg, #38bdf8, #0ea5e9);
+}
+
+.team-france {
+  background: linear-gradient(180deg, #2563eb, #1d4ed8);
+}
+
+.team-germany {
+  background: linear-gradient(180deg, #991b1b, #111827);
+}
+
+.team-spain {
+  background: linear-gradient(180deg, #dc2626, #f59e0b);
+}
+
+.team-portugal {
+  background: linear-gradient(180deg, #166534, #991b1b);
+}
+
+.team-england {
+  background: linear-gradient(180deg, #475569, #334155);
+}
+
+.team-italy {
+  background: linear-gradient(180deg, #2563eb, #1e40af);
+}
+
+.team-default {
+  background: linear-gradient(180deg, #22304a, #1e293b);
+}
