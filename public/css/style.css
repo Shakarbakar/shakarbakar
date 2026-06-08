@@ -34,9 +34,8 @@ body {
 
   background-image: url("../images/stadium-background-v5.jpg");
 
-  background-size: 100% auto;
-
-  background-position: top center;
+  background-size: contain;
+  background-position: center center;
 
   background-attachment: fixed;
 
