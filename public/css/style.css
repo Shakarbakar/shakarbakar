@@ -107,7 +107,7 @@ BUTTONS
 
 button,
 .btn-primary {
-  width: 100%;
+  width: auto;
   padding: 15px;
   background: #22c55e;
   color: white;
