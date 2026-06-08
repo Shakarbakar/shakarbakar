@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>ShakarBakar</title>
+
     <link rel="stylesheet" href="css/style.css" />
 
     <style>
@@ -76,31 +77,34 @@
         max-width: 1000px;
         margin: auto;
         text-align: center;
-        padding: 160px 20px 80px;
+
+        padding: 180px 20px 120px;
+
+        text-shadow:
+          0 2px 8px rgba(0, 0, 0, 0.8),
+          0 4px 20px rgba(0, 0, 0, 0.7);
       }
 
       h1 {
-        font-size: 64px;
-        margin-bottom: 10px;
+        font-size: 82px;
+        margin-bottom: 20px;
       }
 
       .tagline {
-        font-size: 26px;
-        color: #cbd5e1;
-        margin-bottom: 40px;
+        font-size: 34px;
+        color: white;
+        margin-bottom: 60px;
       }
 
-      .box {
-        max-width: 850px;
-        margin: 30px auto;
+      h2 {
+        font-size: 42px;
+        margin-bottom: 25px;
+      }
 
-        background: rgba(15, 23, 42, 0.65);
-        backdrop-filter: blur(8px);
-
-        padding: 40px;
-        border-radius: 20px;
-
-        border: 1px solid rgba(255, 255, 255, 0.12);
+      .hero-text {
+        font-size: 22px;
+        line-height: 1.8;
+        margin-bottom: 15px;
       }
 
       button {
@@ -112,6 +116,8 @@
         border-radius: 10px;
         cursor: pointer;
         transition: 0.2s;
+        width: 350px;
+        max-width: 90%;
       }
 
       button:hover {
@@ -164,30 +170,32 @@
 
       <p class="tagline">Trade. Predict. Compete.</p>
 
-      <div class="box">
-        <h2>Own Teams. Predict Matches. Compete for Glory.</h2>
+      <h2>Own Teams. Predict Matches. Compete for Glory.</h2>
 
-        <p>Buy national teams like stocks and build your football empire.</p>
+      <p class="hero-text">
+        Buy national teams like stocks and build your football empire.
+      </p>
 
-        <p>Compete against players from around the world.</p>
+      <p class="hero-text">Compete against players from around the world.</p>
 
-        <p>Earn Bucks. Build your portfolio. Rise through the rankings.</p>
+      <p class="hero-text">
+        Earn Bucks. Build your portfolio. Rise through the rankings.
+      </p>
 
-        <br />
+      <br />
 
-        <button onclick="window.location.href = 'register.html'">
-          Claim Starter Pack
-        </button>
+      <button onclick="window.location.href = 'register.html'">
+        Claim Starter Pack
+      </button>
 
-        <br /><br />
+      <br /><br />
 
-        <button
-          class="secondary-btn"
-          onclick="window.location.href = 'marketplace.html'"
-        >
-          Teams Marketplace
-        </button>
-      </div>
+      <button
+        class="secondary-btn"
+        onclick="window.location.href = 'marketplace.html'"
+      >
+        Teams Marketplace
+      </button>
     </div>
   </body>
 </html>
