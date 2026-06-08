@@ -31,18 +31,8 @@ GLOBAL SITE BACKGROUND
 */
 body {
   margin: 0;
-
-  background-image: url("../images/stadium-background-v5.jpg");
-
-  background-size: cover;
-  background-position: center top;
-
-  background-attachment: fixed;
-
-  background-repeat: no-repeat;
-
+  background: #0f172a;
   color: white;
-
   font-family: Arial, Helvetica, sans-serif;
 }
 /*

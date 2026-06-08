@@ -78,18 +78,13 @@
 ====================================== */
 
       .hero {
-        height: calc(100vh - 70px);
+        width: 100%;
+      }
 
-        display: flex;
-        flex-direction: column;
-
-        justify-content: flex-start;
-
-        align-items: center;
-
-        padding-top: 15px;
-
-        text-align: center;
+      .hero-image {
+        width: 100%;
+        height: auto;
+        display: block;
       }
 
       h1 {
@@ -181,17 +176,11 @@
     </nav>
 
     <section class="hero">
-      <h1>SHAKARBAKAR</h1>
-
-      <p class="tagline">Trade. Predict. Compete.</p>
-
-      <div class="buttons">
-        <a class="btn btn-primary" href="register.html"> Claim Starter Pack </a>
-
-        <a class="btn btn-secondary" href="marketplace.html">
-          Teams Marketplace
-        </a>
-      </div>
+      <img
+        src="images/stadium-background-v5.jpg"
+        alt="ShakarBakar"
+        class="hero-image"
+      />
     </section>
   </body>
 </html>
