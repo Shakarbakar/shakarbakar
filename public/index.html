@@ -7,6 +7,10 @@
     <title>ShakarBakar</title>
 
     <style>
+      * {
+        box-sizing: border-box;
+      }
+
       body {
         margin: 0;
         padding: 0;
@@ -16,8 +20,8 @@
       }
 
       /* ======================================
-       NAVBAR
-    ====================================== */
+         NAVBAR
+      ====================================== */
 
       .navbar {
         display: flex;
@@ -40,14 +44,16 @@
       }
 
       .nav-center a,
-      .nav-right a {
+      .nav-right a,
+      .languages a {
         color: white;
         text-decoration: none;
         font-size: 16px;
       }
 
       .nav-center a:hover,
-      .nav-right a:hover {
+      .nav-right a:hover,
+      .languages a:hover {
         color: #fbbf24;
       }
 
@@ -63,8 +69,8 @@
       }
 
       /* ======================================
-       HERO SECTION
-    ====================================== */
+         HERO SECTION
+      ====================================== */
 
       .container {
         max-width: 1000px;
@@ -99,6 +105,7 @@
         font-size: 18px;
         border-radius: 10px;
         cursor: pointer;
+        transition: 0.2s;
       }
 
       button:hover {
@@ -117,8 +124,8 @@
 
   <body>
     <!-- ======================================
-     NAVBAR
-======================================= -->
+         NAVBAR
+    ======================================= -->
 
     <nav class="navbar">
       <div class="logo">SHAKARBAKAR</div>
@@ -132,7 +139,10 @@
       </div>
 
       <div class="nav-right">
-        <div class="languages">English | Français | العربية</div>
+        <div class="languages">
+          <a href="#">English</a> | <a href="#">Français</a> |
+          <a href="#">العربية</a>
+        </div>
 
         <a href="login.html">Login</a>
         <a href="register.html">Sign Up</a>
@@ -140,8 +150,8 @@
     </nav>
 
     <!-- ======================================
-     HERO SECTION
-======================================= -->
+         HERO SECTION
+    ======================================= -->
 
     <div class="container">
       <h1>SHAKARBAKAR</h1>
@@ -173,6 +183,5 @@
         </button>
       </div>
     </div>
-    ```
   </body>
 </html>
