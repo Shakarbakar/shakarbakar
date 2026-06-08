@@ -1,242 +1,236 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!--
+==================================================
+SHAKARBAKAR - MARKETPLACE V2
+==================================================
+
+Displays all World Cup teams from MongoDB.
+
+Teams are loaded dynamically by app.js.
+
+Features:
+- Navbar
+- Search box
+- Sort dropdown
+- User balance
+- Team marketplace
+- Team popup
+- Buy team system
+
+==================================================
+-->
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Marketplace - ShakarBakar</title>
 
     <link rel="stylesheet" href="css/style.css" />
-
-    <style>
-      body {
-        margin: 0;
-        background: #0f172a;
-        color: white;
-        font-family: Arial, Helvetica, sans-serif;
-      }
-
-      .navbar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px 40px;
-        background: #111827;
-        border-bottom: 1px solid #334155;
-      }
-
-      .logo {
-        font-size: 28px;
-        font-weight: bold;
-        color: #fbbf24;
-      }
-
-      .nav-center {
-        display: flex;
-        gap: 25px;
-      }
-
-      .nav-center a,
-      .nav-right a {
-        color: white;
-        text-decoration: none;
-      }
-
-      .nav-center a:hover,
-      .nav-right a:hover {
-        color: #fbbf24;
-      }
-
-      .nav-right {
-        display: flex;
-        gap: 20px;
-        align-items: center;
-      }
-
-      .languages a {
-        color: #cbd5e1;
-        text-decoration: none;
-      }
-
-      .languages a:hover {
-        color: #fbbf24;
-      }
-
-      .marketplace-header {
-        text-align: center;
-        padding: 60px 20px 30px;
-      }
-
-      .marketplace-header h1 {
-        font-size: 56px;
-        margin-bottom: 10px;
-      }
-
-      .marketplace-tagline {
-        color: #cbd5e1;
-        font-size: 20px;
-      }
-
-      .teams-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 25px;
-        max-width: 1400px;
-        margin: auto;
-        padding: 30px;
-      }
-
-      .team-card {
-        border-radius: 20px;
-        padding: 25px;
-        text-align: center;
-        transition: 0.3s;
-        cursor: pointer;
-        color: white;
-      }
-
-      .team-card:hover {
-        transform: translateY(-5px);
-      }
-
-      .team-flag {
-        font-size: 60px;
-      }
-
-      .team-name {
-        font-size: 24px;
-        font-weight: bold;
-        margin-top: 10px;
-      }
-
-      .team-price {
-        margin-top: 15px;
-        font-size: 20px;
-        color: #fbbf24;
-      }
-
-      .spain {
-        background: #b91c1c;
-      }
-      .brazil {
-        background: #166534;
-      }
-      .france {
-        background: #1d4ed8;
-      }
-      .argentina {
-        background: #0284c7;
-      }
-      .germany {
-        background: #111827;
-      }
-      .portugal {
-        background: #7f1d1d;
-      }
-      .england {
-        background: #334155;
-      }
-      .italy {
-        background: #1e40af;
-      }
-
-      .footer {
-        text-align: center;
-        padding: 40px;
-      }
-
-      .footer a {
-        color: #fbbf24;
-        text-decoration: none;
-      }
-    </style>
   </head>
 
   <body>
+    <!--
+==================================================
+NAVBAR
+==================================================
+-->
+
     <nav class="navbar">
       <div class="logo">SHAKARBAKAR</div>
 
       <div class="nav-center">
         <a href="index.html">Home</a>
+
         <a href="marketplace.html">Marketplace</a>
+
         <a href="arena.html">Arena</a>
+
         <a href="#">About</a>
+
         <a href="#">How It Works</a>
       </div>
 
       <div class="nav-right">
         <div class="languages">
-          <a href="#">English</a> | <a href="#">Français</a> |
+          <a href="#">English</a> |
+
+          <a href="#">Français</a> |
+
           <a href="#">العربية</a>
         </div>
 
         <a href="login.html">Login</a>
+
         <a href="register.html">Sign Up</a>
       </div>
     </nav>
 
-    <header class="marketplace-header">
-      <h1>MARKETPLACE</h1>
+    <!--
+==================================================
+MARKETPLACE HEADER
+==================================================
+-->
 
-      <p class="marketplace-tagline">Buy national teams. Build your empire.</p>
+    <header class="marketplace-header">
+      <h1>FIFA WORLD CUP MARKETPLACE</h1>
+
+      <p class="marketplace-tagline">
+        Buy teams. Build your empire. Compete for glory.
+      </p>
+
+      <div id="userBar" class="user-bar hidden">
+        <span id="userGreeting"></span>
+
+        <span id="userBalance" class="user-balance"></span>
+      </div>
+
+      <div id="loginPrompt" class="login-prompt">
+        <a href="login.html">Log in</a> to buy teams.
+      </div>
     </header>
 
-    <main>
-      <div class="teams-grid">
-        <div class="team-card spain">
-          <div class="team-flag">🇪🇸</div>
-          <div class="team-name">Spain</div>
-          <div class="team-price">125 Bucks</div>
-        </div>
+    <!--
+==================================================
+SEARCH AND SORT
+==================================================
+-->
 
-        <div class="team-card brazil">
-          <div class="team-flag">🇧🇷</div>
-          <div class="team-name">Brazil</div>
-          <div class="team-price">120 Bucks</div>
-        </div>
+    <section class="marketplace-tools">
+      <input type="text" id="teamSearch" placeholder="Search teams..." />
 
-        <div class="team-card france">
-          <div class="team-flag">🇫🇷</div>
-          <div class="team-name">France</div>
-          <div class="team-price">118 Bucks</div>
-        </div>
+      <select id="sortTeams">
+        <option value="name">Sort A-Z</option>
 
-        <div class="team-card argentina">
-          <div class="team-flag">🇦🇷</div>
-          <div class="team-name">Argentina</div>
-          <div class="team-price">116 Bucks</div>
-        </div>
+        <option value="price">Highest Price</option>
 
-        <div class="team-card germany">
-          <div class="team-flag">🇩🇪</div>
-          <div class="team-name">Germany</div>
-          <div class="team-price">110 Bucks</div>
-        </div>
+        <option value="chance">Highest Winning Chance</option>
+      </select>
+    </section>
 
-        <div class="team-card portugal">
-          <div class="team-flag">🇵🇹</div>
-          <div class="team-name">Portugal</div>
-          <div class="team-price">108 Bucks</div>
-        </div>
+    <!--
+==================================================
+TOP CONTENDERS
+==================================================
+-->
 
-        <div class="team-card england">
-          <div class="team-flag">🏴</div>
-          <div class="team-name">England</div>
-          <div class="team-price">112 Bucks</div>
-        </div>
+    <section class="top-contenders">
+      <h2>🏆 Top Contenders</h2>
 
-        <div class="team-card italy">
-          <div class="team-flag">🇮🇹</div>
-          <div class="team-name">Italy</div>
-          <div class="team-price">105 Bucks</div>
-        </div>
+      <div class="contenders-row">
+        <span>🇧🇷 Brazil</span>
+
+        <span>🇦🇷 Argentina</span>
+
+        <span>🇫🇷 France</span>
+
+        <span>🇩🇪 Germany</span>
+
+        <span>🇪🇸 Spain</span>
       </div>
+    </section>
+
+    <!--
+==================================================
+MARKETPLACE GRID
+==================================================
+-->
+
+    <main class="marketplace-container">
+      <div id="teamsGrid" class="teams-grid">
+        <!-- Teams loaded dynamically -->
+      </div>
+
+      <div id="marketplaceMessage" class="message"></div>
     </main>
 
-    <div class="footer">
-      <a href="index.html">← Back to Home</a>
+    <!--
+==================================================
+TEAM DETAILS POPUP
+==================================================
+-->
+
+    <div id="teamPopup" class="team-popup hidden">
+      <div class="team-popup-card">
+        <button
+          class="popup-close"
+          onclick="closeTeamPopup()"
+          aria-label="Close"
+        >
+          ✕
+        </button>
+
+        <div id="popupFlag" class="popup-flag"></div>
+
+        <h2 id="popupName"></h2>
+
+        <p class="popup-row">
+          <span class="popup-label"> Base Price: </span>
+
+          <span id="popupBasePrice"></span>
+        </p>
+
+        <p class="popup-row popup-stars">
+          <span id="popupStars"></span>
+        </p>
+
+        <p class="popup-row">
+          <span class="popup-label"> Current Price: </span>
+
+          <span id="popupPrice" class="popup-price"></span>
+        </p>
+
+        <p class="popup-row">
+          <span class="popup-label"> Qualification Status: </span>
+
+          <span id="popupQualification"></span>
+        </p>
+
+        <p class="popup-row">
+          <span class="popup-label"> Ownership Status: </span>
+
+          <span id="popupOwnership" class="popup-ownership"></span>
+        </p>
+
+        <button id="buyTeamButton" class="btn-primary" onclick="buyTeam()">
+          Buy Team
+        </button>
+
+        <div id="popupMessage" class="message"></div>
+      </div>
+    </div>
+
+    <div
+      id="popupOverlay"
+      class="popup-overlay hidden"
+      onclick="closeTeamPopup()"
+    ></div>
+
+    <!--
+==================================================
+FOOTER
+==================================================
+-->
+
+    <div class="home-link marketplace-footer">
+      <a href="index.html"> ← Back to Home </a>
     </div>
 
     <script src="js/app.js"></script>
+
+    <script>
+      /*
+==================================================
+LOAD MARKETPLACE
+==================================================
+*/
+
+      document.addEventListener(
+        "DOMContentLoaded",
+
+        loadMarketplace,
+      );
+    </script>
   </body>
 </html>
