@@ -1,121 +1,182 @@
-<!DOCTYPE html>
+<!doctype html>
+
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    ```
     <title>ShakarBakar</title>
 
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: #0f172a;
-            color: white;
-            font-family: Arial, Helvetica, sans-serif;
-            text-align: center;
-        }
+      body {
+        margin: 0;
+        padding: 0;
+        background: #0f172a;
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
+      }
 
-        .container {
-            max-width: 900px;
-            margin: auto;
-            padding: 80px 20px;
-        }
+      /* ======================================
+       NAVBAR
+    ====================================== */
 
-        h1 {
-            font-size: 60px;
-            margin-bottom: 10px;
-        }
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 40px;
+        background: #111827;
+        border-bottom: 1px solid #334155;
+      }
 
-        .tagline {
-            font-size: 24px;
-            color: #cbd5e1;
-            margin-bottom: 40px;
-        }
+      .logo {
+        font-size: 28px;
+        font-weight: bold;
+        color: #fbbf24;
+      }
 
-        .box {
-            background: #1e293b;
-            padding: 30px;
-            border-radius: 15px;
-            margin-top: 30px;
-        }
+      .nav-center {
+        display: flex;
+        gap: 25px;
+      }
 
-        button {
-            background: #22c55e;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            border-radius: 10px;
-            cursor: pointer;
-        }
+      .nav-center a,
+      .nav-right a {
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+      }
 
-        button:hover {
-            background: #16a34a;
-        }
+      .nav-center a:hover,
+      .nav-right a:hover {
+        color: #fbbf24;
+      }
+
+      .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .languages {
+        color: #cbd5e1;
+        font-size: 14px;
+      }
+
+      /* ======================================
+       HERO SECTION
+    ====================================== */
+
+      .container {
+        max-width: 1000px;
+        margin: auto;
+        text-align: center;
+        padding: 80px 20px;
+      }
+
+      h1 {
+        font-size: 64px;
+        margin-bottom: 10px;
+      }
+
+      .tagline {
+        font-size: 26px;
+        color: #cbd5e1;
+        margin-bottom: 40px;
+      }
+
+      .box {
+        background: #1e293b;
+        padding: 40px;
+        border-radius: 20px;
+        margin-top: 30px;
+      }
+
+      button {
+        background: #22c55e;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        font-size: 18px;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #16a34a;
+      }
+
+      .secondary-btn {
+        background: #334155;
+      }
+
+      .secondary-btn:hover {
+        background: #475569;
+      }
     </style>
+    ```
+  </head>
 
-</head>
+  <body>
+    ```
+    <!-- ======================================
+     NAVBAR
+======================================= -->
 
-<body>
+    <nav class="navbar">
+      <div class="logo">SHAKARBAKAR</div>
+
+      <div class="nav-center">
+        <a href="index.html">Home</a>
+        <a href="marketplace.html">Marketplace</a>
+        <a href="#">Teams</a>
+        <a href="#">About</a>
+        <a href="#">How It Works</a>
+      </div>
+
+      <div class="nav-right">
+        <div class="languages">English | Français | العربية</div>
+
+        <a href="login.html">Login</a>
+        <a href="register.html">Sign Up</a>
+      </div>
+    </nav>
+
+    <!-- ======================================
+     HERO SECTION
+======================================= -->
 
     <div class="container">
+      <h1>SHAKARBAKAR</h1>
 
-        <h1>SHAKARBAKAR</h1>
+      <p class="tagline">Trade. Predict. Compete.</p>
 
-        <p class="tagline">
-            Trade. Predict. Compete.
-        </p>
+      <div class="box">
+        <h2>Own Teams. Predict Matches. Compete for Glory.</h2>
 
-        <div class="box">
+        <p>Buy national teams like stocks and build your football empire.</p>
 
-            <h2>Welcome to ShakarBakar</h2>
+        <p>Compete against players from around the world.</p>
 
-            <p>
-                A virtual stock market for real-world events.
-            </p>
+        <p>Earn Bucks. Build your portfolio. Rise through the rankings.</p>
 
-            <p>
-                Buy teams. Sell teams. Build your Bucks.
-            </p>
+        <br />
 
-            <p>
-                Trade national teams like stocks and compete against other players.
-            </p>
+        <button onclick="window.location.href = 'register.html'">
+          Claim Starter Pack
+        </button>
 
-            <br>
+        <br /><br />
 
-            <h3>FOREVER FREE TO PLAY</h3>
-
-            <p>
-                No Deposits.
-            </p>
-
-            <p>
-                No Real-Money Gambling.
-            </p>
-
-            <p>
-                No Purchase Required.
-            </p>
-
-            <br>
-
-            <button onclick="window.location.href='register.html'">
-                Claim Starter Pack
-            </button>
-
-            <br><br>
-
-            <button onclick="window.location.href='marketplace.html'" style="background:#334155;">
-                Teams Marketplace
-            </button>
-
-        </div>
-
+        <button
+          class="secondary-btn"
+          onclick="window.location.href = 'marketplace.html'"
+        >
+          Teams Marketplace
+        </button>
+      </div>
     </div>
-
-</body>
-
+    ```
+  </body>
 </html>
