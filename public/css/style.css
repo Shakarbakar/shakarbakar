@@ -18,13 +18,31 @@ BASE PAGE STYLES
 ==================================================
 */
 
+/*
+==================================================
+GLOBAL SITE BACKGROUND
+==================================================
+*/
+
 body {
   margin: 0;
-  background: #0f172a;
+
+  background-image:
+    linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.75)),
+    url("../images/stadium-background.jpg");
+
+  background-size: cover;
+
+  background-position: center;
+
+  background-attachment: fixed;
+
+  background-repeat: no-repeat;
+
   color: white;
+
   font-family: Arial, Helvetica, sans-serif;
 }
-
 /*
 ==================================================
 LAYOUT
