@@ -865,6 +865,15 @@ Every team receives its own visual identity.
   background: linear-gradient(180deg, #38bdf8, #2563eb);
 }
 
+.team-algeria {
+  background: linear-gradient(180deg, #15803d, #ffffff);
+  color: #111;
+}
+
+.team-panama {
+  background: linear-gradient(180deg, #dc2626, #1d4ed8);
+}
+
 .team-default {
   background: linear-gradient(180deg, #22304a, #1e293b);
 }

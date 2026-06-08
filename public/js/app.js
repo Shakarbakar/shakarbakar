@@ -162,19 +162,75 @@ Returns a CSS class based on country.
 
 function getTeamColorClass(teamName) {
   const colors = {
-    Brazil: "team-brazil",
+    Algeria: "team-algeria",
     Argentina: "team-argentina",
+    Australia: "team-australia",
+    Austria: "team-austria",
+    Belgium: "team-belgium",
+
+    "Bosnia and Herzegovina": "team-bosnia-and-herzegovina",
+
+    Brazil: "team-brazil",
+
+    "Cabo Verde": "team-cabo-verde",
+
+    Canada: "team-canada",
+    Colombia: "team-colombia",
+
+    "Congo DR": "team-congo-dr",
+
+    "Côte d'Ivoire": "team-cote-divoire",
+
+    Croatia: "team-croatia",
+    Curaçao: "team-curacao",
+    Czechia: "team-czechia",
+    Ecuador: "team-ecuador",
+    Egypt: "team-egypt",
+    England: "team-england",
     France: "team-france",
     Germany: "team-germany",
-    Spain: "team-spain",
+    Ghana: "team-ghana",
+    Haiti: "team-haiti",
+
+    "IR Iran": "team-ir-iran",
+
+    Iraq: "team-iraq",
+    Japan: "team-japan",
+    Jordan: "team-jordan",
+
+    "Korea Republic": "team-korea-republic",
+
+    Mexico: "team-mexico",
+    Morocco: "team-morocco",
+    Netherlands: "team-netherlands",
+
+    "New Zealand": "team-new-zealand",
+
+    Norway: "team-norway",
+    Panama: "team-panama",
+    Paraguay: "team-paraguay",
     Portugal: "team-portugal",
-    England: "team-england",
-    Italy: "team-italy",
+    Qatar: "team-qatar",
+
+    "Saudi Arabia": "team-saudi-arabia",
+
+    Scotland: "team-scotland",
+    Senegal: "team-senegal",
+
+    "South Africa": "team-south-africa",
+
+    Spain: "team-spain",
+    Sweden: "team-sweden",
+    Switzerland: "team-switzerland",
+    Tunisia: "team-tunisia",
+    Türkiye: "team-turkiye",
+    Uruguay: "team-uruguay",
+    USA: "team-usa",
+    Uzbekistan: "team-uzbekistan",
   };
 
   return colors[teamName] || "team-default";
 }
-
 /*
 ==================================================
 RENDER MARKETPLACE
