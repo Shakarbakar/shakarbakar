@@ -36,13 +36,19 @@ async function loadPlayers() {
         '<div class="player-status online">' +
         "🟢 Registered Player" +
         "</div>" +
-        '<button class="btn friend-btn">' +
+        '<button class="btn friend-btn" onclick="sendFriendRequest(\'' +
+        user._id +
+        "')\">" +
         "Add Friend" +
         "</button>" +
-        '<button class="btn message-btn">' +
+        '<button class="btn message-btn" onclick="openPrivateMessage(\'' +
+        user._id +
+        "')\">" +
         "Private Message" +
         "</button>" +
-        '<button class="btn duel-btn">' +
+        '<button class="btn duel-btn" onclick="challengePlayer(\'' +
+        user._id +
+        "')\">" +
         "Challenge To Duel" +
         "</button>";
 
@@ -53,6 +59,62 @@ async function loadPlayers() {
 
     grid.innerHTML = "<h2>Server Error</h2>";
   }
+}
+
+/*
+==================================================
+SEND FRIEND REQUEST
+==================================================
+*/
+
+async function sendFriendRequest(receiverId) {
+  const loggedUser = JSON.parse(localStorage.getItem("shakarbakar_user"));
+
+  if (!loggedUser) {
+    alert("Please login first");
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/chat/send-friend-request", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        senderId: loggedUser.id,
+        receiverId: receiverId,
+      }),
+    });
+
+    const data = await response.json();
+
+    alert(data.message);
+  } catch (error) {
+    console.error(error);
+
+    alert("Server Error");
+  }
+}
+
+/*
+==================================================
+OPEN PRIVATE MESSAGE
+==================================================
+*/
+
+function openPrivateMessage(userId) {
+  window.location.href = "private-chat.html?userId=" + userId;
+}
+
+/*
+==================================================
+CHALLENGE PLAYER
+==================================================
+*/
+
+function challengePlayer(userId) {
+  window.location.href = "prediction-duels.html?opponentId=" + userId;
 }
 
 /*
