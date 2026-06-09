@@ -1,13 +1,7 @@
 /*
 ==================================================
-SHAKARBAKAR - VERSION 2
+SHAKARBAKAR - VERSION 3
 MAIN SERVER FILE
-==================================================
-*/
-
-/*
-==================================================
-IMPORT PACKAGES
 ==================================================
 */
 
@@ -19,7 +13,7 @@ const mongoose = require("mongoose");
 
 /*
 ==================================================
-IMPORT ROUTES
+ROUTES
 ==================================================
 */
 
@@ -28,18 +22,13 @@ const loginRoute = require("./routes/login");
 const teamsRoute = require("./routes/teams");
 const ownershipRoute = require("./routes/ownership");
 
-/*
-==================================================
-NEW ARENA ROUTES
-==================================================
-*/
-
 const chatRoute = require("./routes/chat");
 const duelsRoute = require("./routes/duels");
+const usersRoute = require("./routes/users");
 
 /*
 ==================================================
-CREATE EXPRESS APP
+APP
 ==================================================
 */
 
@@ -57,68 +46,18 @@ app.use(express.static("public"));
 
 /*
 ==================================================
-ROUTES
+API ROUTES
 ==================================================
 */
 
 app.use("/api/register", registerRoute);
-
 app.use("/api/login", loginRoute);
-
 app.use("/api/teams", teamsRoute);
-
 app.use("/api/ownership", ownershipRoute);
 
-/*
-==================================================
-ARENA ROUTES
-==================================================
-*/
-
 app.use("/api/chat", chatRoute);
-
 app.use("/api/duels", duelsRoute);
-
-/*
-==================================================
-MONGODB CONNECTION
-==================================================
-*/
-
-console.log("====================================");
-console.log("MONGO_URI =", process.env.MONGO_URI);
-console.log("====================================");
-
-mongoose
-  .connect(process.env.MONGO_URI, {
-    serverSelectionTimeoutMS: 30000,
-  })
-  .then(() => {
-    console.log("✅ MongoDB Connected Successfully");
-  })
-  .catch((error) => {
-    console.error("❌ MongoDB Connection Error");
-    console.error("");
-
-    console.error("NAME:");
-    console.error(error.name);
-
-    console.error("");
-    console.error("MESSAGE:");
-    console.error(error.message);
-
-    console.error("");
-    console.error("CAUSE:");
-    console.dir(error.cause, { depth: null });
-
-    console.error("");
-    console.error("REASON:");
-    console.dir(error.reason, { depth: null });
-
-    console.error("");
-    console.error("FULL ERROR:");
-    console.dir(error, { depth: null });
-  });
+app.use("/api/users", usersRoute);
 
 /*
 ==================================================
@@ -135,7 +74,29 @@ app.get("/api/test", (req, res) => {
 
 /*
 ==================================================
-SERVER START
+MONGODB
+==================================================
+*/
+
+console.log("====================================");
+console.log("MONGO_URI =", process.env.MONGO_URI);
+console.log("====================================");
+
+mongoose
+  .connect(process.env.MONGO_URI, {
+    serverSelectionTimeoutMS: 30000,
+  })
+  .then(() => {
+    console.log("✅ MongoDB Connected Successfully");
+  })
+  .catch((error) => {
+    console.error("❌ MongoDB Connection Error");
+    console.error(error);
+  });
+
+/*
+==================================================
+START SERVER
 ==================================================
 */
 
