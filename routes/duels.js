@@ -50,7 +50,9 @@ router.post("/create", async (req, res) => {
 
     const challenger = await User.findById(challengerUserId);
 
-    const opponent = await User.findById(opponentUserId);
+    const opponent = await User.findOne({
+      username: opponentUserId,
+    });
 
     if (!challenger || !opponent) {
       return res.status(404).json({
