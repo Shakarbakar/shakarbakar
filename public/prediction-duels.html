@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Prediction Duels - ShakarBakar</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <style>
+      body {
+        margin: 0;
+        background-image: url("images/arena-background.jpg");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      .duels-page {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      .duels-title {
+        text-align: center;
+        font-size: 52px;
+        color: #fbbf24;
+        margin-bottom: 10px;
+      }
+
+      .duels-subtitle {
+        text-align: center;
+        color: #cbd5e1;
+        margin-bottom: 40px;
+      }
+
+      .duels-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+      }
+
+      .duel-card {
+        background: rgba(15, 23, 42, 0.82);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 18px;
+        padding: 25px;
+      }
+
+      .duel-card h2 {
+        margin-top: 0;
+        color: #fbbf24;
+      }
+
+      .duel-card p {
+        color: #cbd5e1;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 12px;
+        margin-top: 10px;
+        border-radius: 10px;
+        border: none;
+        box-sizing: border-box;
+      }
+
+      button {
+        width: 100%;
+        margin-top: 15px;
+        padding: 14px;
+        border: none;
+        border-radius: 10px;
+        background: #22c55e;
+        color: white;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #16a34a;
+      }
+
+      .home-link {
+        text-align: center;
+        margin-top: 30px;
+      }
+
+      .home-link a {
+        color: #93c5fd;
+        text-decoration: none;
+      }
+
+      .duel-history-item {
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="duels-page">
+      <h1 class="duels-title">⚔️ PREDICTION DUELS</h1>
+
+      <p class="duels-subtitle">
+        Challenge players. Make predictions. Earn glory.
+      </p>
+
+      <div class="duels-grid">
+        <div class="duel-card">
+          <h2>⚔️ Create Duel</h2>
+
+          <input id="duelOpponent" type="text" placeholder="Opponent User ID" />
+
+          <input id="duelTitle" type="text" placeholder="Duel Title" />
+
+          <textarea
+            id="duelQuestion"
+            placeholder="Prediction Question"
+          ></textarea>
+
+          <textarea
+            id="duelPrediction"
+            placeholder="Your Prediction"
+          ></textarea>
+
+          <button onclick="createDuel()">Create Duel</button>
+        </div>
+
+        <div class="duel-card">
+          <h2>📥 Pending Duels</h2>
+
+          <div id="pendingDuels">No pending duels.</div>
+        </div>
+
+        <div class="duel-card">
+          <h2>🏆 Duel History</h2>
+
+          <div id="duelHistory">No duels yet.</div>
+        </div>
+
+        <div class="duel-card">
+          <h2>🎯 Arena Rankings</h2>
+
+          <p>#1 Player</p>
+          <p>#2 Player</p>
+          <p>#3 Player</p>
+        </div>
+      </div>
+
+      <div class="home-link">
+        <a href="arena.html">← Back to Arena</a>
+      </div>
+
+      <div class="home-link">
+        <a href="index.html">← Back to Home</a>
+      </div>
+    </div>
+
+    <script src="js/duels.js"></script>
+  </body>
+</html>

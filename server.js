@@ -30,6 +30,15 @@ const ownershipRoute = require("./routes/ownership");
 
 /*
 ==================================================
+NEW ARENA ROUTES
+==================================================
+*/
+
+const chatRoute = require("./routes/chat");
+const duelsRoute = require("./routes/duels");
+
+/*
+==================================================
 CREATE EXPRESS APP
 ==================================================
 */
@@ -53,9 +62,22 @@ ROUTES
 */
 
 app.use("/api/register", registerRoute);
+
 app.use("/api/login", loginRoute);
+
 app.use("/api/teams", teamsRoute);
+
 app.use("/api/ownership", ownershipRoute);
+
+/*
+==================================================
+ARENA ROUTES
+==================================================
+*/
+
+app.use("/api/chat", chatRoute);
+
+app.use("/api/duels", duelsRoute);
 
 /*
 ==================================================
