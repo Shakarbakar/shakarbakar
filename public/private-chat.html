@@ -96,15 +96,16 @@
       <p class="subtitle">Chat privately with your friends.</p>
 
       <div class="chat-container">
-        <div class="messages">
-          <div class="message">Hello friend 👋</div>
+        <div id="messages" class="messages"></div>
 
-          <div class="message">Ready for today's matches?</div>
-        </div>
+        <input
+          id="messageInput"
+          class="input"
+          type="text"
+          placeholder="Type message..."
+        />
 
-        <input class="input" type="text" placeholder="Type message..." />
-
-        <button class="send-btn">Send Message</button>
+        <button class="send-btn" onclick="sendMessage()">Send Message</button>
       </div>
 
       <div class="home-link">
@@ -115,5 +116,55 @@
         <a href="index.html"> ← Back to Home </a>
       </div>
     </div>
+
+    <script src="js/chat.js"></script>
+
+    <script>
+      const params = new URLSearchParams(window.location.search);
+
+      const otherUserId = params.get("userId");
+
+      async function refreshMessages() {
+        const messages = await loadMessages(otherUserId);
+
+        const container = document.getElementById("messages");
+
+        container.innerHTML = "";
+
+        if (!messages) {
+          return;
+        }
+
+        messages.forEach((msg) => {
+          const div = document.createElement("div");
+
+          div.className = "message";
+
+          div.innerText = msg.fromUsername + ": " + msg.message;
+
+          container.appendChild(div);
+        });
+      }
+
+      async function sendMessage() {
+        const input = document.getElementById("messageInput");
+
+        const text = input.value.trim();
+
+        if (!text) {
+          return;
+        }
+
+        await sendPrivateMessage(otherUserId, text);
+
+        input.value = "";
+
+        await refreshMessages();
+      }
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        await refreshMessages();
+      });
+    </script>
   </body>
 </html>
