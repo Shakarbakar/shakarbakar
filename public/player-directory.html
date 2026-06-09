@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Player Directory - ShakarBakar</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <style>
+      body {
+        margin: 0;
+        background-image: url("images/arena-background.jpg");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      .page {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      .title {
+        text-align: center;
+        font-size: 52px;
+        color: #fbbf24;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #cbd5e1;
+        margin-bottom: 40px;
+      }
+
+      .search-box {
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto 30px auto;
+        display: block;
+        padding: 15px;
+        border-radius: 12px;
+        border: none;
+      }
+
+      .players-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+      }
+
+      .player-card {
+        background: rgba(15, 23, 42, 0.82);
+        backdrop-filter: blur(8px);
+        border-radius: 18px;
+        padding: 25px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .player-name {
+        font-size: 24px;
+        color: #fbbf24;
+        margin-bottom: 10px;
+      }
+
+      .player-status {
+        margin-bottom: 15px;
+      }
+
+      .online {
+        color: #22c55e;
+      }
+
+      .offline {
+        color: #94a3b8;
+      }
+
+      .btn {
+        width: 100%;
+        margin-top: 10px;
+        padding: 12px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        color: white;
+      }
+
+      .friend-btn {
+        background: #2563eb;
+      }
+
+      .message-btn {
+        background: #7c3aed;
+      }
+
+      .duel-btn {
+        background: #dc2626;
+      }
+
+      .home-link {
+        text-align: center;
+        margin-top: 30px;
+      }
+
+      .home-link a {
+        color: #93c5fd;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="page">
+      <h1 class="title">🌎 PLAYER DIRECTORY</h1>
+
+      <p class="subtitle">Browse all players in ShakarBakar.</p>
+
+      <input
+        id="playerSearch"
+        class="search-box"
+        type="text"
+        placeholder="Search players..."
+      />
+
+      <div id="playersGrid" class="players-grid">
+        <div class="player-card">
+          <div class="player-name">shakar1</div>
+
+          <div class="player-status online">🟢 Online</div>
+
+          <button class="btn friend-btn">Add Friend</button>
+
+          <button class="btn message-btn">Private Message</button>
+
+          <button class="btn duel-btn">Challenge To Duel</button>
+        </div>
+      </div>
+
+      <div class="home-link">
+        <a href="arena-chat.html"> ← Back to Arena Chat </a>
+      </div>
+
+      <div class="home-link">
+        <a href="index.html"> ← Back to Home </a>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Private Messages - ShakarBakar</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <style>
+      body {
+        margin: 0;
+        background-image: url("images/arena-background.jpg");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      .page {
+        max-width: 1400px;
+        margin: auto;
+        padding: 40px 20px;
+      }
+
+      .title {
+        text-align: center;
+        font-size: 52px;
+        color: #fbbf24;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #cbd5e1;
+        margin-bottom: 40px;
+      }
+
+      .chat-container {
+        background: rgba(15, 23, 42, 0.82);
+        backdrop-filter: blur(8px);
+        border-radius: 18px;
+        padding: 25px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .messages {
+        height: 400px;
+        overflow-y: auto;
+        margin-bottom: 20px;
+      }
+
+      .message {
+        padding: 12px;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .input {
+        width: 100%;
+        padding: 15px;
+        border: none;
+        border-radius: 10px;
+        box-sizing: border-box;
+        margin-bottom: 10px;
+      }
+
+      .send-btn {
+        width: 100%;
+        padding: 15px;
+        border: none;
+        border-radius: 10px;
+        background: #22c55e;
+        color: white;
+        cursor: pointer;
+      }
+
+      .home-link {
+        text-align: center;
+        margin-top: 30px;
+      }
+
+      .home-link a {
+        color: #93c5fd;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="page">
+      <h1 class="title">✉️ PRIVATE MESSAGES</h1>
+
+      <p class="subtitle">Chat privately with your friends.</p>
+
+      <div class="chat-container">
+        <div class="messages">
+          <div class="message">Hello friend 👋</div>
+
+          <div class="message">Ready for today's matches?</div>
+        </div>
+
+        <input class="input" type="text" placeholder="Type message..." />
+
+        <button class="send-btn">Send Message</button>
+      </div>
+
+      <div class="home-link">
+        <a href="arena-chat.html"> ← Back to Arena Chat </a>
+      </div>
+
+      <div class="home-link">
+        <a href="index.html"> ← Back to Home </a>
+      </div>
+    </div>
+  </body>
+</html>
