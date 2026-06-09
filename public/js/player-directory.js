@@ -76,14 +76,14 @@ async function sendFriendRequest(receiverId) {
   }
 
   try {
-    const response = await fetch("/api/chat/send-friend-request", {
+    const response = await fetch("/api/chat/friend-request", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        senderId: loggedUser.id,
-        receiverId: receiverId,
+        fromUserId: loggedUser.id,
+        toUserId: receiverId,
       }),
     });
 
