@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>My Profile - ShakarBakar</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <style>
+      body {
+        margin: 0;
+        background-image: url("images/arena-background.jpg");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      .page {
+        max-width: 1000px;
+        margin: auto;
+        padding: 40px 20px;
+      }
+
+      .title {
+        text-align: center;
+        font-size: 52px;
+        color: #fbbf24;
+      }
+
+      .card {
+        background: rgba(15, 23, 42, 0.82);
+        border-radius: 18px;
+        padding: 25px;
+        margin-bottom: 20px;
+      }
+
+      .row {
+        font-size: 22px;
+        margin-bottom: 15px;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        color: white;
+        margin-top: 10px;
+      }
+
+      .logout-btn {
+        background: #dc2626;
+      }
+
+      .chat-btn {
+        background: #7c3aed;
+      }
+
+      .friends-btn {
+        background: #2563eb;
+      }
+
+      .home-link {
+        text-align: center;
+        margin-top: 30px;
+      }
+
+      .home-link a {
+        color: #93c5fd;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="page">
+      <h1 class="title">👤 MY PROFILE</h1>
+
+      <div class="card">
+        <div class="row">
+          Username:
+          <strong id="username">Loading...</strong>
+        </div>
+
+        <div class="row">
+          Status:
+          <strong>🟢 Online</strong>
+        </div>
+
+        <div class="row">
+          Bucks:
+          <strong id="bucksBalance">0</strong>
+        </div>
+
+        <button
+          class="btn chat-btn"
+          onclick="window.location.href = 'arena-chat.html'"
+        >
+          📩 Inbox & Chat
+        </button>
+
+        <button
+          class="btn friends-btn"
+          onclick="window.location.href = 'friends.html'"
+        >
+          👥 Friends
+        </button>
+
+        <button class="btn logout-btn" onclick="logoutUser()">🚪 Logout</button>
+      </div>
+
+      <div class="home-link">
+        <a href="index.html">← Back to Home</a>
+      </div>
+    </div>
+
+    <script>
+      const user = JSON.parse(localStorage.getItem("shakarbakar_user"));
+
+      if (!user) {
+        window.location.href = "login.html";
+      }
+
+      document.getElementById("username").innerText = user.username;
+
+      document.getElementById("bucksBalance").innerText =
+        user.bucksBalance.toLocaleString();
+
+      function logoutUser() {
+        localStorage.removeItem("shakarbakar_user");
+
+        window.location.href = "login.html";
+      }
+    </script>
+  </body>
+</html>
