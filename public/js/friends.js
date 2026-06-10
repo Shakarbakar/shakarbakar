@@ -108,9 +108,14 @@ OPEN PRIVATE CHAT
 */
 
 function openPrivateChat(friendId) {
-  window.location.href = "private-chat.html?userId=" + friendId;
-}
+  if (!friendId) {
+    alert("Friend ID not found");
+    return;
+  }
 
+  window.location.href =
+    "private-chat.html?userId=" + encodeURIComponent(friendId);
+}
 /*
 ==================================================
 CHALLENGE FRIEND
