@@ -113,9 +113,9 @@ async function loginUser() {
         data.user.bucksBalance.toLocaleString() +
         " Bucks.";
 
-      // Redirect to marketplace after short delay
+      // Redirect to home page after short delay
       setTimeout(function () {
-        window.location.href = "marketplace.html";
+        window.location.href = "index.html";
       }, 1500);
     } else {
       message.className = "message error";
