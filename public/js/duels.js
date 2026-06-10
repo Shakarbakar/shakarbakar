@@ -86,7 +86,6 @@ async function createDuel() {
 
     if (!user) {
       alert("Please login first");
-
       return;
     }
 
@@ -96,17 +95,24 @@ async function createDuel() {
 
     let duelQuestion = document.getElementById("duelQuestion").value;
 
-    const duelPrediction = document.getElementById("duelPrediction").value;
+    let duelPrediction = "";
 
     const customQuestionEl = document.getElementById("customQuestion");
 
-    if (duelQuestion === "custom" && customQuestionEl) {
-      duelQuestion = customQuestionEl.value.trim();
+    const customPredictionEl = document.getElementById("customPrediction");
+
+    if (duelQuestion === "custom") {
+      duelQuestion = customQuestionEl ? customQuestionEl.value.trim() : "";
+
+      duelPrediction = customPredictionEl
+        ? customPredictionEl.value.trim()
+        : "";
+    } else {
+      duelPrediction = document.getElementById("duelPrediction").value;
     }
 
     if (!opponentUserId || !duelTitle || !duelQuestion || !duelPrediction) {
       alert("Please complete all fields");
-
       return;
     }
 
@@ -120,11 +126,11 @@ async function createDuel() {
       body: JSON.stringify({
         challengerUserId: user.id,
 
-        opponentUserId: opponentUserId,
+        opponentUserId,
 
-        duelTitle: duelTitle,
+        duelTitle,
 
-        duelQuestion: duelQuestion,
+        duelQuestion,
 
         challengerPrediction: duelPrediction,
       }),
@@ -144,6 +150,10 @@ async function createDuel() {
       if (customQuestionEl) {
         customQuestionEl.value = "";
       }
+
+      if (customPredictionEl) {
+        customPredictionEl.value = "";
+      }
     }
 
     loadDuelHistory();
@@ -153,7 +163,6 @@ async function createDuel() {
     console.error(error);
   }
 }
-
 /*
 ==================================================
 LOAD PENDING DUELS
