@@ -20,10 +20,6 @@
         font-family: Arial, Helvetica, sans-serif;
       }
 
-      /* ======================================
-         NAVBAR
-      ====================================== */
-
       .navbar {
         display: flex;
         justify-content: space-between;
@@ -69,16 +65,18 @@
         font-size: 14px;
       }
 
-      /* ======================================
-         HERO
-      ====================================== */
-
-      /* ======================================
-   HERO
-====================================== */
+      .notification-badge {
+        background: #dc2626;
+        color: white;
+        border-radius: 999px;
+        padding: 2px 8px;
+        font-size: 12px;
+        margin-left: 6px;
+      }
 
       .hero {
         width: 100%;
+        position: relative;
       }
 
       .hero-image {
@@ -87,23 +85,13 @@
         display: block;
       }
 
-      .hero {
-        position: relative;
-      }
-
       .hero-overlay {
         position: absolute;
-
         top: 50%;
-
         left: 50%;
-
         transform: translate(-50%, -50%);
-
         text-align: center;
-
         width: 100%;
-
         text-shadow:
           0 2px 10px rgba(0, 0, 0, 0.9),
           0 4px 20px rgba(0, 0, 0, 0.8);
@@ -111,51 +99,31 @@
 
       h1 {
         margin: 0;
-
         font-size: 34px;
-
         color: white;
-
-        text-shadow:
-          0 2px 6px rgba(0, 0, 0, 0.9),
-          0 3px 12px rgba(0, 0, 0, 0.8);
       }
 
       .tagline {
         margin-top: 5px;
-
         font-size: 16px;
-
         color: white;
-
-        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
       }
 
       .buttons {
         margin-top: 15px;
-
         display: flex;
-
         gap: 10px;
-
         flex-wrap: wrap;
-
         justify-content: center;
       }
 
       .btn {
         padding: 10px 18px;
-
         border-radius: 10px;
-
         text-decoration: none;
-
         font-weight: bold;
-
         font-size: 14px;
-
         min-width: 180px;
-
         color: white;
       }
 
@@ -211,15 +179,34 @@
                 border: 1px solid #334155;
                 padding: 15px;
                 border-radius: 10px;
-                min-width: 220px;
+                min-width: 240px;
                 z-index: 9999;
               "
             >
-              <p><a href="arena-chat.html">📩 Inbox</a></p>
+              <p>
+                <a href="friend-requests.html">
+                  📨 Friend Requests
+                  <span
+                    id="friendRequestBadge"
+                    class="notification-badge"
+                    style="display: none"
+                  >
+                    0
+                  </span>
+                </a>
+              </p>
 
-              <p><a href="friends.html">👥 Friends</a></p>
+              <p>
+                <a href="private-chat.html"> 📩 Inbox </a>
+              </p>
 
-              <p><a href="profile.html">⚙️ Profile</a></p>
+              <p>
+                <a href="friends.html"> 👥 Friends </a>
+              </p>
+
+              <p>
+                <a href="profile.html"> ⚙️ Profile </a>
+              </p>
 
               <p>
                 <a href="#" onclick="logoutUser()"> 🚪 Logout </a>
@@ -263,16 +250,38 @@
 
       if (user) {
         document.getElementById("guestMenu").style.display = "none";
-
         document.getElementById("userMenu").style.display = "block";
-
         document.getElementById("profileName").innerText =
           "👤 " + user.username;
+
+        loadPendingRequests();
+      }
+
+      async function loadPendingRequests() {
+        try {
+          const response = await fetch("/api/chat/friend-requests/" + user.id);
+
+          const data = await response.json();
+
+          if (!data.success) {
+            return;
+          }
+
+          const count = data.requests.length;
+
+          const badge = document.getElementById("friendRequestBadge");
+
+          if (count > 0) {
+            badge.style.display = "inline-block";
+            badge.innerText = count;
+          }
+        } catch (error) {
+          console.error(error);
+        }
       }
 
       function logoutUser() {
         localStorage.removeItem("shakarbakar_user");
-
         window.location.href = "index.html";
       }
     </script>
