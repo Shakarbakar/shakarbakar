@@ -20,7 +20,7 @@
       }
 
       .page {
-        max-width: 1400px;
+        max-width: 1200px;
         margin: auto;
         padding: 40px 20px;
       }
@@ -29,12 +29,44 @@
         text-align: center;
         font-size: 52px;
         color: #fbbf24;
+        margin-bottom: 10px;
       }
 
       .subtitle {
         text-align: center;
         color: #cbd5e1;
-        margin-bottom: 40px;
+        margin-bottom: 30px;
+      }
+
+      .chat-header {
+        background: rgba(15, 23, 42, 0.82);
+        backdrop-filter: blur(8px);
+        border-radius: 18px;
+        padding: 20px;
+        margin-bottom: 15px;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .friend-name {
+        font-size: 24px;
+        color: #fbbf24;
+        font-weight: bold;
+      }
+
+      .message-count {
+        color: #cbd5e1;
+      }
+
+      .delete-btn {
+        background: #dc2626;
+        border: none;
+        color: white;
+        padding: 10px 18px;
+        border-radius: 10px;
+        cursor: pointer;
       }
 
       .chat-container {
@@ -46,30 +78,65 @@
       }
 
       .messages {
-        height: 400px;
+        height: 500px;
         overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
         margin-bottom: 20px;
       }
 
-      .message {
-        padding: 12px;
-        margin-bottom: 10px;
-        border-radius: 10px;
-        background: rgba(255, 255, 255, 0.08);
+      .message-row {
+        display: flex;
+      }
+
+      .my-message {
+        justify-content: flex-end;
+      }
+
+      .friend-message {
+        justify-content: flex-start;
+      }
+
+      .message-bubble {
+        max-width: 70%;
+        padding: 12px 16px;
+        border-radius: 18px;
+        word-wrap: break-word;
+      }
+
+      .my-bubble {
+        background: #22c55e;
+        color: white;
+      }
+
+      .friend-bubble {
+        background: #334155;
+        color: white;
+      }
+
+      .sender {
+        font-size: 12px;
+        opacity: 0.8;
+        margin-bottom: 4px;
+      }
+
+      .input-row {
+        display: flex;
+        gap: 10px;
       }
 
       .input {
-        width: 100%;
+        flex: 1;
         padding: 15px;
         border: none;
         border-radius: 10px;
-        box-sizing: border-box;
-        margin-bottom: 10px;
+        background: #0f172a;
+        color: white;
       }
 
       .send-btn {
-        width: 100%;
-        padding: 15px;
+        width: 180px;
         border: none;
         border-radius: 10px;
         background: #22c55e;
@@ -79,7 +146,7 @@
 
       .home-link {
         text-align: center;
-        margin-top: 30px;
+        margin-top: 25px;
       }
 
       .home-link a {
@@ -95,21 +162,35 @@
 
       <p class="subtitle">Chat privately with your friends.</p>
 
+      <div class="chat-header">
+        <div>
+          <div id="friendName" class="friend-name">Conversation</div>
+
+          <div id="messageCount" class="message-count">0 messages</div>
+        </div>
+
+        <button class="delete-btn" onclick="deleteConversation()">
+          🗑 Delete Conversation
+        </button>
+      </div>
+
       <div class="chat-container">
         <div id="messages" class="messages"></div>
 
-        <input
-          id="messageInput"
-          class="input"
-          type="text"
-          placeholder="Type message..."
-        />
+        <div class="input-row">
+          <input
+            id="messageInput"
+            class="input"
+            type="text"
+            placeholder="Type message..."
+          />
 
-        <button class="send-btn" onclick="sendMessage()">Send Message</button>
+          <button class="send-btn" onclick="sendMessage()">Send</button>
+        </div>
       </div>
 
       <div class="home-link">
-        <a href="arena-chat.html"> ← Back to Arena Chat </a>
+        <a href="friends.html"> ← Back to Friends </a>
       </div>
 
       <div class="home-link">
@@ -124,6 +205,8 @@
 
       const otherUserId = params.get("userId");
 
+      const currentUser = JSON.parse(localStorage.getItem("shakarbakar_user"));
+
       async function refreshMessages() {
         const messages = await loadMessages(otherUserId);
 
@@ -135,15 +218,32 @@
           return;
         }
 
+        document.getElementById("messageCount").innerText =
+          messages.length + " messages";
+
         messages.forEach((msg) => {
-          const div = document.createElement("div");
+          const row = document.createElement("div");
 
-          div.className = "message";
+          const mine = msg.fromUserId === currentUser.id;
 
-          div.innerText = msg.fromUsername + ": " + msg.message;
+          row.className = mine
+            ? "message-row my-message"
+            : "message-row friend-message";
 
-          container.appendChild(div);
+          row.innerHTML = `
+<div class="message-bubble ${mine ? "my-bubble" : "friend-bubble"}">
+<div class="sender">
+${msg.fromUsername}
+</div>
+
+${msg.message}
+</div>
+`;
+
+          container.appendChild(row);
         });
+
+        container.scrollTop = container.scrollHeight;
       }
 
       async function sendMessage() {
@@ -162,7 +262,19 @@
         await refreshMessages();
       }
 
-      document.addEventListener("DOMContentLoaded", async () => {
+      document
+        .getElementById("messageInput")
+        .addEventListener("keypress", function (event) {
+          if (event.key === "Enter") {
+            sendMessage();
+          }
+        });
+
+      function deleteConversation() {
+        alert("Delete conversation feature will be connected next.");
+      }
+
+      document.addEventListener("DOMContentLoaded", async function () {
         await refreshMessages();
       });
     </script>
