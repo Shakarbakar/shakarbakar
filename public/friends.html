@@ -39,30 +39,47 @@
 
       .friends-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 20px;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 25px;
+        align-items: start;
       }
 
       .friend-card {
-        background: rgba(15, 23, 42, 0.82);
+        background: rgba(15, 23, 42, 0.88);
         backdrop-filter: blur(8px);
-        border-radius: 18px;
-        padding: 25px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        text-align: center;
+        transition: all 0.25s ease;
+      }
+
+      .friend-card:hover {
+        transform: translateY(-6px);
+        border-color: #fbbf24;
+        box-shadow: 0 0 20px rgba(251, 191, 36, 0.25);
+      }
+
+      .friend-avatar {
+        font-size: 64px;
+        margin-bottom: 10px;
       }
 
       .friend-name {
-        font-size: 24px;
+        font-size: 26px;
         color: #fbbf24;
         margin-bottom: 10px;
+        font-weight: bold;
       }
 
       .online {
         color: #22c55e;
+        margin-bottom: 15px;
       }
 
       .offline {
         color: #94a3b8;
+        margin-bottom: 15px;
       }
 
       .btn {
@@ -73,6 +90,8 @@
         border-radius: 10px;
         cursor: pointer;
         color: white;
+        font-size: 15px;
+        font-weight: bold;
       }
 
       .message-btn {
@@ -85,6 +104,10 @@
 
       .remove-btn {
         background: #475569;
+      }
+
+      .btn:hover {
+        opacity: 0.9;
       }
 
       .home-link {
@@ -106,17 +129,7 @@
       <p class="subtitle">Your football friends and rivals.</p>
 
       <div class="friends-grid" id="friendsGrid">
-        <div class="friend-card">
-          <div class="friend-name">shakar1</div>
-
-          <div class="online">🟢 Online</div>
-
-          <button class="btn message-btn">Private Message</button>
-
-          <button class="btn duel-btn">Challenge To Duel</button>
-
-          <button class="btn remove-btn">Remove Friend</button>
-        </div>
+        <!-- Loaded dynamically by friends.js -->
       </div>
 
       <div class="home-link">
