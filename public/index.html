@@ -267,10 +267,17 @@
       if (user) {
         document.getElementById("guestMenu").style.display = "none";
         document.getElementById("userMenu").style.display = "block";
-        document.getElementById("profileName").innerText =
-          "👤 " + user.username;
+
+        const profileName = document.getElementById("profileName");
+
+        profileName.innerHTML =
+          "👤 " +
+          user.username +
+          '<span id="topRequestBadge" style="display:none;margin-left:6px;background:#ef4444;color:white;border-radius:999px;padding:2px 7px;font-size:12px;font-weight:bold;">0</span>';
 
         loadPendingRequests();
+
+        setInterval(loadPendingRequests, 5000);
       }
 
       async function loadPendingRequests() {
@@ -315,6 +322,7 @@
 
       function logoutUser() {
         localStorage.removeItem("shakarbakar_user");
+
         window.location.href = "index.html";
       }
     </script>
