@@ -197,7 +197,7 @@
         </div>
 
         <div id="userMenu" style="display: none">
-          <details>
+          <details style="position: relative">
             <summary id="profileName" style="cursor: pointer; color: white">
               👤 User
             </summary>
@@ -205,11 +205,14 @@
             <div
               style="
                 position: absolute;
+                right: 0;
+                top: 30px;
                 background: #111827;
+                border: 1px solid #334155;
                 padding: 15px;
                 border-radius: 10px;
-                margin-top: 10px;
-                min-width: 180px;
+                min-width: 220px;
+                z-index: 9999;
               "
             >
               <p><a href="arena-chat.html">📩 Inbox</a></p>
