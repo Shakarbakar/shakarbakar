@@ -77,19 +77,20 @@ async function loadFriends() {
       card.className = "friend-card";
 
       card.innerHTML =
+        '<div style="font-size:60px;text-align:center;margin-bottom:10px;">👤</div>' +
         '<div class="friend-name">' +
         friend.friendUsername +
         "</div>" +
         '<div class="online">🟢 Registered Player</div>' +
         '<button class="btn message-btn" onclick="openPrivateChat(\'' +
         friend.friendUserId +
-        "')\">Private Chat</button>" +
+        "')\">💬 Chat Friend</button>" +
         '<button class="btn duel-btn" onclick="challengeFriend(\'' +
         friend.friendUserId +
-        "')\">Challenge To Duel</button>" +
+        "')\">⚔️ Duel</button>" +
         '<button class="btn remove-btn" onclick="removeFriend(\'' +
         friend.friendUserId +
-        "')\">Remove Friend</button>";
+        "')\">❌ Remove</button>";
 
       grid.appendChild(card);
     });
