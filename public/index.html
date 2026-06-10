@@ -191,11 +191,39 @@
           <a href="#">العربية</a>
         </div>
 
-        <a href="profile.html">👤 Profile</a>
+        <div id="guestMenu">
+          <a href="login.html">Login</a>
+          <a href="register.html">Sign Up</a>
+        </div>
 
-        <a href="login.html">Login</a>
+        <div id="userMenu" style="display: none">
+          <details>
+            <summary id="profileName" style="cursor: pointer; color: white">
+              👤 User
+            </summary>
 
-        <a href="register.html">Sign Up</a>
+            <div
+              style="
+                position: absolute;
+                background: #111827;
+                padding: 15px;
+                border-radius: 10px;
+                margin-top: 10px;
+                min-width: 180px;
+              "
+            >
+              <p><a href="arena-chat.html">📩 Inbox</a></p>
+
+              <p><a href="friends.html">👥 Friends</a></p>
+
+              <p><a href="profile.html">⚙️ Profile</a></p>
+
+              <p>
+                <a href="#" onclick="logoutUser()"> 🚪 Logout </a>
+              </p>
+            </div>
+          </details>
+        </div>
       </div>
     </nav>
 
@@ -226,5 +254,24 @@
         </div>
       </div>
     </section>
+
+    <script>
+      const user = JSON.parse(localStorage.getItem("shakarbakar_user"));
+
+      if (user) {
+        document.getElementById("guestMenu").style.display = "none";
+
+        document.getElementById("userMenu").style.display = "block";
+
+        document.getElementById("profileName").innerText =
+          "👤 " + user.username;
+      }
+
+      function logoutUser() {
+        localStorage.removeItem("shakarbakar_user");
+
+        window.location.href = "index.html";
+      }
+    </script>
   </body>
 </html>
