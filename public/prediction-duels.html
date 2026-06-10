@@ -112,7 +112,8 @@
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       }
 
-      #customQuestionContainer {
+      #customQuestionContainer,
+      #customPredictionContainer {
         display: none;
       }
     </style>
@@ -177,15 +178,27 @@
             ></textarea>
           </div>
 
-          <label>Your Prediction</label>
+          <div id="predictionDropdownContainer">
+            <label>Your Prediction</label>
 
-          <select id="duelPrediction">
-            <option value="">Select Prediction</option>
+            <select id="duelPrediction">
+              <option value="">Select Prediction</option>
 
-            <option value="Yes">Yes</option>
+              <option value="Yes">Yes</option>
 
-            <option value="No">No</option>
-          </select>
+              <option value="No">No</option>
+            </select>
+          </div>
+
+          <div id="customPredictionContainer">
+            <label>Put Your Prediction</label>
+
+            <input
+              id="customPrediction"
+              type="text"
+              placeholder="Enter your prediction"
+            />
+          </div>
 
           <button onclick="createDuel()">Create Duel</button>
         </div>
@@ -224,17 +237,35 @@
       function handleQuestionChange() {
         const question = document.getElementById("duelQuestion").value;
 
-        const customContainer = document.getElementById(
+        const customQuestionContainer = document.getElementById(
           "customQuestionContainer",
+        );
+
+        const customPredictionContainer = document.getElementById(
+          "customPredictionContainer",
+        );
+
+        const predictionDropdownContainer = document.getElementById(
+          "predictionDropdownContainer",
         );
 
         const prediction = document.getElementById("duelPrediction");
 
         if (question === "custom") {
-          customContainer.style.display = "block";
-        } else {
-          customContainer.style.display = "none";
+          customQuestionContainer.style.display = "block";
+
+          customPredictionContainer.style.display = "block";
+
+          predictionDropdownContainer.style.display = "none";
+
+          return;
         }
+
+        customQuestionContainer.style.display = "none";
+
+        customPredictionContainer.style.display = "none";
+
+        predictionDropdownContainer.style.display = "block";
 
         prediction.innerHTML = "";
 
