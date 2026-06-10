@@ -202,6 +202,37 @@ router.get("/pending/:userId", async (req, res) => {
 
 /*
 ==================================================
+GET /api/duels/pending-count/:userId
+==================================================
+
+Used for notification badges.
+
+==================================================
+*/
+
+router.get("/pending-count/:userId", async (req, res) => {
+  try {
+    const count = await Duel.countDocuments({
+      opponentUserId: req.params.userId,
+      status: "pending",
+    });
+
+    res.json({
+      success: true,
+      count,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+});
+
+/*
+==================================================
 POST /api/duels/complete
 ==================================================
 */

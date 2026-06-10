@@ -217,6 +217,19 @@
               </p>
 
               <p>
+                <a href="prediction-duels.html">
+                  ⚔️ Duels
+                  <span
+                    id="duelBadge"
+                    class="notification-badge"
+                    style="display: none"
+                  >
+                    0
+                  </span>
+                </a>
+              </p>
+
+              <p>
                 <a href="friends.html"> 👥 Friends </a>
               </p>
 
@@ -275,45 +288,94 @@
           user.username +
           '<span id="topRequestBadge" style="display:none;margin-left:6px;background:#ef4444;color:white;border-radius:999px;padding:2px 7px;font-size:12px;font-weight:bold;">0</span>';
 
-        loadPendingRequests();
+        loadNotifications();
 
-        setInterval(loadPendingRequests, 5000);
+        setInterval(loadNotifications, 5000);
       }
 
-      async function loadPendingRequests() {
+      async function loadNotifications() {
         try {
-          const response = await fetch("/api/chat/friend-requests/" + user.id);
+          /*
+          ==========================
+          FRIEND REQUESTS
+          ==========================
+          */
 
-          const data = await response.json();
+          let friendCount = 0;
 
-          if (!data.success) {
-            return;
+          const friendResponse = await fetch(
+            "/api/chat/friend-requests/" + user.id,
+          );
+
+          const friendData = await friendResponse.json();
+
+          if (friendData.success) {
+            friendCount = friendData.requests.length;
           }
 
-          const count = data.requests.length;
+          /*
+          ==========================
+          DUELS
+          ==========================
+          */
 
-          const badge = document.getElementById("friendRequestBadge");
+          let duelCount = 0;
+
+          const duelResponse = await fetch(
+            "/api/duels/pending-count/" + user.id,
+          );
+
+          const duelData = await duelResponse.json();
+
+          if (duelData.success) {
+            duelCount = duelData.count;
+          }
+
+          /*
+          ==========================
+          TOP BADGE
+          ==========================
+          */
+
+          const totalCount = friendCount + duelCount;
 
           const topBadge = document.getElementById("topRequestBadge");
 
-          if (count > 0) {
-            if (badge) {
-              badge.style.display = "inline-block";
-              badge.innerText = count;
-            }
-
-            if (topBadge) {
-              topBadge.style.display = "inline-block";
-              topBadge.innerText = count;
-            }
+          if (totalCount > 0) {
+            topBadge.style.display = "inline-block";
+            topBadge.innerText = totalCount;
           } else {
-            if (badge) {
-              badge.style.display = "none";
-            }
+            topBadge.style.display = "none";
+          }
 
-            if (topBadge) {
-              topBadge.style.display = "none";
-            }
+          /*
+          ==========================
+          FRIEND BADGE
+          ==========================
+          */
+
+          const friendBadge = document.getElementById("friendRequestBadge");
+
+          if (friendCount > 0) {
+            friendBadge.style.display = "inline-block";
+            friendBadge.innerText = friendCount;
+          } else {
+            friendBadge.style.display = "none";
+          }
+
+          /*
+          ==========================
+          DUEL BADGE
+          ==========================
+          */
+
+          const duelBadge = document.getElementById("duelBadge");
+
+          if (duelCount > 0) {
+            duelBadge.style.display = "inline-block";
+            duelBadge.innerText = duelCount;
+          } else {
+            duelBadge.style.display = "none";
           }
         } catch (error) {
           console.error(error);

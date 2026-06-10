@@ -9,6 +9,7 @@ Frontend functions for:
 - Accept Duel
 - Pending Duels
 - Duel History
+- Friends Dropdown
 
 ==================================================
 */
@@ -31,6 +32,50 @@ function getDuelUser() {
 
 /*
 ==================================================
+LOAD FRIENDS DROPDOWN
+==================================================
+*/
+
+async function loadFriendsDropdown() {
+  try {
+    const user = getDuelUser();
+
+    if (!user) {
+      return;
+    }
+
+    const select = document.getElementById("duelOpponent");
+
+    if (!select) {
+      return;
+    }
+
+    select.innerHTML = '<option value="">Select Friend</option>';
+
+    const response = await fetch("/api/chat/friends/" + user.id);
+
+    const data = await response.json();
+
+    if (!data.success) {
+      return;
+    }
+
+    data.friends.forEach(function (friend) {
+      const option = document.createElement("option");
+
+      option.value = friend.friendUsername;
+
+      option.textContent = friend.friendUsername;
+
+      select.appendChild(option);
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+/*
+==================================================
 CREATE DUEL
 ==================================================
 */
@@ -47,11 +92,23 @@ async function createDuel() {
 
     const opponentUserId = document.getElementById("duelOpponent").value;
 
-    const duelTitle = document.getElementById("duelTitle").value;
+    const duelTitle = document.getElementById("duelTitle").value.trim();
 
-    const duelQuestion = document.getElementById("duelQuestion").value;
+    let duelQuestion = document.getElementById("duelQuestion").value;
 
     const duelPrediction = document.getElementById("duelPrediction").value;
+
+    const customQuestionEl = document.getElementById("customQuestion");
+
+    if (duelQuestion === "custom" && customQuestionEl) {
+      duelQuestion = customQuestionEl.value.trim();
+    }
+
+    if (!opponentUserId || !duelTitle || !duelQuestion || !duelPrediction) {
+      alert("Please complete all fields");
+
+      return;
+    }
 
     const response = await fetch("/api/duels/create", {
       method: "POST",
@@ -76,6 +133,18 @@ async function createDuel() {
     const data = await response.json();
 
     alert(data.message);
+
+    if (data.success) {
+      document.getElementById("duelTitle").value = "";
+
+      document.getElementById("duelQuestion").selectedIndex = 0;
+
+      document.getElementById("duelPrediction").selectedIndex = 0;
+
+      if (customQuestionEl) {
+        customQuestionEl.value = "";
+      }
+    }
 
     loadDuelHistory();
 
@@ -223,8 +292,7 @@ async function loadDuelHistory() {
         duel.challengerUsername +
         " vs " +
         duel.opponentUsername +
-        "<br>" +
-        "Status: " +
+        "<br>Status: " +
         duel.status;
 
       container.appendChild(div);
@@ -244,6 +312,8 @@ document.addEventListener(
   "DOMContentLoaded",
 
   async function () {
+    await loadFriendsDropdown();
+
     await loadPendingDuels();
 
     await loadDuelHistory();
