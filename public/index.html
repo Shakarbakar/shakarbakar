@@ -168,6 +168,22 @@
           <details style="position: relative">
             <summary id="profileName" style="cursor: pointer; color: white">
               👤 User
+
+              <span
+                id="topRequestBadge"
+                style="
+                  display: none;
+                  margin-left: 6px;
+                  background: #ef4444;
+                  color: white;
+                  border-radius: 999px;
+                  padding: 2px 7px;
+                  font-size: 12px;
+                  font-weight: bold;
+                "
+              >
+                0
+              </span>
             </summary>
 
             <div
@@ -271,9 +287,26 @@
 
           const badge = document.getElementById("friendRequestBadge");
 
+          const topBadge = document.getElementById("topRequestBadge");
+
           if (count > 0) {
-            badge.style.display = "inline-block";
-            badge.innerText = count;
+            if (badge) {
+              badge.style.display = "inline-block";
+              badge.innerText = count;
+            }
+
+            if (topBadge) {
+              topBadge.style.display = "inline-block";
+              topBadge.innerText = count;
+            }
+          } else {
+            if (badge) {
+              badge.style.display = "none";
+            }
+
+            if (topBadge) {
+              topBadge.style.display = "none";
+            }
           }
         } catch (error) {
           console.error(error);
