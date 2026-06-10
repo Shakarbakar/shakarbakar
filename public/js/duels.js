@@ -1,7 +1,5 @@
 /*
-==================================================
 SHAKARBAKAR - DUELS FRONTEND
-==================================================
 */
 
 function getDuelUser() {
@@ -15,11 +13,8 @@ function getDuelUser() {
 }
 
 /*
-==================================================
 LOAD FRIENDS DROPDOWN
-==================================================
 */
-
 async function loadFriendsDropdown() {
   try {
     const user = getDuelUser();
@@ -37,7 +32,6 @@ async function loadFriendsDropdown() {
     select.innerHTML = '<option value="">Select Friend</option>';
 
     const response = await fetch("/api/chat/friends/" + user.id);
-
     const data = await response.json();
 
     if (!data.success) {
@@ -48,7 +42,6 @@ async function loadFriendsDropdown() {
       const option = document.createElement("option");
 
       option.value = friend.friendUserId;
-
       option.textContent = friend.friendUsername;
 
       select.appendChild(option);
@@ -59,11 +52,8 @@ async function loadFriendsDropdown() {
 }
 
 /*
-==================================================
 CREATE DUEL
-==================================================
 */
-
 async function createDuel() {
   try {
     const user = getDuelUser();
@@ -124,11 +114,8 @@ async function createDuel() {
 }
 
 /*
-==================================================
 LOAD PENDING DUELS
-==================================================
 */
-
 async function loadPendingDuels() {
   try {
     const user = getDuelUser();
@@ -177,11 +164,8 @@ async function loadPendingDuels() {
 }
 
 /*
-==================================================
 ACCEPT DUEL
-==================================================
 */
-
 async function acceptDuel(duelId) {
   try {
     const prediction = prompt("Enter your prediction");
@@ -214,11 +198,8 @@ async function acceptDuel(duelId) {
 }
 
 /*
-==================================================
 LOAD ACTIVE DUELS
-==================================================
 */
-
 async function loadActiveDuels() {
   try {
     const user = getDuelUser();
@@ -239,7 +220,10 @@ async function loadActiveDuels() {
 
     container.innerHTML = "";
 
-    const activeDuels = data.duels.filter((duel) => duel.status === "accepted");
+    const activeDuels = data.duels.filter(
+      (duel) =>
+        duel.status === "accepted" || duel.status === "awaiting_confirmation",
+    );
 
     if (activeDuels.length === 0) {
       container.innerHTML = "No active duels.";
@@ -251,17 +235,29 @@ async function loadActiveDuels() {
 
       div.className = "duel-history-item";
 
-      div.innerHTML =
+      let html =
         "<strong>" +
         duel.duelTitle +
         "</strong><br>" +
         duel.challengerUsername +
         " vs " +
-        duel.opponentUsername +
-        "<br><br>" +
-        "<button onclick=\"submitResult('" +
-        duel._id +
-        "')\">Submit Result</button>";
+        duel.opponentUsername;
+
+      if (duel.status === "accepted") {
+        html +=
+          "<br><br><button onclick=\"submitResult('" +
+          duel._id +
+          "')\">Submit Result</button>";
+      }
+
+      if (duel.status === "awaiting_confirmation") {
+        html +=
+          "<br><br><button onclick=\"confirmResult('" +
+          duel._id +
+          "')\">✅ Confirm Result</button>";
+      }
+
+      div.innerHTML = html;
 
       container.appendChild(div);
     });
@@ -271,11 +267,8 @@ async function loadActiveDuels() {
 }
 
 /*
-==================================================
 SUBMIT RESULT
-==================================================
 */
-
 async function submitResult(duelId) {
   const actualResult = prompt("Enter actual result");
 
@@ -295,9 +288,9 @@ async function submitResult(duelId) {
       }),
     });
 
-    const data = await response.json();
+    await response.json();
 
-    alert(data.message);
+    alert("Result submitted. Waiting for opponent confirmation.");
 
     await loadActiveDuels();
     await loadDuelHistory();
@@ -307,11 +300,8 @@ async function submitResult(duelId) {
 }
 
 /*
-==================================================
 LOAD HISTORY
-==================================================
 */
-
 async function loadDuelHistory() {
   try {
     const user = getDuelUser();
@@ -352,11 +342,15 @@ async function loadDuelHistory() {
         "<br>Status: " +
         duel.status;
 
-      if (duel.status === "result_submitted") {
+      if (duel.status === "awaiting_confirmation") {
         html +=
           "<br><br><button onclick=\"confirmResult('" +
           duel._id +
-          "')\">Confirm Result</button>";
+          "')\">✅ Confirm Result</button>";
+      }
+
+      if (duel.status === "completed" && duel.winnerUsername) {
+        html += "<br>🏆 Winner: " + duel.winnerUsername;
       }
 
       div.innerHTML = html;
@@ -369,11 +363,8 @@ async function loadDuelHistory() {
 }
 
 /*
-==================================================
 CONFIRM RESULT
-==================================================
 */
-
 async function confirmResult(duelId) {
   try {
     const response = await fetch("/api/duels/confirm-result", {
@@ -390,6 +381,7 @@ async function confirmResult(duelId) {
 
     alert(data.message);
 
+    await loadPendingDuels();
     await loadActiveDuels();
     await loadDuelHistory();
   } catch (error) {
@@ -398,11 +390,8 @@ async function confirmResult(duelId) {
 }
 
 /*
-==================================================
 AUTO REFRESH
-==================================================
 */
-
 setInterval(async () => {
   await loadPendingDuels();
   await loadActiveDuels();
@@ -410,11 +399,8 @@ setInterval(async () => {
 }, 5000);
 
 /*
-==================================================
 START
-==================================================
 */
-
 document.addEventListener("DOMContentLoaded", async function () {
   await loadFriendsDropdown();
   await loadPendingDuels();

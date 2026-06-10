@@ -87,6 +87,7 @@ router.post("/accept", async (req, res) => {
     }
 
     duel.opponentPrediction = opponentPrediction;
+
     duel.status = "accepted";
 
     await duel.save();
@@ -124,9 +125,11 @@ router.post("/submit-result", async (req, res) => {
       });
     }
 
-    duel.actualResult = actualResult;
+    duel.submittedResult = actualResult;
 
-    duel.status = "result_submitted";
+    duel.resultSubmittedAt = new Date();
+
+    duel.status = "awaiting_confirmation";
 
     await duel.save();
 
@@ -163,7 +166,7 @@ router.post("/confirm-result", async (req, res) => {
       });
     }
 
-    const result = duel.actualResult.toLowerCase().trim();
+    const result = duel.submittedResult.toLowerCase().trim();
 
     const challengerPrediction = duel.challengerPrediction.toLowerCase().trim();
 
@@ -184,6 +187,33 @@ router.post("/confirm-result", async (req, res) => {
       loser = await User.findById(duel.challengerUserId);
     }
 
+    /*
+    ==================================================
+    DRAW SYSTEM
+    ==================================================
+    */
+
+    if (
+      (challengerPrediction === result && opponentPrediction === result) ||
+      (challengerPrediction !== result && opponentPrediction !== result)
+    ) {
+      const challenger = await User.findById(duel.challengerUserId);
+
+      const opponent = await User.findById(duel.opponentUserId);
+
+      if (challenger) {
+        challenger.duelDraws = (challenger.duelDraws || 0) + 1;
+
+        await challenger.save();
+      }
+
+      if (opponent) {
+        opponent.duelDraws = (opponent.duelDraws || 0) + 1;
+
+        await opponent.save();
+      }
+    }
+
     if (winner) {
       winner.duelWins = (winner.duelWins || 0) + 1;
 
@@ -198,12 +228,17 @@ router.post("/confirm-result", async (req, res) => {
       await loser.save();
     }
 
+    duel.resultConfirmed = true;
+
+    duel.resultConfirmedAt = new Date();
+
     duel.status = "completed";
 
     duel.completedAt = new Date();
 
     if (winner) {
       duel.winnerUserId = winner._id;
+
       duel.winnerUsername = winner.username;
     }
 
