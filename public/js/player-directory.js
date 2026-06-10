@@ -24,7 +24,19 @@ async function loadPlayers() {
 
     grid.innerHTML = "";
 
+    const loggedUser = JSON.parse(localStorage.getItem("shakarbakar_user"));
+
     data.users.forEach((user) => {
+      /*
+      ==========================================
+      DO NOT SHOW CURRENT USER
+      ==========================================
+      */
+
+      if (loggedUser && user._id === loggedUser.id) {
+        return;
+      }
+
       const card = document.createElement("div");
 
       card.className = "player-card";
