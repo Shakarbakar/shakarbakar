@@ -76,21 +76,40 @@ async function loadFriends() {
 
       card.className = "friend-card";
 
-      card.innerHTML =
-        '<div style="font-size:60px;text-align:center;margin-bottom:10px;">👤</div>' +
-        '<div class="friend-name">' +
-        friend.friendUsername +
-        "</div>" +
-        '<div class="online">🟢 Registered Player</div>' +
-        '<button class="btn message-btn" onclick="openPrivateChat(\'' +
-        friend.friendUserId +
-        "')\">💬 Chat Friend</button>" +
-        '<button class="btn duel-btn" onclick="challengeFriend(\'' +
-        friend.friendUserId +
-        "')\">⚔️ Duel</button>" +
-        '<button class="btn remove-btn" onclick="removeFriend(\'' +
-        friend.friendUserId +
-        "')\">❌ Remove</button>";
+      card.innerHTML = `
+        <div style="font-size:60px;text-align:center;margin-bottom:10px;">
+          👤
+        </div>
+
+        <div class="friend-name">
+          ${friend.friendUsername}
+        </div>
+
+        <div class="online">
+          🟢 Registered Player
+        </div>
+
+        <button
+          class="btn message-btn"
+          onclick="openPrivateChat('${friend.friendUserId}')"
+        >
+          💬 Chat Friend
+        </button>
+
+        <button
+          class="btn duel-btn"
+          onclick="challengeFriend('${friend.friendUserId}')"
+        >
+          ⚔️ Duel
+        </button>
+
+        <button
+          class="btn remove-btn"
+          onclick="removeFriend('${friend.friendUserId}')"
+        >
+          ❌ Remove
+        </button>
+      `;
 
       grid.appendChild(card);
     });
@@ -116,6 +135,7 @@ function openPrivateChat(friendId) {
   window.location.href =
     "private-chat.html?userId=" + encodeURIComponent(friendId);
 }
+
 /*
 ==================================================
 CHALLENGE FRIEND
@@ -123,7 +143,8 @@ CHALLENGE FRIEND
 */
 
 function challengeFriend(friendId) {
-  window.location.href = "prediction-duels.html?opponent=" + friendId;
+  window.location.href =
+    "prediction-duels.html?opponent=" + encodeURIComponent(friendId);
 }
 
 /*
@@ -163,7 +184,7 @@ async function removeFriend(friendId) {
 
     alert(data.message);
 
-    loadFriends();
+    await loadFriends();
   } catch (error) {
     console.error(error);
   }
