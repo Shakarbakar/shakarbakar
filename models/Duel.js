@@ -10,6 +10,7 @@ Used by:
 - Accept Duel
 - Duel History
 - Duel Results
+- Arena Rankings
 
 ==================================================
 */
@@ -65,6 +66,83 @@ const duelSchema = new mongoose.Schema({
     default: "",
   },
 
+  /*
+  ==================================================
+  RESULT SYSTEM
+  ==================================================
+  */
+
+  submittedResult: {
+    type: String,
+    default: "",
+  },
+
+  resultSubmittedByUserId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null,
+  },
+
+  resultSubmittedByUsername: {
+    type: String,
+    default: "",
+  },
+
+  resultSubmittedAt: {
+    type: Date,
+    default: null,
+  },
+
+  /*
+  ==================================================
+  CONFIRMATION SYSTEM
+  ==================================================
+  */
+
+  resultConfirmed: {
+    type: Boolean,
+    default: false,
+  },
+
+  resultConfirmedByUserId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null,
+  },
+
+  resultConfirmedAt: {
+    type: Date,
+    default: null,
+  },
+
+  /*
+  ==================================================
+  DISPUTE SYSTEM
+  ==================================================
+  */
+
+  disputed: {
+    type: Boolean,
+    default: false,
+  },
+
+  disputedByUserId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null,
+  },
+
+  disputedAt: {
+    type: Date,
+    default: null,
+  },
+
+  /*
+  ==================================================
+  FINAL RESULT
+  ==================================================
+  */
+
   correctAnswer: {
     type: String,
     default: "",
@@ -81,11 +159,31 @@ const duelSchema = new mongoose.Schema({
     default: "",
   },
 
+  /*
+  ==================================================
+  STATUS
+  ==================================================
+  */
+
   status: {
     type: String,
-    enum: ["pending", "accepted", "completed", "cancelled"],
+    enum: [
+      "pending",
+      "accepted",
+      "awaiting_result",
+      "awaiting_confirmation",
+      "completed",
+      "cancelled",
+      "disputed",
+    ],
     default: "pending",
   },
+
+  /*
+  ==================================================
+  DATES
+  ==================================================
+  */
 
   createdAt: {
     type: Date,

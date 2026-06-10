@@ -2,22 +2,6 @@
 ==================================================
 SHAKARBAKAR - DUELS FRONTEND
 ==================================================
-
-Frontend functions for:
-
-- Create Duel
-- Accept Duel
-- Pending Duels
-- Duel History
-- Friends Dropdown
-
-==================================================
-*/
-
-/*
-==================================================
-GET LOGGED IN USER
-==================================================
 */
 
 function getDuelUser() {
@@ -60,10 +44,10 @@ async function loadFriendsDropdown() {
       return;
     }
 
-    data.friends.forEach(function (friend) {
+    data.friends.forEach((friend) => {
       const option = document.createElement("option");
 
-      option.value = friend.friendUsername;
+      option.value = friend.friendUserId;
 
       option.textContent = friend.friendUsername;
 
@@ -102,11 +86,8 @@ async function createDuel() {
     const customPredictionEl = document.getElementById("customPrediction");
 
     if (duelQuestion === "custom") {
-      duelQuestion = customQuestionEl ? customQuestionEl.value.trim() : "";
-
-      duelPrediction = customPredictionEl
-        ? customPredictionEl.value.trim()
-        : "";
+      duelQuestion = customQuestionEl.value.trim();
+      duelPrediction = customPredictionEl.value.trim();
     } else {
       duelPrediction = document.getElementById("duelPrediction").value;
     }
@@ -118,20 +99,14 @@ async function createDuel() {
 
     const response = await fetch("/api/duels/create", {
       method: "POST",
-
       headers: {
         "Content-Type": "application/json",
       },
-
       body: JSON.stringify({
         challengerUserId: user.id,
-
         opponentUserId,
-
         duelTitle,
-
         duelQuestion,
-
         challengerPrediction: duelPrediction,
       }),
     });
@@ -140,29 +115,14 @@ async function createDuel() {
 
     alert(data.message);
 
-    if (data.success) {
-      document.getElementById("duelTitle").value = "";
-
-      document.getElementById("duelQuestion").selectedIndex = 0;
-
-      document.getElementById("duelPrediction").selectedIndex = 0;
-
-      if (customQuestionEl) {
-        customQuestionEl.value = "";
-      }
-
-      if (customPredictionEl) {
-        customPredictionEl.value = "";
-      }
-    }
-
-    loadDuelHistory();
-
-    loadPendingDuels();
+    await loadPendingDuels();
+    await loadActiveDuels();
+    await loadDuelHistory();
   } catch (error) {
     console.error(error);
   }
 }
+
 /*
 ==================================================
 LOAD PENDING DUELS
@@ -191,11 +151,10 @@ async function loadPendingDuels() {
 
     if (!data.duels || data.duels.length === 0) {
       container.innerHTML = "No pending duels.";
-
       return;
     }
 
-    data.duels.forEach(function (duel) {
+    data.duels.forEach((duel) => {
       const div = document.createElement("div");
 
       div.className = "duel-history-item";
@@ -233,14 +192,11 @@ async function acceptDuel(duelId) {
 
     const response = await fetch("/api/duels/accept", {
       method: "POST",
-
       headers: {
         "Content-Type": "application/json",
       },
-
       body: JSON.stringify({
-        duelId: duelId,
-
+        duelId,
         opponentPrediction: prediction,
       }),
     });
@@ -249,9 +205,9 @@ async function acceptDuel(duelId) {
 
     alert(data.message);
 
-    loadPendingDuels();
-
-    loadDuelHistory();
+    await loadPendingDuels();
+    await loadActiveDuels();
+    await loadDuelHistory();
   } catch (error) {
     console.error(error);
   }
@@ -259,7 +215,100 @@ async function acceptDuel(duelId) {
 
 /*
 ==================================================
-LOAD DUEL HISTORY
+LOAD ACTIVE DUELS
+==================================================
+*/
+
+async function loadActiveDuels() {
+  try {
+    const user = getDuelUser();
+
+    if (!user) {
+      return;
+    }
+
+    const response = await fetch("/api/duels/user/" + user.id);
+
+    const data = await response.json();
+
+    const container = document.getElementById("activeDuels");
+
+    if (!container) {
+      return;
+    }
+
+    container.innerHTML = "";
+
+    const activeDuels = data.duels.filter((duel) => duel.status === "accepted");
+
+    if (activeDuels.length === 0) {
+      container.innerHTML = "No active duels.";
+      return;
+    }
+
+    activeDuels.forEach((duel) => {
+      const div = document.createElement("div");
+
+      div.className = "duel-history-item";
+
+      div.innerHTML =
+        "<strong>" +
+        duel.duelTitle +
+        "</strong><br>" +
+        duel.challengerUsername +
+        " vs " +
+        duel.opponentUsername +
+        "<br><br>" +
+        "<button onclick=\"submitResult('" +
+        duel._id +
+        "')\">Submit Result</button>";
+
+      container.appendChild(div);
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+/*
+==================================================
+SUBMIT RESULT
+==================================================
+*/
+
+async function submitResult(duelId) {
+  const actualResult = prompt("Enter actual result");
+
+  if (!actualResult) {
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/duels/submit-result", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        duelId,
+        actualResult,
+      }),
+    });
+
+    const data = await response.json();
+
+    alert(data.message);
+
+    await loadActiveDuels();
+    await loadDuelHistory();
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+/*
+==================================================
+LOAD HISTORY
 ==================================================
 */
 
@@ -285,16 +334,15 @@ async function loadDuelHistory() {
 
     if (!data.duels || data.duels.length === 0) {
       container.innerHTML = "No duels yet.";
-
       return;
     }
 
-    data.duels.forEach(function (duel) {
+    data.duels.forEach((duel) => {
       const div = document.createElement("div");
 
       div.className = "duel-history-item";
 
-      div.innerHTML =
+      let html =
         "<strong>" +
         duel.duelTitle +
         "</strong><br>" +
@@ -303,6 +351,15 @@ async function loadDuelHistory() {
         duel.opponentUsername +
         "<br>Status: " +
         duel.status;
+
+      if (duel.status === "result_submitted") {
+        html +=
+          "<br><br><button onclick=\"confirmResult('" +
+          duel._id +
+          "')\">Confirm Result</button>";
+      }
+
+      div.innerHTML = html;
 
       container.appendChild(div);
     });
@@ -313,18 +370,54 @@ async function loadDuelHistory() {
 
 /*
 ==================================================
-AUTO LOAD
+CONFIRM RESULT
 ==================================================
 */
 
-document.addEventListener(
-  "DOMContentLoaded",
+async function confirmResult(duelId) {
+  try {
+    const response = await fetch("/api/duels/confirm-result", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        duelId,
+      }),
+    });
 
-  async function () {
-    await loadFriendsDropdown();
+    const data = await response.json();
 
-    await loadPendingDuels();
+    alert(data.message);
 
+    await loadActiveDuels();
     await loadDuelHistory();
-  },
-);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+/*
+==================================================
+AUTO REFRESH
+==================================================
+*/
+
+setInterval(async () => {
+  await loadPendingDuels();
+  await loadActiveDuels();
+  await loadDuelHistory();
+}, 5000);
+
+/*
+==================================================
+START
+==================================================
+*/
+
+document.addEventListener("DOMContentLoaded", async function () {
+  await loadFriendsDropdown();
+  await loadPendingDuels();
+  await loadActiveDuels();
+  await loadDuelHistory();
+});

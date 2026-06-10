@@ -2,15 +2,6 @@
 ==================================================
 DUELS ROUTE
 ==================================================
-
-Handles:
-
-- Create Duel
-- Accept Duel
-- List Duels
-- Duel History
-
-==================================================
 */
 
 const express = require("express");
@@ -21,7 +12,7 @@ const Duel = require("../models/Duel");
 
 /*
 ==================================================
-POST /api/duels/create
+CREATE DUEL
 ==================================================
 */
 
@@ -35,27 +26,12 @@ router.post("/create", async (req, res) => {
       challengerPrediction,
     } = req.body;
 
-    if (
-      !challengerUserId ||
-      !opponentUserId ||
-      !duelTitle ||
-      !duelQuestion ||
-      !challengerPrediction
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Missing duel information",
-      });
-    }
-
     const challenger = await User.findById(challengerUserId);
 
-    const opponent = await User.findOne({
-      username: opponentUserId,
-    });
+    const opponent = await User.findById(opponentUserId);
 
     if (!challenger || !opponent) {
-      return res.status(404).json({
+      return res.json({
         success: false,
         message: "User not found",
       });
@@ -63,16 +39,16 @@ router.post("/create", async (req, res) => {
 
     const duel = new Duel({
       challengerUserId: challenger._id,
-
       challengerUsername: challenger.username,
 
       opponentUserId: opponent._id,
-
       opponentUsername: opponent.username,
 
       duelTitle,
       duelQuestion,
       challengerPrediction,
+
+      status: "pending",
     });
 
     await duel.save();
@@ -80,7 +56,6 @@ router.post("/create", async (req, res) => {
     res.json({
       success: true,
       message: "Duel created",
-      duel,
     });
   } catch (error) {
     console.error(error);
@@ -94,7 +69,7 @@ router.post("/create", async (req, res) => {
 
 /*
 ==================================================
-POST /api/duels/accept
+ACCEPT DUEL
 ==================================================
 */
 
@@ -105,14 +80,13 @@ router.post("/accept", async (req, res) => {
     const duel = await Duel.findById(duelId);
 
     if (!duel) {
-      return res.status(404).json({
+      return res.json({
         success: false,
         message: "Duel not found",
       });
     }
 
     duel.opponentPrediction = opponentPrediction;
-
     duel.status = "accepted";
 
     await duel.save();
@@ -120,7 +94,6 @@ router.post("/accept", async (req, res) => {
     res.json({
       success: true,
       message: "Duel accepted",
-      duel,
     });
   } catch (error) {
     console.error(error);
@@ -134,22 +107,137 @@ router.post("/accept", async (req, res) => {
 
 /*
 ==================================================
-GET /api/duels/user/:userId
+SUBMIT RESULT
+==================================================
+*/
+
+router.post("/submit-result", async (req, res) => {
+  try {
+    const { duelId, actualResult } = req.body;
+
+    const duel = await Duel.findById(duelId);
+
+    if (!duel) {
+      return res.json({
+        success: false,
+        message: "Duel not found",
+      });
+    }
+
+    duel.actualResult = actualResult;
+
+    duel.status = "result_submitted";
+
+    await duel.save();
+
+    res.json({
+      success: true,
+      message: "Result submitted",
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+});
+
+/*
+==================================================
+CONFIRM RESULT
+==================================================
+*/
+
+router.post("/confirm-result", async (req, res) => {
+  try {
+    const { duelId } = req.body;
+
+    const duel = await Duel.findById(duelId);
+
+    if (!duel) {
+      return res.json({
+        success: false,
+        message: "Duel not found",
+      });
+    }
+
+    const result = duel.actualResult.toLowerCase().trim();
+
+    const challengerPrediction = duel.challengerPrediction.toLowerCase().trim();
+
+    const opponentPrediction = duel.opponentPrediction.toLowerCase().trim();
+
+    let winner = null;
+    let loser = null;
+
+    if (challengerPrediction === result && opponentPrediction !== result) {
+      winner = await User.findById(duel.challengerUserId);
+
+      loser = await User.findById(duel.opponentUserId);
+    }
+
+    if (opponentPrediction === result && challengerPrediction !== result) {
+      winner = await User.findById(duel.opponentUserId);
+
+      loser = await User.findById(duel.challengerUserId);
+    }
+
+    if (winner) {
+      winner.duelWins = (winner.duelWins || 0) + 1;
+
+      winner.arenaScore = (winner.arenaScore || 0) + 10;
+
+      await winner.save();
+    }
+
+    if (loser) {
+      loser.duelLosses = (loser.duelLosses || 0) + 1;
+
+      await loser.save();
+    }
+
+    duel.status = "completed";
+
+    duel.completedAt = new Date();
+
+    if (winner) {
+      duel.winnerUserId = winner._id;
+      duel.winnerUsername = winner.username;
+    }
+
+    await duel.save();
+
+    res.json({
+      success: true,
+      message: "Duel completed",
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+});
+
+/*
+==================================================
+USER DUELS
 ==================================================
 */
 
 router.get("/user/:userId", async (req, res) => {
   try {
-    const userId = req.params.userId;
-
     const duels = await Duel.find({
       $or: [
         {
-          challengerUserId: userId,
+          challengerUserId: req.params.userId,
         },
-
         {
-          opponentUserId: userId,
+          opponentUserId: req.params.userId,
         },
       ],
     }).sort({
@@ -172,7 +260,7 @@ router.get("/user/:userId", async (req, res) => {
 
 /*
 ==================================================
-GET /api/duels/pending/:userId
+PENDING DUELS
 ==================================================
 */
 
@@ -180,10 +268,7 @@ router.get("/pending/:userId", async (req, res) => {
   try {
     const duels = await Duel.find({
       opponentUserId: req.params.userId,
-
       status: "pending",
-    }).sort({
-      createdAt: -1,
     });
 
     res.json({
@@ -202,11 +287,7 @@ router.get("/pending/:userId", async (req, res) => {
 
 /*
 ==================================================
-GET /api/duels/pending-count/:userId
-==================================================
-
-Used for notification badges.
-
+PENDING COUNT
 ==================================================
 */
 
@@ -233,58 +314,7 @@ router.get("/pending-count/:userId", async (req, res) => {
 
 /*
 ==================================================
-POST /api/duels/complete
-==================================================
-*/
-
-router.post("/complete", async (req, res) => {
-  try {
-    const { duelId, correctAnswer, winnerUserId } = req.body;
-
-    const duel = await Duel.findById(duelId);
-
-    if (!duel) {
-      return res.status(404).json({
-        success: false,
-        message: "Duel not found",
-      });
-    }
-
-    duel.correctAnswer = correctAnswer;
-
-    duel.winnerUserId = winnerUserId;
-
-    const winner = await User.findById(winnerUserId);
-
-    if (winner) {
-      duel.winnerUsername = winner.username;
-    }
-
-    duel.status = "completed";
-
-    duel.completedAt = new Date();
-
-    await duel.save();
-
-    res.json({
-      success: true,
-      message: "Duel completed",
-
-      duel,
-    });
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-});
-
-/*
-==================================================
-GET /api/duels/all
+ALL DUELS
 ==================================================
 */
 
@@ -307,11 +337,5 @@ router.get("/all", async (req, res) => {
     });
   }
 });
-
-/*
-==================================================
-EXPORT ROUTE
-==================================================
-*/
 
 module.exports = router;
