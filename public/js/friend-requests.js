@@ -49,7 +49,6 @@ async function loadFriendRequests() {
 
   if (!user) {
     grid.innerHTML = "<h2>Please login first.</h2>";
-
     return;
   }
 
@@ -60,14 +59,14 @@ async function loadFriendRequests() {
 
     if (!data.success) {
       grid.innerHTML = "<h2>No requests found.</h2>";
-
       return;
     }
 
     grid.innerHTML = "";
 
-    if (data.requests.length === 0) {
-      grid.innerHTML = "<h2>No pending friend requests.</h2>";
+    if (!data.requests || data.requests.length === 0) {
+      grid.innerHTML =
+        '<div class="empty-state">📭 No pending friend requests.</div>';
 
       return;
     }
@@ -77,17 +76,33 @@ async function loadFriendRequests() {
 
       card.className = "request-card";
 
-      card.innerHTML =
-        '<div class="username">' +
-        request.fromUsername +
-        "</div>" +
-        "<p>Wants to become your friend.</p>" +
-        '<button class="btn accept-btn" onclick="acceptRequest(\'' +
-        request._id +
-        "')\">Accept Request</button>" +
-        '<button class="btn decline-btn" onclick="declineRequest(\'' +
-        request._id +
-        "')\">Decline Request</button>";
+      card.innerHTML = `
+        <div style="font-size:60px;text-align:center;margin-bottom:10px;">
+          👤
+        </div>
+
+        <div class="username">
+          ${request.fromUsername}
+        </div>
+
+        <p>
+          Wants to become your friend.
+        </p>
+
+        <button
+          class="btn accept-btn"
+          onclick="acceptRequest('${request._id}')"
+        >
+          ✅ Accept Request
+        </button>
+
+        <button
+          class="btn decline-btn"
+          onclick="declineRequest('${request._id}')"
+        >
+          ❌ Decline Request
+        </button>
+      `;
 
       grid.appendChild(card);
     });
@@ -108,9 +123,11 @@ async function acceptRequest(requestId) {
   try {
     const response = await fetch("/api/chat/friend-request/accept", {
       method: "POST",
+
       headers: {
         "Content-Type": "application/json",
       },
+
       body: JSON.stringify({
         requestId: requestId,
       }),
@@ -120,7 +137,7 @@ async function acceptRequest(requestId) {
 
     alert(data.message);
 
-    loadFriendRequests();
+    await loadFriendRequests();
   } catch (error) {
     console.error(error);
   }
@@ -136,9 +153,11 @@ async function declineRequest(requestId) {
   try {
     const response = await fetch("/api/chat/friend-request/reject", {
       method: "POST",
+
       headers: {
         "Content-Type": "application/json",
       },
+
       body: JSON.stringify({
         requestId: requestId,
       }),
@@ -148,10 +167,26 @@ async function declineRequest(requestId) {
 
     alert(data.message);
 
-    loadFriendRequests();
+    await loadFriendRequests();
   } catch (error) {
     console.error(error);
   }
+}
+
+/*
+==================================================
+AUTO REFRESH
+==================================================
+
+Checks every 5 seconds for new requests.
+
+==================================================
+*/
+
+function startAutoRefresh() {
+  setInterval(async () => {
+    await loadFriendRequests();
+  }, 5000);
 }
 
 /*
@@ -160,6 +195,8 @@ START
 ==================================================
 */
 
-window.onload = function () {
-  loadFriendRequests();
+window.onload = async function () {
+  await loadFriendRequests();
+
+  startAutoRefresh();
 };

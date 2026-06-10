@@ -84,6 +84,13 @@
         color: #93c5fd;
         text-decoration: none;
       }
+
+      .empty-state {
+        text-align: center;
+        font-size: 22px;
+        color: #cbd5e1;
+        margin-top: 50px;
+      }
     </style>
   </head>
 
@@ -94,23 +101,15 @@
       <p class="subtitle">Manage incoming friendship requests.</p>
 
       <div class="requests-grid" id="requestsGrid">
-        <div class="request-card">
-          <div class="username">footballKing</div>
-
-          <p>Wants to become your friend.</p>
-
-          <button class="btn accept-btn">Accept Request</button>
-
-          <button class="btn decline-btn">Decline Request</button>
-        </div>
+        <!-- Requests loaded dynamically -->
       </div>
 
       <div class="home-link">
-        <a href="arena-chat.html"> ← Back to Arena Chat </a>
+        <a href="arena-chat.html">← Back to Arena Chat</a>
       </div>
 
       <div class="home-link">
-        <a href="index.html"> ← Back to Home </a>
+        <a href="index.html">← Back to Home</a>
       </div>
     </div>
 
