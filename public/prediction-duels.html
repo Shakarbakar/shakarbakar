@@ -62,12 +62,20 @@
         color: #cbd5e1;
       }
 
+      label {
+        display: block;
+        margin-top: 14px;
+        margin-bottom: 6px;
+        color: #cbd5e1;
+        font-size: 14px;
+      }
+
       input,
       textarea,
       select {
         width: 100%;
         padding: 12px;
-        margin-top: 10px;
+        margin-top: 5px;
         border-radius: 10px;
         border: none;
         box-sizing: border-box;
@@ -103,6 +111,10 @@
         padding-bottom: 10px;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       }
+
+      #customQuestionContainer {
+        display: none;
+      }
     </style>
   </head>
 
@@ -118,19 +130,62 @@
         <div class="duel-card">
           <h2>⚔️ Create Duel</h2>
 
-          <input id="duelOpponent" type="text" placeholder="Opponent User ID" />
+          <label>Select Friend</label>
 
-          <input id="duelTitle" type="text" placeholder="Duel Title" />
+          <select id="duelOpponent">
+            <option value="">Loading friends...</option>
+          </select>
 
-          <textarea
-            id="duelQuestion"
-            placeholder="Prediction Question"
-          ></textarea>
+          <label>Duel Title</label>
 
-          <textarea
-            id="duelPrediction"
-            placeholder="Your Prediction"
-          ></textarea>
+          <input
+            id="duelTitle"
+            type="text"
+            placeholder="Example: World Cup Duel"
+          />
+
+          <label>Prediction Question</label>
+
+          <select id="duelQuestion" onchange="handleQuestionChange()">
+            <option value="">Select Question</option>
+
+            <option value="Will Brazil win?">Will Brazil win?</option>
+
+            <option value="Will France reach semifinals?">
+              Will France reach semifinals?
+            </option>
+
+            <option value="Will Argentina score first?">
+              Will Argentina score first?
+            </option>
+
+            <option value="Will Germany qualify?">Will Germany qualify?</option>
+
+            <option value="Will Spain keep a clean sheet?">
+              Will Spain keep a clean sheet?
+            </option>
+
+            <option value="custom">Custom Question...</option>
+          </select>
+
+          <div id="customQuestionContainer">
+            <label>Custom Question</label>
+
+            <textarea
+              id="customQuestion"
+              placeholder="Enter your custom question"
+            ></textarea>
+          </div>
+
+          <label>Your Prediction</label>
+
+          <select id="duelPrediction">
+            <option value="">Select Prediction</option>
+
+            <option value="Yes">Yes</option>
+
+            <option value="No">No</option>
+          </select>
 
           <button onclick="createDuel()">Create Duel</button>
         </div>
@@ -164,6 +219,46 @@
         <a href="index.html">← Back to Home</a>
       </div>
     </div>
+
+    <script>
+      function handleQuestionChange() {
+        const question = document.getElementById("duelQuestion").value;
+
+        const customContainer = document.getElementById(
+          "customQuestionContainer",
+        );
+
+        const prediction = document.getElementById("duelPrediction");
+
+        if (question === "custom") {
+          customContainer.style.display = "block";
+        } else {
+          customContainer.style.display = "none";
+        }
+
+        prediction.innerHTML = "";
+
+        const emptyOption = document.createElement("option");
+
+        emptyOption.value = "";
+
+        emptyOption.textContent = "Select Prediction";
+
+        prediction.appendChild(emptyOption);
+
+        if (
+          question.includes("Will") ||
+          question.includes("qualify") ||
+          question.includes("semifinals") ||
+          question.includes("clean sheet")
+        ) {
+          prediction.innerHTML += `
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          `;
+        }
+      }
+    </script>
 
     <script src="js/duels.js"></script>
   </body>
