@@ -48,18 +48,16 @@ Failure response:
 */
 
 router.post("/", async (req, res) => {
-
-    try {
-
-        /*
+  try {
+    /*
         ==========================================
         READ REQUEST DATA
         ==========================================
         */
 
-        const { identifier, password } = req.body;
+    const { identifier, password } = req.body;
 
-        /*
+    /*
         ==========================================
         BASIC VALIDATION
         ==========================================
@@ -69,16 +67,14 @@ router.post("/", async (req, res) => {
 
         */
 
-        if (!identifier || !password) {
+    if (!identifier || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Username or email and password are required",
+      });
+    }
 
-            return res.status(400).json({
-                success: false,
-                message: "Username or email and password are required"
-            });
-
-        }
-
-        /*
+    /*
         ==========================================
         TRIM WHITESPACE
         ==========================================
@@ -88,18 +84,16 @@ router.post("/", async (req, res) => {
 
         */
 
-        const trimmedIdentifier = identifier.trim();
+    const trimmedIdentifier = identifier.trim();
 
-        if (!trimmedIdentifier) {
+    if (!trimmedIdentifier) {
+      return res.status(400).json({
+        success: false,
+        message: "Username or email and password are required",
+      });
+    }
 
-            return res.status(400).json({
-                success: false,
-                message: "Username or email and password are required"
-            });
-
-        }
-
-        /*
+    /*
         ==========================================
         FIND USER BY USERNAME OR EMAIL
         ==========================================
@@ -111,14 +105,20 @@ router.post("/", async (req, res) => {
 
         */
 
-        const user = await User.findOne({
-            $or: [
-                { username: trimmedIdentifier },
-                { email: trimmedIdentifier.toLowerCase() }
-            ]
-        });
-
-        /*
+    const user = await User.findOne({
+      $or: [
+        {
+          username: {
+            $regex: "^" + trimmedIdentifier + "$",
+            $options: "i",
+          },
+        },
+        {
+          email: trimmedIdentifier.toLowerCase(),
+        },
+      ],
+    });
+    /*
         ==========================================
         USER NOT FOUND
         ==========================================
@@ -129,16 +129,14 @@ router.post("/", async (req, res) => {
 
         */
 
-        if (!user) {
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid username or email, or password",
+      });
+    }
 
-            return res.status(401).json({
-                success: false,
-                message: "Invalid username or email, or password"
-            });
-
-        }
-
-        /*
+    /*
         ==========================================
         COMPARE PASSWORD WITH BCRYPT
         ==========================================
@@ -149,21 +147,16 @@ router.post("/", async (req, res) => {
 
         */
 
-        const passwordMatches = await bcrypt.compare(
-            password,
-            user.password
-        );
+    const passwordMatches = await bcrypt.compare(password, user.password);
 
-        if (!passwordMatches) {
+    if (!passwordMatches) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid username or email, or password",
+      });
+    }
 
-            return res.status(401).json({
-                success: false,
-                message: "Invalid username or email, or password"
-            });
-
-        }
-
-        /*
+    /*
         ==========================================
         SUCCESS RESPONSE
         ==========================================
@@ -173,34 +166,25 @@ router.post("/", async (req, res) => {
 
         */
 
-        res.json({
+    res.json({
+      success: true,
+      message: "Login successful",
 
-            success: true,
-            message: "Login successful",
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        bucksBalance: user.bucksBalance,
+      },
+    });
+  } catch (error) {
+    console.error(error);
 
-            user: {
-                id: user._id,
-                username: user.username,
-                email: user.email,
-                bucksBalance: user.bucksBalance
-            }
-
-        });
-
-    }
-    catch (error) {
-
-        console.error(error);
-
-        res.status(500).json({
-
-            success: false,
-            message: "Server error"
-
-        });
-
-    }
-
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
 });
 
 /*
