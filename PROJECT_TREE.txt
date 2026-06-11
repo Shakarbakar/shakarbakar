@@ -1,0 +1,271 @@
+Folder PATH listing for volume D
+Volume serial number is 00000086 CEA3:8D18
+D:.
++---data
++---models
++---node_modules
+|   +---.bin
+|   +---@mongodb-js
+|   |   \---saslprep
+|   |       \---dist
+|   +---@types
+|   |   +---webidl-conversions
+|   |   \---whatwg-url
+|   |       \---lib
+|   +---accepts
+|   +---bcrypt
+|   |   +---.github
+|   |   |   \---workflows
+|   |   +---examples
+|   |   +---prebuilds
+|   |   |   +---darwin-arm64
+|   |   |   +---darwin-x64
+|   |   |   +---linux-arm
+|   |   |   +---linux-arm64
+|   |   |   +---linux-x64
+|   |   |   +---win32-arm64
+|   |   |   \---win32-x64
+|   |   +---src
+|   |   \---test
+|   +---body-parser
+|   |   \---lib
+|   |       \---types
+|   +---bson
+|   |   +---etc
+|   |   +---lib
+|   |   \---src
+|   |       +---parser
+|   |       |   \---on_demand
+|   |       \---utils
+|   +---bytes
+|   +---call-bind-apply-helpers
+|   |   +---.github
+|   |   \---test
+|   +---call-bound
+|   |   +---.github
+|   |   \---test
+|   +---content-disposition
+|   +---content-type
+|   +---cookie
+|   +---cookie-signature
+|   +---cors
+|   |   \---lib
+|   +---debug
+|   |   \---src
+|   +---depd
+|   |   \---lib
+|   |       \---browser
+|   +---dotenv
+|   |   +---lib
+|   |   \---skills
+|   |       +---dotenv
+|   |       \---dotenvx
+|   +---dunder-proto
+|   |   +---.github
+|   |   \---test
+|   +---ee-first
+|   +---encodeurl
+|   +---es-define-property
+|   |   +---.github
+|   |   \---test
+|   +---es-errors
+|   |   +---.github
+|   |   \---test
+|   +---es-object-atoms
+|   |   +---.github
+|   |   \---test
+|   +---escape-html
+|   +---etag
+|   +---express
+|   |   \---lib
+|   +---finalhandler
+|   +---forwarded
+|   +---fresh
+|   +---function-bind
+|   |   +---.github
+|   |   \---test
+|   +---get-intrinsic
+|   |   +---.github
+|   |   \---test
+|   +---get-proto
+|   |   +---.github
+|   |   \---test
+|   +---gopd
+|   |   +---.github
+|   |   \---test
+|   +---has-symbols
+|   |   +---.github
+|   |   \---test
+|   |       \---shams
+|   +---hasown
+|   |   \---.github
+|   +---http-errors
+|   +---iconv-lite
+|   |   +---encodings
+|   |   |   \---tables
+|   |   +---lib
+|   |   |   \---helpers
+|   |   \---types
+|   +---inherits
+|   +---ipaddr.js
+|   |   \---lib
+|   +---is-promise
+|   +---kareem
+|   +---math-intrinsics
+|   |   +---.github
+|   |   +---constants
+|   |   \---test
+|   +---media-typer
+|   +---memory-pager
+|   +---merge-descriptors
+|   +---mime-db
+|   +---mime-types
+|   +---mongodb
+|   |   +---etc
+|   |   +---lib
+|   |   |   +---bulk
+|   |   |   +---client-side-encryption
+|   |   |   |   \---providers
+|   |   |   +---cmap
+|   |   |   |   +---auth
+|   |   |   |   |   \---mongodb_oidc
+|   |   |   |   +---handshake
+|   |   |   |   \---wire_protocol
+|   |   |   |       \---on_demand
+|   |   |   +---cursor
+|   |   |   +---gridfs
+|   |   |   +---operations
+|   |   |   |   +---client_bulk_write
+|   |   |   |   \---search_indexes
+|   |   |   \---sdam
+|   |   \---src
+|   |       +---bulk
+|   |       +---client-side-encryption
+|   |       |   \---providers
+|   |       +---cmap
+|   |       |   +---auth
+|   |       |   |   \---mongodb_oidc
+|   |       |   +---handshake
+|   |       |   \---wire_protocol
+|   |       |       \---on_demand
+|   |       +---cursor
+|   |       +---gridfs
+|   |       +---operations
+|   |       |   +---client_bulk_write
+|   |       |   \---search_indexes
+|   |       \---sdam
+|   +---mongodb-connection-string-url
+|   |   \---lib
+|   +---mongoose
+|   |   +---lib
+|   |   |   +---cast
+|   |   |   +---cursor
+|   |   |   +---drivers
+|   |   |   |   \---node-mongodb-native
+|   |   |   +---error
+|   |   |   +---helpers
+|   |   |   |   +---aggregate
+|   |   |   |   +---cursor
+|   |   |   |   +---discriminator
+|   |   |   |   +---document
+|   |   |   |   +---error
+|   |   |   |   +---indexes
+|   |   |   |   +---model
+|   |   |   |   +---path
+|   |   |   |   +---populate
+|   |   |   |   +---projection
+|   |   |   |   +---query
+|   |   |   |   +---schema
+|   |   |   |   +---schematype
+|   |   |   |   +---timestamps
+|   |   |   |   +---topology
+|   |   |   |   \---update
+|   |   |   +---options
+|   |   |   +---plugins
+|   |   |   +---schema
+|   |   |   |   \---operators
+|   |   |   \---types
+|   |   |       +---array
+|   |   |       |   \---methods
+|   |   |       \---documentArray
+|   |   |           \---methods
+|   |   \---types
+|   +---mpath
+|   |   +---lib
+|   |   \---test
+|   +---mquery
+|   |   +---.github
+|   |   \---lib
+|   |       \---collection
+|   +---ms
+|   +---negotiator
+|   |   \---lib
+|   +---node-addon-api
+|   |   \---tools
+|   +---node-gyp-build
+|   +---object-assign
+|   +---object-inspect
+|   |   +---.github
+|   |   +---example
+|   |   \---test
+|   |       \---browser
+|   +---on-finished
+|   +---once
+|   +---parseurl
+|   +---path-to-regexp
+|   |   \---dist
+|   +---proxy-addr
+|   +---punycode
+|   +---qs
+|   |   +---.github
+|   |   +---dist
+|   |   +---lib
+|   |   \---test
+|   +---range-parser
+|   +---raw-body
+|   +---router
+|   |   \---lib
+|   +---safer-buffer
+|   +---send
+|   +---serve-static
+|   +---setprototypeof
+|   |   \---test
+|   +---side-channel
+|   |   +---.github
+|   |   \---test
+|   +---side-channel-list
+|   |   +---.github
+|   |   \---test
+|   +---side-channel-map
+|   |   +---.github
+|   |   \---test
+|   +---side-channel-weakmap
+|   |   +---.github
+|   |   \---test
+|   +---sift
+|   |   +---es
+|   |   +---es5m
+|   |   +---lib
+|   |   \---src
+|   +---sparse-bitfield
+|   +---statuses
+|   +---toidentifier
+|   +---tr46
+|   |   \---lib
+|   +---type-is
+|   |   \---node_modules
+|   |       \---content-type
+|   |           \---dist
+|   +---unpipe
+|   +---vary
+|   +---webidl-conversions
+|   |   \---lib
+|   +---whatwg-url
+|   |   \---lib
+|   \---wrappy
++---public
+|   +---css
+|   +---images
+|   \---js
++---routes
+\---scripts
