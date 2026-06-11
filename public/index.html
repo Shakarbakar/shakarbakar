@@ -146,22 +146,23 @@
       <div class="logo">SHAKARBAKAR</div>
 
       <div class="nav-center">
-        <a href="index.html">Home</a>
-        <a href="marketplace.html">Marketplace</a>
-        <a href="arena.html">Arena</a>
-        <a href="#">About</a>
-        <a href="#">How It Works</a>
+        <a href="index.html" data-translate="home">Home</a>
+        <a href="marketplace.html" data-translate="marketplace">Marketplace</a>
+        <a href="arena.html" data-translate="arena">Arena</a>
+        <a href="#" data-translate="about">About</a>
+        <a href="#" data-translate="howItWorks">How It Works</a>
       </div>
 
       <div class="nav-right">
         <div class="languages">
-          <a href="#">English</a> | <a href="#">Français</a> |
-          <a href="#">العربية</a>
+          <a href="#" onclick="setLanguage('en')">English</a> |
+          <a href="#" onclick="setLanguage('fr')">Français</a> |
+          <a href="#" onclick="setLanguage('ar')">العربية</a>
         </div>
 
         <div id="guestMenu">
-          <a href="login.html">Login</a>
-          <a href="register.html">Sign Up</a>
+          <a href="login.html" data-translate="login">Login</a>
+          <a href="register.html" data-translate="signup">Sign Up</a>
         </div>
 
         <div id="userMenu" style="display: none">
@@ -256,10 +257,16 @@
       <div class="hero-overlay">
         <h1>SHAKARBAKAR</h1>
 
-        <p class="tagline">Trade. Predict. Compete.</p>
+        <p class="tagline" data-translate="tradePredictCompete">
+          Trade. Predict. Compete.
+        </p>
 
         <div class="buttons">
-          <a class="btn btn-primary" href="register.html">
+          <a
+            class="btn btn-primary"
+            href="register.html"
+            data-translate="claimStarterPack"
+          >
             Claim Starter Pack
           </a>
 
@@ -273,6 +280,8 @@
         </div>
       </div>
     </section>
+
+    <script src="js/translations.js"></script>
 
     <script>
       const user = JSON.parse(localStorage.getItem("shakarbakar_user"));
@@ -390,3 +399,4 @@
     </script>
   </body>
 </html>
+>
