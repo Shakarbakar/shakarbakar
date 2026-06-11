@@ -149,9 +149,17 @@ async function loadPendingDuels() {
       div.innerHTML =
         "<strong>" +
         duel.duelTitle +
-        "</strong><br>" +
+        "</strong><br><br>" +
+        "<strong>Question:</strong><br>" +
+        duel.duelQuestion +
+        "<br><br>" +
+        "<strong>Challenger:</strong> " +
         duel.challengerUsername +
-        " challenged you<br><br>" +
+        "<br><br>" +
+        "<input id='prediction-" +
+        duel._id +
+        "' type='text' placeholder='Your prediction'>" +
+        "<br><br>" +
         "<button onclick=\"acceptDuel('" +
         duel._id +
         "')\">Accept Duel</button>";
@@ -168,9 +176,12 @@ ACCEPT DUEL
 */
 async function acceptDuel(duelId) {
   try {
-    const prediction = prompt("Enter your prediction");
+    const predictionInput = document.getElementById("prediction-" + duelId);
+
+    const prediction = predictionInput.value.trim();
 
     if (!prediction) {
+      alert("Please enter your prediction");
       return;
     }
 
@@ -230,7 +241,7 @@ async function loadActiveDuels() {
       return;
     }
 
-    activeDuels.forEach((duel) => {
+    data.duels.forEach((duel) => {
       const div = document.createElement("div");
 
       div.className = "duel-history-item";
@@ -242,7 +253,6 @@ async function loadActiveDuels() {
         duel.challengerUsername +
         " vs " +
         duel.opponentUsername;
-
       if (duel.status === "accepted") {
         html +=
           "<br><br><button onclick=\"submitResult('" +
