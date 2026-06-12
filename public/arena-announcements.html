@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Arena Announcements</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <style>
+      body {
+        margin: 0;
+        background-image: url("images/arena-background.jpg");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      .page {
+        max-width: 1200px;
+        margin: auto;
+        padding: 40px 20px;
+      }
+
+      .title {
+        text-align: center;
+        color: #fbbf24;
+        font-size: 48px;
+        margin-bottom: 10px;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #cbd5e1;
+        margin-bottom: 40px;
+      }
+
+      .announcement {
+        background: rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 20px;
+      }
+
+      .announcement-title {
+        color: #fbbf24;
+        font-size: 24px;
+        font-weight: bold;
+      }
+
+      .announcement-category {
+        color: #22c55e;
+        margin-top: 6px;
+        margin-bottom: 15px;
+      }
+
+      .announcement-content {
+        color: white;
+        line-height: 1.6;
+      }
+
+      .announcement-date {
+        margin-top: 15px;
+        color: #94a3b8;
+        font-size: 14px;
+      }
+
+      .home-link {
+        text-align: center;
+        margin-top: 30px;
+      }
+
+      .home-link a {
+        color: #93c5fd;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="page">
+      <h1 class="title">📢 ARENA ANNOUNCEMENTS</h1>
+
+      <p class="subtitle">
+        Official ShakarBakar news, match results and tournament updates.
+      </p>
+
+      <div id="announcementsContainer"></div>
+
+      <div class="home-link">
+        <a href="arena-chat.html">← Back to Arena Chat</a>
+      </div>
+
+      <div class="home-link">
+        <a href="arena.html">← Back to Arena</a>
+      </div>
+    </div>
+
+    <script>
+      async function loadAnnouncements() {
+        try {
+          const response = await fetch("/api/admin/announcements");
+
+          const data = await response.json();
+
+          const container = document.getElementById("announcementsContainer");
+
+          container.innerHTML = "";
+
+          if (
+            !data.success ||
+            !data.announcements ||
+            data.announcements.length === 0
+          ) {
+            container.innerHTML = `
+              <div class="announcement">
+                <div class="announcement-title">
+                  No announcements yet
+                </div>
+              </div>
+            `;
+            return;
+          }
+
+          data.announcements.forEach((announcement) => {
+            const div = document.createElement("div");
+
+            div.className = "announcement";
+
+            div.innerHTML = `
+              <div class="announcement-title">
+                ${announcement.title}
+              </div>
+
+              <div class="announcement-category">
+                ${announcement.category}
+              </div>
+
+              <div class="announcement-content">
+                ${announcement.content}
+              </div>
+
+              <div class="announcement-date">
+                ${new Date(announcement.createdAt).toLocaleString()}
+              </div>
+            `;
+
+            container.appendChild(div);
+          });
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      loadAnnouncements();
+    </script>
+  </body>
+</html>
