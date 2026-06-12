@@ -146,11 +146,13 @@
       <div class="logo">SHAKARBAKAR</div>
 
       <div class="nav-center">
-        <a href="index.html" data-translate="home">Home</a>
-        <a href="marketplace.html" data-translate="marketplace">Marketplace</a>
-        <a href="arena.html" data-translate="arena">Arena</a>
-        <a href="#" data-translate="about">About</a>
-        <a href="faq.html" data-translate="howItWorks">How It Works</a>
+        <a href="index.html">Home</a>
+        <a href="marketplace.html">Marketplace</a>
+        <a href="arena.html">Arena</a>
+        <a href="#">About</a>
+        <a href="#">How It Works</a>
+
+        <span id="adminLinkContainer"></span>
       </div>
 
       <div class="nav-right">
@@ -285,6 +287,11 @@
 
     <script>
       const user = JSON.parse(localStorage.getItem("shakarbakar_user"));
+
+      if (user && user.username === "JeddoElie") {
+        document.getElementById("adminLinkContainer").innerHTML =
+          '<a href="admin.html">Admin</a>';
+      }
 
       if (user) {
         document.getElementById("guestMenu").style.display = "none";
