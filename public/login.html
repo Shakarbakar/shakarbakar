@@ -21,14 +21,18 @@ Uses shared CSS (style.css) and shared JS (app.js).
 
     <!-- Shared stylesheet for all auth pages -->
     <link rel="stylesheet" href="css/style.css" />
+
+    <script src="js/translations.js"></script>
   </head>
 
   <body>
     <div class="container">
       <div class="card">
-        <h1>Welcome Back</h1>
+        <h1 data-translate="welcomeBack">Welcome Back</h1>
 
-        <p>Log in to your ShakarBakar account.</p>
+        <p data-translate="loginToAccount">
+          Log in to your ShakarBakar account.
+        </p>
 
         <!-- USERNAME OR EMAIL -->
         <input id="identifier" type="text" placeholder="Username or Email" />
@@ -49,7 +53,7 @@ Uses shared CSS (style.css) and shared JS (app.js).
         </div>
 
         <!-- LOGIN BUTTON -->
-        <button onclick="loginUser()">Log In</button>
+        <button onclick="loginUser()" data-translate="login">Log In</button>
 
         <!-- RESULT MESSAGE -->
         <div id="message" class="message"></div>
@@ -57,7 +61,7 @@ Uses shared CSS (style.css) and shared JS (app.js).
         <!-- LINK TO REGISTER PAGE -->
         <div class="auth-link">
           Don't have an account?
-          <a href="register.html">Register Here</a>
+          <a href="register.html" data-translate="signup">Register Here</a>
         </div>
 
         <div class="home-link">
