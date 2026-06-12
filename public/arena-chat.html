@@ -40,8 +40,8 @@
       }
 
       .chat-grid {
-        display: flex;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 350px));
         justify-content: center;
         gap: 20px;
       }
@@ -57,7 +57,6 @@
         text-decoration: none;
         color: white;
         display: block;
-        width: 450px;
       }
 
       .chat-card:hover {
