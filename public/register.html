@@ -112,48 +112,57 @@
         <h1 data-translate="createAccount">Create Account</h1>
 
         <p>
-          <span data-translate="joinAndReceive"
-            >Join ShakarBakar and receive your starter pack.</span
-          >
+          <span data-translate="joinAndReceive">
+            Join ShakarBakar and receive your starter pack.
+          </span>
         </p>
 
-        <!-- USERNAME -->
-        <input id="username" type="text" placeholder="Username" />
+        <input
+          id="username"
+          type="text"
+          placeholder="Username"
+          data-translate-placeholder="username"
+        />
 
-        <!-- EMAIL -->
-        <input id="email" type="email" placeholder="Email Address" />
+        <input
+          id="email"
+          type="email"
+          placeholder="Email Address"
+          data-translate-placeholder="emailAddress"
+        />
 
-        <!-- PASSWORD -->
-        <input id="password" type="password" placeholder="Password" />
+        <input
+          id="password"
+          type="password"
+          placeholder="Password"
+          data-translate-placeholder="password"
+        />
 
-        <!-- REGISTER BUTTON -->
         <button onclick="registerUser()" data-translate="createAccount">
           Create Account
         </button>
 
-        <!-- RESULT MESSAGE -->
         <div id="message" class="message"></div>
 
-        <div class="bonus">🎁 Starter Pack: 10,000 Bucks</div>
+        <div class="bonus" data-translate="starterPack">
+          Starter Pack: 10,000 Bucks
+        </div>
 
         <div class="auth-link">
-          Already have an account?
-          <a href="login.html" data-translate="login">Login</a>
+          <span data-translate="alreadyHaveAccount">
+            Already have an account?
+          </span>
+
+          <a href="login.html" data-translate="loginHere"> Login Here </a>
         </div>
 
         <div class="home-link">
-          <a href="index.html">← Back to Home</a>
+          <a href="index.html" data-translate="backToHome"> Back to Home </a>
         </div>
       </div>
     </div>
 
     <script>
-      /*
-==================================================
-REGISTER USER
-==================================================
-*/
-
       async function registerUser() {
         const username = document.getElementById("username").value;
 
@@ -183,7 +192,8 @@ REGISTER USER
           if (data.success) {
             message.className = "message success";
 
-            message.innerText = "Account created successfully!";
+            message.innerText =
+              translations[getLanguage()].accountCreatedSuccessfully;
           } else {
             message.className = "message error";
 
@@ -194,7 +204,7 @@ REGISTER USER
 
           message.className = "message error";
 
-          message.innerText = "Server error";
+          message.innerText = translations[getLanguage()].serverError;
         }
       }
     </script>

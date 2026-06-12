@@ -19,6 +19,20 @@ const translations = {
     teamsMarketplace: "Teams Marketplace",
 
     tradePredictCompete: "Trade. Predict. Compete.",
+
+    username: "Username",
+    emailAddress: "Email Address",
+    password: "Password",
+
+    alreadyHaveAccount: "Already have an account?",
+    loginHere: "Login Here",
+
+    starterPack: "Starter Pack: 10,000 Bucks",
+
+    backToHome: "Back to Home",
+
+    accountCreatedSuccessfully: "Account created successfully!",
+    serverError: "Server error",
   },
 
   fr: {
@@ -41,6 +55,20 @@ const translations = {
     teamsMarketplace: "Marché des Équipes",
 
     tradePredictCompete: "Échangez. Prédisez. Rivalisez.",
+
+    username: "Nom d'utilisateur",
+    emailAddress: "Adresse Email",
+    password: "Mot de passe",
+
+    alreadyHaveAccount: "Vous avez déjà un compte ?",
+    loginHere: "Connexion",
+
+    starterPack: "Pack de Départ : 10 000 Bucks",
+
+    backToHome: "Retour à l'accueil",
+
+    accountCreatedSuccessfully: "Compte créé avec succès !",
+    serverError: "Erreur serveur",
   },
 
   ar: {
@@ -63,6 +91,20 @@ const translations = {
     teamsMarketplace: "سوق المنتخبات",
 
     tradePredictCompete: "تداول. توقّع. نافس.",
+
+    username: "اسم المستخدم",
+    emailAddress: "البريد الإلكتروني",
+    password: "كلمة المرور",
+
+    alreadyHaveAccount: "لديك حساب بالفعل؟",
+    loginHere: "تسجيل الدخول",
+
+    starterPack: "حزمة البداية: 10,000 باكس",
+
+    backToHome: "العودة للرئيسية",
+
+    accountCreatedSuccessfully: "تم إنشاء الحساب بنجاح!",
+    serverError: "خطأ في الخادم",
   },
 };
 
@@ -93,6 +135,16 @@ function applyTranslations() {
       element.textContent = translations[language][key];
     }
   });
+
+  document
+    .querySelectorAll("[data-translate-placeholder]")
+    .forEach((element) => {
+      const key = element.getAttribute("data-translate-placeholder");
+
+      if (translations[language] && translations[language][key]) {
+        element.placeholder = translations[language][key];
+      }
+    });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
