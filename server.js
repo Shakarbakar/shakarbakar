@@ -26,6 +26,8 @@ const chatRoute = require("./routes/chat");
 const duelsRoute = require("./routes/duels");
 const usersRoute = require("./routes/users");
 
+const adminRoute = require("./routes/admin");
+
 /*
 ==================================================
 APP
@@ -58,6 +60,8 @@ app.use("/api/ownership", ownershipRoute);
 app.use("/api/chat", chatRoute);
 app.use("/api/duels", duelsRoute);
 app.use("/api/users", usersRoute);
+
+app.use("/api/admin", adminRoute);
 
 /*
 ==================================================

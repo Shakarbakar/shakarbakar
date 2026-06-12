@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Admin Dashboard</title>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #0f172a;
+        color: white;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: auto;
+        padding: 30px;
+      }
+
+      h1 {
+        text-align: center;
+        color: #fbbf24;
+        margin-bottom: 30px;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+      }
+
+      .stat-card {
+        background: #1e293b;
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+      }
+
+      .stat-number {
+        font-size: 32px;
+        font-weight: bold;
+        color: #22c55e;
+      }
+
+      .stat-label {
+        margin-top: 10px;
+        color: #cbd5e1;
+      }
+
+      .editor {
+        background: #1e293b;
+        padding: 25px;
+        border-radius: 12px;
+        margin-bottom: 40px;
+      }
+
+      .editor h2 {
+        margin-top: 0;
+        color: #fbbf24;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px;
+        margin-bottom: 15px;
+        border: none;
+        border-radius: 8px;
+        background: #0f172a;
+        color: white;
+      }
+
+      textarea {
+        height: 180px;
+        resize: vertical;
+      }
+
+      button {
+        background: #22c55e;
+        color: white;
+        border: none;
+        padding: 14px 20px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      button:hover {
+        background: #16a34a;
+      }
+
+      .announcement {
+        background: #1e293b;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 15px;
+      }
+
+      .announcement-title {
+        font-size: 22px;
+        font-weight: bold;
+        color: #fbbf24;
+      }
+
+      .announcement-category {
+        color: #22c55e;
+        margin-top: 5px;
+      }
+
+      .delete-btn {
+        background: #ef4444;
+        margin-top: 15px;
+      }
+
+      .delete-btn:hover {
+        background: #dc2626;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>⚙️ SHAKARBAKAR ADMIN</h1>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div id="usersCount" class="stat-number">0</div>
+          <div class="stat-label">Users</div>
+        </div>
+
+        <div class="stat-card">
+          <div id="teamsCount" class="stat-number">0</div>
+          <div class="stat-label">Teams</div>
+        </div>
+
+        <div class="stat-card">
+          <div id="ownershipsCount" class="stat-number">0</div>
+          <div class="stat-label">Ownerships</div>
+        </div>
+
+        <div class="stat-card">
+          <div id="friendsCount" class="stat-number">0</div>
+          <div class="stat-label">Friends</div>
+        </div>
+
+        <div class="stat-card">
+          <div id="friendRequestsCount" class="stat-number">0</div>
+          <div class="stat-label">Friend Requests</div>
+        </div>
+
+        <div class="stat-card">
+          <div id="duelsCount" class="stat-number">0</div>
+          <div class="stat-label">Duels</div>
+        </div>
+
+        <div class="stat-card">
+          <div id="messagesCount" class="stat-number">0</div>
+          <div class="stat-label">Messages</div>
+        </div>
+
+        <div class="stat-card">
+          <div id="chatroomsCount" class="stat-number">0</div>
+          <div class="stat-label">Chat Rooms</div>
+        </div>
+      </div>
+
+      <div class="editor">
+        <h2>Publish Announcement</h2>
+
+        <input id="title" type="text" placeholder="Announcement Title" />
+
+        <select id="category">
+          <option>Match Result</option>
+          <option>Tournament Update</option>
+          <option>Arena News</option>
+          <option>System News</option>
+        </select>
+
+        <textarea id="content" placeholder="Write announcement..."></textarea>
+
+        <button onclick="publishAnnouncement()">Publish Announcement</button>
+      </div>
+
+      <h2>Latest Announcements</h2>
+
+      <div id="announcements"></div>
+    </div>
+
+    <script>
+      async function loadStats() {
+        try {
+          const response = await fetch("/api/admin/stats");
+
+          const data = await response.json();
+
+          if (!data.success) {
+            return;
+          }
+
+          document.getElementById("usersCount").innerText = data.stats.users;
+
+          document.getElementById("teamsCount").innerText = data.stats.teams;
+
+          document.getElementById("ownershipsCount").innerText =
+            data.stats.ownerships;
+
+          document.getElementById("friendsCount").innerText =
+            data.stats.friends;
+
+          document.getElementById("friendRequestsCount").innerText =
+            data.stats.friendRequests;
+
+          document.getElementById("duelsCount").innerText = data.stats.duels;
+
+          document.getElementById("messagesCount").innerText =
+            data.stats.messages;
+
+          document.getElementById("chatroomsCount").innerText =
+            data.stats.chatrooms;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      async function publishAnnouncement() {
+        const title = document.getElementById("title").value;
+
+        const content = document.getElementById("content").value;
+
+        const category = document.getElementById("category").value;
+
+        if (!title || !content) {
+          alert("Please complete all fields.");
+          return;
+        }
+
+        try {
+          const response = await fetch("/api/admin/announcement", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              title,
+              content,
+              category,
+            }),
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            document.getElementById("title").value = "";
+            document.getElementById("content").value = "";
+
+            loadAnnouncements();
+
+            alert("Announcement published.");
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      async function loadAnnouncements() {
+        try {
+          const response = await fetch("/api/admin/announcements");
+
+          const data = await response.json();
+
+          if (!data.success) {
+            return;
+          }
+
+          const container = document.getElementById("announcements");
+
+          container.innerHTML = "";
+
+          data.announcements.forEach((announcement) => {
+            const div = document.createElement("div");
+
+            div.className = "announcement";
+
+            div.innerHTML = `
+          <div class="announcement-title">
+            ${announcement.title}
+          </div>
+
+          <div class="announcement-category">
+            ${announcement.category}
+          </div>
+
+          <p>
+            ${announcement.content}
+          </p>
+
+          <small>
+            ${new Date(announcement.createdAt).toLocaleString()}
+          </small>
+
+          <br>
+
+          <button
+            class="delete-btn"
+            onclick="deleteAnnouncement('${announcement._id}')"
+          >
+            Delete
+          </button>
+        `;
+
+            container.appendChild(div);
+          });
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      async function deleteAnnouncement(id) {
+        const confirmed = confirm("Delete this announcement?");
+
+        if (!confirmed) {
+          return;
+        }
+
+        try {
+          await fetch("/api/admin/announcement/" + id, {
+            method: "DELETE",
+          });
+
+          loadAnnouncements();
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      loadStats();
+      loadAnnouncements();
+    </script>
+  </body>
+</html>
