@@ -482,17 +482,28 @@ function openTeamPopup(teamId) {
 
   const ownershipEl = document.getElementById("popupOwnership");
   const buyButton = document.getElementById("buyTeamButton");
+  const sellButton = document.getElementById("sellTeamButton");
 
   if (team.isOwned) {
     ownershipEl.innerText = "I own " + team.name;
+
     ownershipEl.classList.remove("available");
-    buyButton.disabled = true;
-    buyButton.innerText = "I own " + team.name;
+
+    buyButton.style.display = "none";
+
+    sellButton.style.display = "inline-block";
   } else {
     ownershipEl.innerText = "Available";
+
     ownershipEl.classList.add("available");
+
+    buyButton.style.display = "inline-block";
+
     buyButton.disabled = false;
+
     buyButton.innerText = "Buy Team";
+
+    sellButton.style.display = "none";
   }
 
   document.getElementById("popupMessage").innerText = "";
@@ -605,5 +616,62 @@ async function buyTeam() {
     messageEl.className = "message error";
     messageEl.innerText = "Server error";
     buyButton.disabled = false;
+  }
+}
+
+/*
+==================================================
+SELL TEAM
+==================================================
+*/
+
+async function sellTeam() {
+  const user = getLoggedInUser();
+
+  const messageEl = document.getElementById("popupMessage");
+
+  if (!user || !selectedTeamId) {
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/ownership/sell", {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify({
+        userId: user.id,
+        teamId: selectedTeamId,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      user.bucksBalance = data.newBalance;
+
+      saveLoggedInUser(user);
+
+      updateUserBar(user);
+
+      await loadMarketplace();
+
+      closeTeamPopup();
+
+      alert(data.message);
+    } else {
+      messageEl.className = "message error";
+
+      messageEl.innerText = data.message;
+    }
+  } catch (error) {
+    console.error(error);
+
+    messageEl.className = "message error";
+
+    messageEl.innerText = "Server error";
   }
 }

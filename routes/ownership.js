@@ -36,61 +36,53 @@ Body:
 */
 
 router.post("/buy", async (req, res) => {
+  try {
+    const { userId, teamId } = req.body;
 
-    try {
-
-        const { userId, teamId } = req.body;
-
-        /*
+    /*
         ==========================================
         VALIDATION
         ==========================================
         */
 
-        if (!userId || !teamId) {
+    if (!userId || !teamId) {
+      return res.status(400).json({
+        success: false,
+        message: "You must be logged in to buy a team",
+      });
+    }
 
-            return res.status(400).json({
-                success: false,
-                message: "You must be logged in to buy a team"
-            });
-
-        }
-
-        /*
+    /*
         ==========================================
         LOAD USER
         ==========================================
         */
 
-        const user = await User.findById(userId);
+    const user = await User.findById(userId);
 
-        if (!user) {
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "You must be logged in to buy a team",
+      });
+    }
 
-            return res.status(401).json({
-                success: false,
-                message: "You must be logged in to buy a team"
-            });
-
-        }
-
-        /*
+    /*
         ==========================================
         LOAD TEAM
         ==========================================
         */
 
-        const team = await Team.findById(teamId);
+    const team = await Team.findById(teamId);
 
-        if (!team) {
+    if (!team) {
+      return res.status(404).json({
+        success: false,
+        message: "Team not found",
+      });
+    }
 
-            return res.status(404).json({
-                success: false,
-                message: "Team not found"
-            });
-
-        }
-
-        /*
+    /*
         ==========================================
         CHECK DUPLICATE OWNERSHIP
         ==========================================
@@ -99,61 +91,55 @@ router.post("/buy", async (req, res) => {
 
         */
 
-        const existingOwnership = await Ownership.findOne({
-            userId: user._id,
-            teamId: team._id
-        });
+    const existingOwnership = await Ownership.findOne({
+      userId: user._id,
+      teamId: team._id,
+    });
 
-        if (existingOwnership) {
+    if (existingOwnership) {
+      return res.status(400).json({
+        success: false,
+        message: "I own " + team.name,
+      });
+    }
 
-            return res.status(400).json({
-                success: false,
-                message: "I own " + team.name
-            });
-
-        }
-
-        /*
+    /*
         ==========================================
         CHECK BUCKS BALANCE
         ==========================================
         */
 
-        if (user.bucksBalance < team.price) {
+    if (user.bucksBalance < team.price) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Not enough Bucks. You need " +
+          team.price.toLocaleString() +
+          " Bucks.",
+      });
+    }
 
-            return res.status(400).json({
-                success: false,
-                message:
-                    "Not enough Bucks. You need " +
-                    team.price.toLocaleString() +
-                    " Bucks."
-            });
-
-        }
-
-        /*
+    /*
         ==========================================
         DEDUCT BUCKS AND CREATE OWNERSHIP
         ==========================================
         */
 
-        user.bucksBalance = user.bucksBalance - team.price;
+    user.bucksBalance = user.bucksBalance - team.price;
 
-        await user.save();
+    await user.save();
 
-        const ownership = new Ownership({
+    const ownership = new Ownership({
+      userId: user._id,
+      username: user.username,
+      teamId: team._id,
+      teamName: team.name,
+      purchasePrice: team.price,
+    });
 
-            userId: user._id,
-            username: user.username,
-            teamId: team._id,
-            teamName: team.name,
-            purchasePrice: team.price
+    await ownership.save();
 
-        });
-
-        await ownership.save();
-
-        /*
+    /*
         ==========================================
         SUCCESS RESPONSE
         ==========================================
@@ -163,51 +149,42 @@ router.post("/buy", async (req, res) => {
 
         */
 
-        res.json({
+    res.json({
+      success: true,
+      message: "You now own " + team.name + ".",
 
-            success: true,
-            message: "You now own " + team.name + ".",
+      ownershipMessage: "I own " + team.name,
 
-            ownershipMessage: "I own " + team.name,
+      remainingBalance: user.bucksBalance,
 
-            remainingBalance: user.bucksBalance,
+      user: {
+        id: user._id,
+        username: user.username,
+        bucksBalance: user.bucksBalance,
+      },
 
-            user: {
-                id: user._id,
-                username: user.username,
-                bucksBalance: user.bucksBalance
-            },
+      team: {
+        id: team._id,
+        name: team.name,
+        flag: team.flag,
+      },
+    });
+  } catch (error) {
+    console.error(error);
 
-            team: {
-                id: team._id,
-                name: team.name,
-                flag: team.flag
-            }
-
-        });
-
-    }
-    catch (error) {
-
-        console.error(error);
-
-        // Duplicate key from unique index
-        if (error.code === 11000) {
-
-            return res.status(400).json({
-                success: false,
-                message: "You already own this team"
-            });
-
-        }
-
-        res.status(500).json({
-            success: false,
-            message: "Server error"
-        });
-
+    // Duplicate key from unique index
+    if (error.code === 11000) {
+      return res.status(400).json({
+        success: false,
+        message: "You already own this team",
+      });
     }
 
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
 });
 
 /*
@@ -221,50 +198,39 @@ Returns all teams owned by a user.
 */
 
 router.get("/", async (req, res) => {
+  try {
+    const { userId } = req.query;
 
-    try {
-
-        const { userId } = req.query;
-
-        if (!userId) {
-
-            return res.status(400).json({
-                success: false,
-                message: "userId is required"
-            });
-
-        }
-
-        const ownerships = await Ownership.find({
-            userId: userId
-        }).sort({ purchaseDate: -1 });
-
-        res.json({
-
-            success: true,
-
-            ownerships: ownerships.map((o) => ({
-                teamId: o.teamId,
-                teamName: o.teamName,
-                purchasePrice: o.purchasePrice,
-                purchaseDate: o.purchaseDate,
-                ownershipMessage: "I own " + o.teamName
-            }))
-
-        });
-
-    }
-    catch (error) {
-
-        console.error(error);
-
-        res.status(500).json({
-            success: false,
-            message: "Server error"
-        });
-
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "userId is required",
+      });
     }
 
+    const ownerships = await Ownership.find({
+      userId: userId,
+    }).sort({ purchaseDate: -1 });
+
+    res.json({
+      success: true,
+
+      ownerships: ownerships.map((o) => ({
+        teamId: o.teamId,
+        teamName: o.teamName,
+        purchasePrice: o.purchasePrice,
+        purchaseDate: o.purchaseDate,
+        ownershipMessage: "I own " + o.teamName,
+      })),
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
 });
 
 /*
@@ -272,5 +238,68 @@ router.get("/", async (req, res) => {
 EXPORT ROUTE
 ==================================================
 */
+
+/*
+==================================================
+POST /api/ownership/sell
+==================================================
+*/
+
+router.post("/sell", async (req, res) => {
+  try {
+    const { userId, teamId } = req.body;
+
+    const ownership = await Ownership.findOne({
+      userId,
+      teamId,
+    });
+
+    if (!ownership) {
+      return res.status(404).json({
+        success: false,
+        message: "Ownership not found",
+      });
+    }
+
+    const user = await User.findById(userId);
+
+    const team = await Team.findById(teamId);
+
+    if (!user || !team) {
+      return res.status(404).json({
+        success: false,
+        message: "User or team not found",
+      });
+    }
+
+    user.bucksBalance += team.price;
+
+    await user.save();
+
+    await Ownership.deleteOne({
+      _id: ownership._id,
+    });
+
+    res.json({
+      success: true,
+
+      message:
+        "You sold " +
+        team.name +
+        " for " +
+        team.price.toLocaleString() +
+        " Bucks.",
+
+      newBalance: user.bucksBalance,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+});
 
 module.exports = router;
