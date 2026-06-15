@@ -16,6 +16,7 @@ Handles:
 */
 
 const express = require("express");
+const mongoose = require("mongoose");
 const router = express.Router();
 
 const User = require("../models/User");
@@ -399,6 +400,32 @@ router.post("/send-message", async (req, res) => {
   try {
     const { fromUserId, toUserId, message } = req.body;
 
+    if (
+      !mongoose.isValidObjectId(fromUserId) ||
+      !mongoose.isValidObjectId(toUserId)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid sender and recipient are required",
+      });
+    }
+
+    const trimmedMessage = typeof message === "string" ? message.trim() : "";
+
+    if (!trimmedMessage) {
+      return res.status(400).json({
+        success: false,
+        message: "Message cannot be empty",
+      });
+    }
+
+    if (String(fromUserId) === String(toUserId)) {
+      return res.status(400).json({
+        success: false,
+        message: "You cannot message yourself",
+      });
+    }
+
     const sender = await User.findById(fromUserId);
 
     const receiver = await User.findById(toUserId);
@@ -410,6 +437,18 @@ router.post("/send-message", async (req, res) => {
       });
     }
 
+    const friendship = await Friend.findOne({
+      userId: fromUserId,
+      friendUserId: toUserId,
+    });
+
+    if (!friendship) {
+      return res.status(403).json({
+        success: false,
+        message: "You can only message approved friends",
+      });
+    }
+
     const newMessage = new Message({
       fromUserId,
       fromUsername: sender.username,
@@ -417,7 +456,7 @@ router.post("/send-message", async (req, res) => {
       toUserId,
       toUsername: receiver.username,
 
-      message,
+      message: trimmedMessage,
     });
 
     await newMessage.save();
@@ -445,6 +484,28 @@ GET /api/chat/messages
 router.get("/messages", async (req, res) => {
   try {
     const { user1, user2 } = req.query;
+
+    if (
+      !mongoose.isValidObjectId(user1) ||
+      !mongoose.isValidObjectId(user2)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid conversation participants are required",
+      });
+    }
+
+    const friendship = await Friend.findOne({
+      userId: user1,
+      friendUserId: user2,
+    });
+
+    if (!friendship) {
+      return res.status(403).json({
+        success: false,
+        message: "You can only view conversations with approved friends",
+      });
+    }
 
     const messages = await Message.find({
       $or: [

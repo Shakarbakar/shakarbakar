@@ -26,7 +26,37 @@ function getArenaUser() {
     return null;
   }
 
-  return JSON.parse(raw);
+  try {
+    return JSON.parse(raw);
+  } catch (error) {
+    return null;
+  }
+}
+
+/*
+==================================================
+LOAD FRIENDS FOR PRIVATE CHAT
+==================================================
+*/
+
+async function loadFriendsForChat() {
+  const user = getArenaUser();
+
+  if (!user || !user.id) {
+    return [];
+  }
+
+  const response = await fetch(
+    "/api/chat/friends/" + encodeURIComponent(user.id),
+  );
+
+  const data = await response.json();
+
+  if (!response.ok || !data.success) {
+    throw new Error(data.message || "Failed to load friends");
+  }
+
+  return data.friends;
 }
 
 /*
@@ -112,6 +142,13 @@ async function sendPrivateMessage(toUserId, messageText) {
   try {
     const user = getArenaUser();
 
+    if (!user || !user.id || !toUserId) {
+      return {
+        success: false,
+        message: "Choose a friend before sending a message",
+      };
+    }
+
     const response = await fetch("/api/chat/send-message", {
       method: "POST",
 
@@ -131,6 +168,11 @@ async function sendPrivateMessage(toUserId, messageText) {
     return data;
   } catch (error) {
     console.error(error);
+
+    return {
+      success: false,
+      message: "Unable to send message",
+    };
   }
 }
 
@@ -141,21 +183,27 @@ LOAD CONVERSATION
 */
 
 async function loadMessages(otherUserId) {
-  try {
-    const user = getArenaUser();
+  const user = getArenaUser();
 
-    const response = await fetch(
-      "/api/chat/messages" + "?user1=" + user.id + "&user2=" + otherUserId,
-    );
-
-    const data = await response.json();
-
-    console.log("Messages:", data.messages);
-
-    return data.messages;
-  } catch (error) {
-    console.error(error);
+  if (!user || !user.id || !otherUserId) {
+    return [];
   }
+
+  const response = await fetch(
+    "/api/chat/messages" +
+      "?user1=" +
+      encodeURIComponent(user.id) +
+      "&user2=" +
+      encodeURIComponent(otherUserId),
+  );
+
+  const data = await response.json();
+
+  if (!response.ok || !data.success) {
+    throw new Error(data.message || "Failed to load messages");
+  }
+
+  return data.messages;
 }
 
 /*
