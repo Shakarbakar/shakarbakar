@@ -633,6 +633,124 @@ router.post("/mark-read", async (req, res) => {
 
 /*
 ==================================================
+GET /api/chat/conversations/:userId
+==================================================
+*/
+
+router.get("/conversations/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    if (!mongoose.isValidObjectId(userId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid user is required",
+      });
+    }
+
+    const friends = await Friend.find({
+      userId,
+    }).sort({
+      friendUsername: 1,
+    });
+
+    const friendIds = friends.map((friend) => friend.friendUserId);
+
+    const messages = await Message.find({
+      $or: [
+        {
+          fromUserId: userId,
+          toUserId: {
+            $in: friendIds,
+          },
+        },
+        {
+          fromUserId: {
+            $in: friendIds,
+          },
+          toUserId: userId,
+        },
+      ],
+    }).sort({
+      createdAt: -1,
+    });
+
+    const conversationsByFriend = new Map();
+
+    friends.forEach((friend) => {
+      conversationsByFriend.set(String(friend.friendUserId), {
+        friendUserId: friend.friendUserId,
+        friendUsername: friend.friendUsername,
+        unreadCount: 0,
+        latestMessage: "",
+        latestAt: null,
+        latestFromUsername: "",
+      });
+    });
+
+    messages.forEach((message) => {
+      const sentByCurrentUser =
+        String(message.fromUserId) === String(userId);
+
+      const friendUserId = sentByCurrentUser
+        ? String(message.toUserId)
+        : String(message.fromUserId);
+
+      const conversation = conversationsByFriend.get(friendUserId);
+
+      if (!conversation) {
+        return;
+      }
+
+      if (!conversation.latestAt) {
+        conversation.latestMessage = message.message;
+        conversation.latestAt = message.createdAt;
+        conversation.latestFromUsername = message.fromUsername;
+      }
+
+      if (!sentByCurrentUser && !message.isRead) {
+        conversation.unreadCount += 1;
+      }
+    });
+
+    const conversations = Array.from(conversationsByFriend.values()).sort(
+      (first, second) => {
+        if (first.unreadCount !== second.unreadCount) {
+          return second.unreadCount - first.unreadCount;
+        }
+
+        const firstDate = first.latestAt
+          ? new Date(first.latestAt).getTime()
+          : 0;
+
+        const secondDate = second.latestAt
+          ? new Date(second.latestAt).getTime()
+          : 0;
+
+        if (firstDate !== secondDate) {
+          return secondDate - firstDate;
+        }
+
+        return first.friendUsername.localeCompare(second.friendUsername);
+      },
+    );
+
+    res.json({
+      success: true,
+      conversations,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+});
+
+/*
+==================================================
 GET /api/chat/rooms
 ==================================================
 */

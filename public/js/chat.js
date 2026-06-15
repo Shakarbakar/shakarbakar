@@ -35,11 +35,11 @@ function getArenaUser() {
 
 /*
 ==================================================
-LOAD FRIENDS FOR PRIVATE CHAT
+LOAD CONVERSATION SUMMARIES
 ==================================================
 */
 
-async function loadFriendsForChat() {
+async function loadConversationSummaries() {
   const user = getArenaUser();
 
   if (!user || !user.id) {
@@ -47,16 +47,16 @@ async function loadFriendsForChat() {
   }
 
   const response = await fetch(
-    "/api/chat/friends/" + encodeURIComponent(user.id),
+    "/api/chat/conversations/" + encodeURIComponent(user.id),
   );
 
   const data = await response.json();
 
   if (!response.ok || !data.success) {
-    throw new Error(data.message || "Failed to load friends");
+    throw new Error(data.message || "Failed to load Inbox");
   }
 
-  return data.friends;
+  return data.conversations;
 }
 
 /*
