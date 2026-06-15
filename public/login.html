@@ -69,14 +69,19 @@ Uses shared CSS (style.css) and shared JS (app.js).
         justify-content: center;
         padding: 20px;
         overflow-y: auto;
-        background:
+        background-image:
           radial-gradient(
             circle at 50% 15%,
-            rgba(37, 99, 235, 0.2),
+            rgba(37, 99, 235, 0.18),
             transparent 42%
           ),
-          rgba(2, 6, 23, 0.82);
-        backdrop-filter: blur(10px) saturate(120%);
+          linear-gradient(rgba(2, 6, 23, 0.64), rgba(2, 6, 23, 0.78)),
+          url("images/arena-background.jpg");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+        background-attachment: fixed;
+        backdrop-filter: blur(2px) saturate(115%);
         animation: arena-overlay-fade 320ms ease-out;
       }
 
