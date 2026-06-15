@@ -23,6 +23,9 @@ Used by the marketplace to buy teams.
 */
 
 const STORAGE_KEY = "shakarbakar_user";
+const LOGIN_UPDATES_SEEN_KEY = "shakarbakar_login_updates_seen";
+const RECENT_ANNOUNCEMENT_WINDOW_MS = 24 * 60 * 60 * 1000;
+const MAX_LOGIN_ANNOUNCEMENTS = 3;
 
 /*
 ==================================================
@@ -66,6 +69,122 @@ function clearLoggedInUser() {
 
 /*
 ==================================================
+POST-LOGIN ARENA UPDATES
+==================================================
+*/
+
+function markLoginUpdatesSeen() {
+  sessionStorage.setItem(LOGIN_UPDATES_SEEN_KEY, "true");
+}
+
+function continueAfterLoginUpdates() {
+  markLoginUpdatesSeen();
+  window.location.href = "index.html";
+}
+
+function getRecentLoginAnnouncements(announcements, now = Date.now()) {
+  if (!Array.isArray(announcements)) {
+    return [];
+  }
+
+  const cutoff = now - RECENT_ANNOUNCEMENT_WINDOW_MS;
+
+  return announcements
+    .filter((announcement) => {
+      const publishedAt = new Date(announcement.createdAt).getTime();
+
+      return (
+        Number.isFinite(publishedAt) &&
+        publishedAt >= cutoff &&
+        publishedAt <= now
+      );
+    })
+    .sort(
+      (first, second) =>
+        new Date(second.createdAt).getTime() -
+        new Date(first.createdAt).getTime(),
+    )
+    .slice(0, MAX_LOGIN_ANNOUNCEMENTS);
+}
+
+function renderLoginUpdates(announcements) {
+  const list = document.getElementById("loginUpdatesList");
+
+  if (!list) {
+    return;
+  }
+
+  list.replaceChildren();
+
+  announcements.forEach((announcement) => {
+    const card = document.createElement("article");
+    card.className = "login-update-card";
+
+    const title = document.createElement("div");
+    title.className = "login-update-title";
+    title.innerHTML = renderAnnouncementFlags(announcement.title);
+
+    const category = document.createElement("div");
+    category.className = "login-update-category";
+    category.textContent = announcement.category || "Arena News";
+
+    const content = document.createElement("div");
+    content.className = "login-update-content";
+    content.innerHTML = renderAnnouncementFlags(announcement.content);
+
+    const date = document.createElement("div");
+    date.className = "login-update-date";
+    date.textContent = new Date(announcement.createdAt).toLocaleString();
+
+    card.appendChild(title);
+    card.appendChild(category);
+    card.appendChild(content);
+    card.appendChild(date);
+    list.appendChild(card);
+  });
+}
+
+async function showRecentLoginUpdates() {
+  if (sessionStorage.getItem(LOGIN_UPDATES_SEEN_KEY) === "true") {
+    return false;
+  }
+
+  const overlay = document.getElementById("loginUpdatesOverlay");
+
+  if (!overlay || typeof renderAnnouncementFlags !== "function") {
+    return false;
+  }
+
+  try {
+    const response = await fetch("/api/admin/announcements");
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      return false;
+    }
+
+    const recentAnnouncements = getRecentLoginAnnouncements(
+      data.announcements,
+    );
+
+    if (recentAnnouncements.length === 0) {
+      return false;
+    }
+
+    renderLoginUpdates(recentAnnouncements);
+    markLoginUpdatesSeen();
+    overlay.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+}
+
+/*
+==================================================
 LOGIN USER
 ==================================================
 
@@ -103,6 +222,7 @@ async function loginUser() {
     if (data.success) {
       // Save user for marketplace and ownership
       saveLoggedInUser(data.user);
+      sessionStorage.removeItem(LOGIN_UPDATES_SEEN_KEY);
 
       message.className = "message success";
 
@@ -113,10 +233,13 @@ async function loginUser() {
         data.user.bucksBalance.toLocaleString() +
         " Bucks.";
 
-      // Redirect to home page after short delay
-      setTimeout(function () {
-        window.location.href = "index.html";
-      }, 1500);
+      const updatesShown = await showRecentLoginUpdates();
+
+      if (!updatesShown) {
+        setTimeout(function () {
+          window.location.href = "index.html";
+        }, 1000);
+      }
     } else {
       message.className = "message error";
       message.innerText = data.message;

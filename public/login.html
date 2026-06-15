@@ -21,6 +21,7 @@ Uses shared CSS (style.css) and shared JS (app.js).
 
     <!-- Shared stylesheet for all auth pages -->
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/flags.css" />
 
     <style>
       .password-field {
@@ -50,6 +51,148 @@ Uses shared CSS (style.css) and shared JS (app.js).
       .show-password-row {
         margin-top: -10px;
         margin-bottom: 16px;
+      }
+
+      .login-updates-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(2, 6, 23, 0.86);
+        backdrop-filter: blur(8px);
+      }
+
+      .login-updates-overlay.hidden {
+        display: none;
+      }
+
+      .login-updates-panel {
+        width: min(760px, 100%);
+        max-height: calc(100vh - 40px);
+        overflow-y: auto;
+        padding: 28px;
+        border: 1px solid rgba(251, 191, 36, 0.35);
+        border-radius: 20px;
+        background: #111827;
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+      }
+
+      .login-updates-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .login-updates-title {
+        margin-bottom: 8px;
+        color: #fbbf24;
+        text-align: left;
+      }
+
+      .login-updates-subtitle {
+        margin: 0 0 22px;
+        text-align: left;
+      }
+
+      .login-updates-close-icon {
+        flex: 0 0 auto;
+        padding: 4px 10px;
+        background: transparent;
+        color: #cbd5e1;
+        font-size: 28px;
+        line-height: 1;
+      }
+
+      .login-updates-close-icon:hover {
+        background: #334155;
+      }
+
+      .login-update-card {
+        padding: 18px;
+        margin-bottom: 14px;
+        border: 1px solid #334155;
+        border-radius: 14px;
+        background: #1e293b;
+      }
+
+      .login-update-title {
+        color: #fbbf24;
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      .login-update-category {
+        margin: 6px 0 10px;
+        color: #22c55e;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      .login-update-content {
+        color: white;
+        line-height: 1.55;
+        white-space: pre-wrap;
+      }
+
+      .login-update-date {
+        margin-top: 12px;
+        color: #94a3b8;
+        font-size: 13px;
+      }
+
+      .login-updates-footer {
+        margin-top: 22px;
+        padding-top: 18px;
+        border-top: 1px solid #334155;
+      }
+
+      .login-updates-footer p {
+        margin: 0 0 8px;
+      }
+
+      .login-updates-link {
+        display: block;
+        color: #93c5fd;
+        text-align: center;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      .login-updates-link:hover {
+        text-decoration: underline;
+      }
+
+      .login-updates-actions {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 22px;
+      }
+
+      .login-updates-secondary {
+        background: #475569;
+      }
+
+      .login-updates-secondary:hover {
+        background: #64748b;
+      }
+
+      @media (max-width: 600px) {
+        .login-updates-panel {
+          padding: 20px;
+        }
+
+        .login-updates-actions {
+          flex-direction: column-reverse;
+        }
+
+        .login-updates-actions button {
+          width: 100%;
+        }
       }
     </style>
 
@@ -126,7 +269,67 @@ Uses shared CSS (style.css) and shared JS (app.js).
       </div>
     </div>
 
+    <div
+      id="loginUpdatesOverlay"
+      class="login-updates-overlay hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="loginUpdatesTitle"
+    >
+      <section class="login-updates-panel">
+        <div class="login-updates-header">
+          <div>
+            <h1 id="loginUpdatesTitle" class="login-updates-title">
+              📢 Latest Arena Updates
+            </h1>
+
+            <p class="login-updates-subtitle">
+              Here's what happened while you were away.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="login-updates-close-icon"
+            aria-label="Close updates and continue to Home"
+            onclick="continueAfterLoginUpdates()"
+          >
+            ×
+          </button>
+        </div>
+
+        <div id="loginUpdatesList"></div>
+
+        <footer class="login-updates-footer">
+          <p>Want to see older announcements?</p>
+
+          <a
+            class="login-updates-link"
+            href="arena-announcements.html"
+            onclick="markLoginUpdatesSeen()"
+          >
+            View the complete Arena Announcements page →
+          </a>
+
+          <div class="login-updates-actions">
+            <button
+              type="button"
+              class="login-updates-secondary"
+              onclick="continueAfterLoginUpdates()"
+            >
+              Close
+            </button>
+
+            <button type="button" onclick="continueAfterLoginUpdates()">
+              Continue to Home
+            </button>
+          </div>
+        </footer>
+      </section>
+    </div>
+
     <!-- Shared JavaScript for login logic -->
+    <script src="js/flags.js"></script>
     <script src="js/app.js"></script>
 
     <script>
