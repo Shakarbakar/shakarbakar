@@ -7,6 +7,7 @@
     <title>Arena Announcements</title>
 
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/flags.css" />
 
     <style>
       body {
@@ -63,6 +64,7 @@
       .announcement-content {
         color: white;
         line-height: 1.6;
+        white-space: pre-wrap;
       }
 
       .announcement-date {
@@ -102,6 +104,8 @@
       </div>
     </div>
 
+    <script src="js/flags.js"></script>
+
     <script>
       async function loadAnnouncements() {
         try {
@@ -133,23 +137,28 @@
 
             div.className = "announcement";
 
-            div.innerHTML = `
-              <div class="announcement-title">
-                ${announcement.title}
-              </div>
+            const title = document.createElement("div");
+            title.className = "announcement-title";
+            title.innerHTML = renderAnnouncementFlags(announcement.title);
 
-              <div class="announcement-category">
-                ${announcement.category}
-              </div>
+            const category = document.createElement("div");
+            category.className = "announcement-category";
+            category.textContent = announcement.category;
 
-              <div class="announcement-content">
-                ${announcement.content}
-              </div>
+            const content = document.createElement("div");
+            content.className = "announcement-content";
+            content.innerHTML = renderAnnouncementFlags(announcement.content);
 
-              <div class="announcement-date">
-                ${new Date(announcement.createdAt).toLocaleString()}
-              </div>
-            `;
+            const date = document.createElement("div");
+            date.className = "announcement-date";
+            date.textContent = new Date(
+              announcement.createdAt,
+            ).toLocaleString();
+
+            div.appendChild(title);
+            div.appendChild(category);
+            div.appendChild(content);
+            div.appendChild(date);
 
             container.appendChild(div);
           });
