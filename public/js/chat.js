@@ -208,6 +208,37 @@ async function loadMessages(otherUserId) {
 
 /*
 ==================================================
+MARK CONVERSATION READ
+==================================================
+*/
+
+async function markConversationRead(otherUserId) {
+  const user = getArenaUser();
+
+  if (!user || !user.id || !otherUserId) {
+    return;
+  }
+
+  const response = await fetch("/api/chat/mark-read", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      userId: user.id,
+      friendUserId: otherUserId,
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok || !data.success) {
+    throw new Error(data.message || "Failed to update message notifications");
+  }
+}
+
+/*
+==================================================
 CREATE CHAT ROOM
 ==================================================
 */

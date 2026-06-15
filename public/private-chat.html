@@ -344,6 +344,12 @@
             container.appendChild(row);
           });
 
+          try {
+            await markConversationRead(otherUserId);
+          } catch (error) {
+            console.error(error);
+          }
+
           container.scrollTop = container.scrollHeight;
         } catch (error) {
           console.error(error);

@@ -538,6 +538,101 @@ router.get("/messages", async (req, res) => {
 
 /*
 ==================================================
+GET /api/chat/unread-count/:userId
+==================================================
+*/
+
+router.get("/unread-count/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    if (!mongoose.isValidObjectId(userId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid user is required",
+      });
+    }
+
+    const count = await Message.countDocuments({
+      toUserId: userId,
+      isRead: false,
+    });
+
+    res.json({
+      success: true,
+      count,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+});
+
+/*
+==================================================
+POST /api/chat/mark-read
+==================================================
+*/
+
+router.post("/mark-read", async (req, res) => {
+  try {
+    const { userId, friendUserId } = req.body;
+
+    if (
+      !mongoose.isValidObjectId(userId) ||
+      !mongoose.isValidObjectId(friendUserId)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid conversation participants are required",
+      });
+    }
+
+    const friendship = await Friend.findOne({
+      userId,
+      friendUserId,
+    });
+
+    if (!friendship) {
+      return res.status(403).json({
+        success: false,
+        message: "You can only update conversations with approved friends",
+      });
+    }
+
+    const result = await Message.updateMany(
+      {
+        fromUserId: friendUserId,
+        toUserId: userId,
+        isRead: false,
+      },
+      {
+        $set: {
+          isRead: true,
+        },
+      },
+    );
+
+    res.json({
+      success: true,
+      markedRead: result.modifiedCount,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+});
+
+/*
+==================================================
 GET /api/chat/rooms
 ==================================================
 */

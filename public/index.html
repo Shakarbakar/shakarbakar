@@ -216,7 +216,16 @@
               </p>
 
               <p>
-                <a href="private-chat.html"> 📩 Inbox </a>
+                <a href="private-chat.html">
+                  📩 Inbox
+                  <span
+                    id="inboxBadge"
+                    class="notification-badge"
+                    style="display: none"
+                  >
+                    0
+                  </span>
+                </a>
               </p>
 
               <p>
@@ -349,11 +358,29 @@
 
           /*
           ==========================
+          UNREAD MESSAGES
+          ==========================
+          */
+
+          let messageCount = 0;
+
+          const messageResponse = await fetch(
+            "/api/chat/unread-count/" + user.id,
+          );
+
+          const messageData = await messageResponse.json();
+
+          if (messageData.success) {
+            messageCount = messageData.count;
+          }
+
+          /*
+          ==========================
           TOP BADGE
           ==========================
           */
 
-          const totalCount = friendCount + duelCount;
+          const totalCount = friendCount + duelCount + messageCount;
 
           const topBadge = document.getElementById("topRequestBadge");
 
@@ -392,6 +419,21 @@
             duelBadge.innerText = duelCount;
           } else {
             duelBadge.style.display = "none";
+          }
+
+          /*
+          ==========================
+          INBOX BADGE
+          ==========================
+          */
+
+          const inboxBadge = document.getElementById("inboxBadge");
+
+          if (messageCount > 0) {
+            inboxBadge.style.display = "inline-block";
+            inboxBadge.innerText = messageCount;
+          } else {
+            inboxBadge.style.display = "none";
           }
         } catch (error) {
           console.error(error);
