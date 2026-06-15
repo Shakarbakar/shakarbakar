@@ -22,6 +22,37 @@ Uses shared CSS (style.css) and shared JS (app.js).
     <!-- Shared stylesheet for all auth pages -->
     <link rel="stylesheet" href="css/style.css" />
 
+    <style>
+      .password-field {
+        position: relative;
+      }
+
+      .password-field input {
+        padding-right: 55px;
+      }
+
+      .password-eye {
+        position: absolute;
+        top: 18px;
+        right: 8px;
+        width: 42px;
+        padding: 8px;
+        background: transparent;
+        color: white;
+        font-size: 20px;
+        line-height: 1;
+      }
+
+      .password-eye:hover {
+        background: #334155;
+      }
+
+      .show-password-row {
+        margin-top: -10px;
+        margin-bottom: 16px;
+      }
+    </style>
+
     <script src="js/translations.js"></script>
   </head>
 
@@ -38,7 +69,32 @@ Uses shared CSS (style.css) and shared JS (app.js).
         <input id="identifier" type="text" placeholder="Username or Email" />
 
         <!-- PASSWORD -->
-        <input id="password" type="password" placeholder="Password" />
+        <div class="password-field">
+          <input id="password" type="password" placeholder="Password" />
+
+          <button
+            id="passwordEye"
+            class="password-eye"
+            type="button"
+            aria-label="Show password"
+            aria-pressed="false"
+            onclick="togglePasswordVisibility()"
+          >
+            👁
+          </button>
+        </div>
+
+        <div class="show-password-row">
+          <label class="remember-label">
+            <input
+              id="showPassword"
+              type="checkbox"
+              onchange="setPasswordVisibility(this.checked)"
+            />
+
+            Show Password
+          </label>
+        </div>
 
         <!-- REMEMBER ME + FORGOT PASSWORD -->
         <div class="remember-row">
@@ -72,5 +128,28 @@ Uses shared CSS (style.css) and shared JS (app.js).
 
     <!-- Shared JavaScript for login logic -->
     <script src="js/app.js"></script>
+
+    <script>
+      function setPasswordVisibility(showPassword) {
+        const passwordInput = document.getElementById("password");
+        const checkbox = document.getElementById("showPassword");
+        const eyeButton = document.getElementById("passwordEye");
+
+        passwordInput.type = showPassword ? "text" : "password";
+        checkbox.checked = showPassword;
+        eyeButton.textContent = showPassword ? "🙈" : "👁";
+        eyeButton.setAttribute(
+          "aria-label",
+          showPassword ? "Hide password" : "Show password",
+        );
+        eyeButton.setAttribute("aria-pressed", String(showPassword));
+      }
+
+      function togglePasswordVisibility() {
+        const passwordInput = document.getElementById("password");
+
+        setPasswordVisibility(passwordInput.type === "password");
+      }
+    </script>
   </body>
 </html>

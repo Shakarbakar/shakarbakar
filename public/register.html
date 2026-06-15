@@ -46,6 +46,51 @@
         box-sizing: border-box;
       }
 
+      .password-field {
+        position: relative;
+      }
+
+      .password-field input {
+        padding-right: 55px;
+      }
+
+      .password-eye {
+        position: absolute;
+        top: 18px;
+        right: 8px;
+        width: 42px;
+        padding: 8px;
+        background: transparent;
+        color: #0f172a;
+        font-size: 20px;
+        line-height: 1;
+      }
+
+      .password-eye:hover {
+        background: #e2e8f0;
+      }
+
+      .show-password-row {
+        margin-top: -10px;
+        margin-bottom: 20px;
+      }
+
+      .show-password-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #cbd5e1;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .show-password-label input {
+        width: 16px;
+        height: 16px;
+        margin: 0;
+        cursor: pointer;
+      }
+
       button {
         width: 100%;
         padding: 15px;
@@ -131,12 +176,37 @@
           data-translate-placeholder="emailAddress"
         />
 
-        <input
-          id="password"
-          type="password"
-          placeholder="Password"
-          data-translate-placeholder="password"
-        />
+        <div class="password-field">
+          <input
+            id="password"
+            type="password"
+            placeholder="Password"
+            data-translate-placeholder="password"
+          />
+
+          <button
+            id="passwordEye"
+            class="password-eye"
+            type="button"
+            aria-label="Show password"
+            aria-pressed="false"
+            onclick="togglePasswordVisibility()"
+          >
+            👁
+          </button>
+        </div>
+
+        <div class="show-password-row">
+          <label class="show-password-label">
+            <input
+              id="showPassword"
+              type="checkbox"
+              onchange="setPasswordVisibility(this.checked)"
+            />
+
+            Show Password
+          </label>
+        </div>
 
         <button onclick="registerUser()" data-translate="createAccount">
           Create Account
@@ -163,6 +233,27 @@
     </div>
 
     <script>
+      function setPasswordVisibility(showPassword) {
+        const passwordInput = document.getElementById("password");
+        const checkbox = document.getElementById("showPassword");
+        const eyeButton = document.getElementById("passwordEye");
+
+        passwordInput.type = showPassword ? "text" : "password";
+        checkbox.checked = showPassword;
+        eyeButton.textContent = showPassword ? "🙈" : "👁";
+        eyeButton.setAttribute(
+          "aria-label",
+          showPassword ? "Hide password" : "Show password",
+        );
+        eyeButton.setAttribute("aria-pressed", String(showPassword));
+      }
+
+      function togglePasswordVisibility() {
+        const passwordInput = document.getElementById("password");
+
+        setPasswordVisibility(passwordInput.type === "password");
+      }
+
       async function registerUser() {
         const username = document.getElementById("username").value;
 
