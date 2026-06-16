@@ -3,60 +3,121 @@
 SHAKARBAKAR TOURNAMENT HUB
 ==================================================
 
-Public renderer for Tournament Manager data.
-Prediction submissions are still local-only drafts for
-future backend integration.
+Phase 4 frontend-only placeholder data.
+No backend calls, no scoring, and no rewards yet.
 
 ==================================================
 */
 
-const emptyTournamentState = {
-  upcomingMatches: [],
-  results: [],
-  qualifiedTeams: [],
-  round16: [],
-  quarterFinals: [],
-  semiFinals: [],
-  final: [],
+const tournamentState = {
+  upcomingMatches: [
+    {
+      id: "match-slot-1",
+      label: "Match Slot 1",
+      teamA: "Team A",
+      teamB: "Team B",
+      date: "Date Placeholder",
+      time: "Time Placeholder",
+      venue: "Stadium Placeholder",
+    },
+    {
+      id: "match-slot-2",
+      label: "Match Slot 2",
+      teamA: "Team A",
+      teamB: "Team B",
+      date: "Date Placeholder",
+      time: "Time Placeholder",
+      venue: "Stadium Placeholder",
+    },
+    {
+      id: "match-slot-3",
+      label: "Match Slot 3",
+      teamA: "Team A",
+      teamB: "Team B",
+      date: "Date Placeholder",
+      time: "Time Placeholder",
+      venue: "Stadium Placeholder",
+    },
+  ],
+  results: [
+    {
+      id: "result-slot-1",
+      label: "Result Slot 1",
+      teamA: "Team Placeholder",
+      teamB: "Team Placeholder",
+      score: "Score Placeholder",
+      date: "Match Date Placeholder",
+    },
+    {
+      id: "result-slot-2",
+      label: "Result Slot 2",
+      teamA: "Team Placeholder",
+      teamB: "Team Placeholder",
+      score: "Score Placeholder",
+      date: "Match Date Placeholder",
+    },
+    {
+      id: "result-slot-3",
+      label: "Result Slot 3",
+      teamA: "Team Placeholder",
+      teamB: "Team Placeholder",
+      score: "Score Placeholder",
+      date: "Match Date Placeholder",
+    },
+  ],
+  qualifiedTeams: [
+    "Team Placeholder 1",
+    "Team Placeholder 2",
+    "Team Placeholder 3",
+    "Team Placeholder 4",
+    "Team Placeholder 5",
+    "Team Placeholder 6",
+    "Team Placeholder 7",
+    "Team Placeholder 8",
+  ],
+  quarterFinals: [
+    {
+      label: "Quarter Final 1",
+      teamA: "Winner R16-1",
+      teamB: "Winner R16-2",
+    },
+    {
+      label: "Quarter Final 2",
+      teamA: "Winner R16-3",
+      teamB: "Winner R16-4",
+    },
+    {
+      label: "Quarter Final 3",
+      teamA: "Winner R16-5",
+      teamB: "Winner R16-6",
+    },
+    {
+      label: "Quarter Final 4",
+      teamA: "Winner R16-7",
+      teamB: "Winner R16-8",
+    },
+  ],
+  semiFinals: [
+    {
+      label: "Semi Final 1",
+      teamA: "Winner QF1",
+      teamB: "Winner QF2",
+    },
+    {
+      label: "Semi Final 2",
+      teamA: "Winner QF3",
+      teamB: "Winner QF4",
+    },
+  ],
+  final: [
+    {
+      label: "Final",
+      teamA: "Winner SF1",
+      teamB: "Winner SF2",
+    },
+  ],
   predictionDrafts: [],
 };
-
-let tournamentState = { ...emptyTournamentState };
-
-function normalizeTournamentData(data = {}) {
-  return {
-    upcomingMatches: Array.isArray(data.upcomingMatches)
-      ? data.upcomingMatches
-      : [],
-    results: Array.isArray(data.results) ? data.results : [],
-    qualifiedTeams: Array.isArray(data.qualifiedTeams)
-      ? data.qualifiedTeams
-      : [],
-    round16: Array.isArray(data.round16) ? data.round16 : [],
-    quarterFinals: Array.isArray(data.quarterFinals)
-      ? data.quarterFinals
-      : [],
-    semiFinals: Array.isArray(data.semiFinals) ? data.semiFinals : [],
-    final: Array.isArray(data.final) ? data.final : [],
-    predictionDrafts: [],
-  };
-}
-
-async function loadTournamentData() {
-  try {
-    const response = await fetch("/api/admin/tournament");
-    const data = await response.json();
-
-    if (!data.success) {
-      throw new Error(data.message || "Unable to load tournament data");
-    }
-
-    tournamentState = normalizeTournamentData(data.tournament);
-  } catch (error) {
-    console.error(error);
-    tournamentState = { ...emptyTournamentState };
-  }
-}
 
 function createElement(tagName, className, textContent) {
   const element = document.createElement(tagName);
@@ -72,144 +133,111 @@ function createElement(tagName, className, textContent) {
   return element;
 }
 
-function clearContainer(containerId) {
-  const container = document.getElementById(containerId);
+function createPlaceholderFlag() {
+  const flag = createElement("span", "placeholder-flag");
 
-  container.textContent = "";
+  flag.setAttribute("aria-hidden", "true");
 
-  return container;
-}
-
-function renderEmptyState(container, message) {
-  container.appendChild(createElement("p", "empty-state", message));
-}
-
-function createFlag(teamName) {
-  const flagPath =
-    typeof getFlagSvg === "function" ? getFlagSvg(teamName) : undefined;
-
-  if (!flagPath) {
-    return null;
-  }
-
-  const image = document.createElement("img");
-  image.src = flagPath;
-  image.alt = teamName;
-  image.className = "team-flag team-flag--small";
-  image.loading = "lazy";
-
-  return image;
+  return flag;
 }
 
 function createTeamInline(teamName) {
   const wrapper = createElement("span", "team-inline");
-  const displayName = teamName || "TBD";
-  const flag = createFlag(displayName);
 
-  if (flag) {
-    wrapper.appendChild(flag);
-  }
-
-  wrapper.appendChild(document.createTextNode(displayName));
+  wrapper.appendChild(createPlaceholderFlag());
+  wrapper.appendChild(document.createTextNode(teamName));
 
   return wrapper;
 }
 
-function formatMatchMeta(match) {
-  return [match.date, match.time, match.stadium].filter(Boolean).join(" · ");
+function renderCounts() {
+  document.getElementById("upcomingCount").textContent =
+    tournamentState.upcomingMatches.length;
+  document.getElementById("resultCount").textContent =
+    tournamentState.results.length;
+  document.getElementById("qualifiedCount").textContent =
+    tournamentState.qualifiedTeams.length;
 }
 
 function renderUpcomingMatches() {
-  const container = clearContainer("upcomingMatches");
+  const container = document.getElementById("upcomingMatches");
 
-  if (!tournamentState.upcomingMatches.length) {
-    renderEmptyState(container, "No upcoming matches available.");
-    return;
-  }
+  container.textContent = "";
 
   tournamentState.upcomingMatches.forEach((match) => {
     const card = createElement("article", "match-card");
-    const teams = createElement("div", "match-teams");
+    const label = createElement("div", "slot-label", match.label);
+    const matchup = createElement("div", "matchup");
     const meta = createElement("div", "match-meta");
 
-    teams.appendChild(createTeamInline(match.teamA));
-    teams.appendChild(createElement("span", "versus", "VS"));
-    teams.appendChild(createTeamInline(match.teamB));
+    matchup.appendChild(createTeamInline(match.teamA));
+    matchup.appendChild(createElement("span", "versus", "VS"));
+    matchup.appendChild(createTeamInline(match.teamB));
 
-    meta.textContent = formatMatchMeta(match) || "Fixture details pending";
+    meta.appendChild(createElement("span", "", match.date));
+    meta.appendChild(createElement("span", "", match.time));
+    meta.appendChild(createElement("span", "", match.venue));
 
-    card.appendChild(teams);
+    card.appendChild(label);
+    card.appendChild(matchup);
     card.appendChild(meta);
     container.appendChild(card);
   });
 }
 
 function renderMatchResults() {
-  const container = clearContainer("matchResults");
+  const container = document.getElementById("matchResults");
 
-  if (!tournamentState.results.length) {
-    renderEmptyState(container, "No results available.");
-    return;
-  }
+  container.textContent = "";
 
   tournamentState.results.forEach((result) => {
     const card = createElement("article", "result-card");
-    const score = createElement("div", "result-score");
-    const scoreNumber = createElement(
-      "span",
-      "score-number",
-      `${result.scoreA} - ${result.scoreB}`,
-    );
+    const label = createElement("div", "result-label", result.label);
+    const line = createElement("div", "result-line");
+    const meta = createElement("div", "result-meta");
 
-    score.appendChild(createTeamInline(result.teamA));
-    score.appendChild(scoreNumber);
-    score.appendChild(createTeamInline(result.teamB));
+    line.appendChild(createTeamInline(result.teamA));
+    line.appendChild(createElement("span", "score-placeholder", result.score));
+    line.appendChild(createTeamInline(result.teamB));
+    meta.appendChild(createElement("span", "", result.date));
 
-    card.appendChild(score);
+    card.appendChild(label);
+    card.appendChild(line);
+    card.appendChild(meta);
     container.appendChild(card);
   });
 }
 
 function renderQualifiedTeams() {
-  const container = clearContainer("qualifiedTeams");
+  const container = document.getElementById("qualifiedTeams");
 
-  if (!tournamentState.qualifiedTeams.length) {
-    renderEmptyState(container, "No qualified teams yet.");
-    return;
-  }
+  container.textContent = "";
 
   tournamentState.qualifiedTeams.forEach((teamName) => {
     const tile = createElement("div", "team-tile");
-    const flag = createFlag(teamName);
 
-    if (flag) {
-      tile.appendChild(flag);
-    }
-
+    tile.appendChild(createPlaceholderFlag());
     tile.appendChild(document.createTextNode(teamName));
     container.appendChild(tile);
   });
 }
 
 function renderBracket(containerId, matches, isFinal = false) {
-  const container = clearContainer(containerId);
+  const container = document.getElementById(containerId);
 
-  if (!matches.length) {
-    renderEmptyState(container, "TBD");
-    return;
-  }
+  container.textContent = "";
 
   matches.forEach((match) => {
     const card = createElement(
       "article",
       isFinal ? "bracket-card final-card" : "bracket-card",
     );
-    const label = createElement("div", "bracket-label", match.label || "TBD");
+    const label = createElement("div", "bracket-label", match.label);
     const matchup = createElement("div", "bracket-matchup");
 
-    matchup.appendChild(createTeamInline(match.teamA));
+    matchup.appendChild(createElement("span", "", match.teamA));
     matchup.appendChild(createElement("span", "versus", "VS"));
-    matchup.appendChild(createTeamInline(match.teamB));
+    matchup.appendChild(createElement("span", "", match.teamB));
 
     card.appendChild(label);
     card.appendChild(matchup);
@@ -235,11 +263,10 @@ function createScoreSelect(matchId, teamName) {
   const field = createElement("div", "score-field");
   const label = document.createElement("label");
   const select = document.createElement("select");
-  const safeTeamId = (teamName || "team").replace(/\s+/g, "-");
+  const safeName = teamName.toLowerCase().replace(/\s+/g, "-");
 
   label.textContent = `${teamName} Score`;
-  label.htmlFor = `${matchId}-${safeTeamId}-score`;
-
+  label.htmlFor = `${matchId}-${safeName}-score`;
   select.id = label.htmlFor;
 
   for (let score = 0; score <= 7; score++) {
@@ -265,30 +292,22 @@ function savePredictionDraft(payload, statusElement) {
 }
 
 function renderPredictionForms() {
-  const container = clearContainer("predictionForms");
+  const container = document.getElementById("predictionForms");
 
-  if (!tournamentState.upcomingMatches.length) {
-    renderEmptyState(container, "No active matches available for predictions.");
-    return;
-  }
+  container.textContent = "";
 
   tournamentState.upcomingMatches.forEach((match) => {
-    const matchPanel = createElement("div", "prediction-panel section-panel");
-    const title = createElement(
-      "h3",
-      "section-title",
-      `${match.teamA} vs ${match.teamB}`,
-    );
-    const predictionLayout = createElement("div", "prediction-layout");
+    const panel = createElement("section", "prediction-match");
+    const title = createElement("h3", "prediction-match-title", "Upcoming Match");
+    const layout = createElement("div", "prediction-layout");
 
-    matchPanel.appendChild(title);
+    layout.appendChild(createWinnerPredictionCard(match));
+    layout.appendChild(createTeamPredictionCard(match));
+    layout.appendChild(createScorePredictionCard(match));
 
-    predictionLayout.appendChild(createWinnerPredictionCard(match));
-    predictionLayout.appendChild(createTeamPredictionCard(match));
-    predictionLayout.appendChild(createScorePredictionCard(match));
-
-    matchPanel.appendChild(predictionLayout);
-    container.appendChild(matchPanel);
+    panel.appendChild(title);
+    panel.appendChild(layout);
+    container.appendChild(panel);
   });
 }
 
@@ -296,23 +315,25 @@ function createWinnerPredictionCard(match) {
   const card = createElement("article", "prediction-card");
   const status = createElement("div", "prediction-status");
   const groupName = `${match.id}-winner`;
+  const options = createElement("div", "radio-list");
+  const button = createElement("button", "prediction-button", "Submit Prediction");
 
   card.appendChild(createElement("h3", "", "Who Will Win?"));
-  card.appendChild(createElement("p", "prediction-question", "Pick one result."));
+  card.appendChild(
+    createElement("p", "prediction-question", "Choose one placeholder result."),
+  );
 
-  const options = createElement("div", "radio-list");
   options.appendChild(createRadioOption(groupName, match.teamA, match.teamA));
   options.appendChild(createRadioOption(groupName, "Draw", "Draw"));
   options.appendChild(createRadioOption(groupName, match.teamB, match.teamB));
 
-  const button = createElement("button", "prediction-button", "Submit Prediction");
   button.addEventListener("click", () => {
     const selected = document.querySelector(
       `input[name="${groupName}"]:checked`,
     );
 
     if (!selected) {
-      status.textContent = "Choose a winner, draw, or opponent first.";
+      status.textContent = "Choose Team A, Draw, or Team B first.";
       return;
     }
 
@@ -337,24 +358,24 @@ function createTeamPredictionCard(match) {
   const card = createElement("article", "prediction-card");
   const status = createElement("div", "prediction-status");
   const groupName = `${match.id}-team`;
+  const options = createElement("div", "radio-list");
+  const button = createElement("button", "prediction-button", "Submit Prediction");
 
   card.appendChild(createElement("h3", "", "Choose Your Team"));
   card.appendChild(
     createElement("p", "prediction-question", "One selection only."),
   );
 
-  const options = createElement("div", "radio-list");
   options.appendChild(createRadioOption(groupName, match.teamA, match.teamA));
   options.appendChild(createRadioOption(groupName, match.teamB, match.teamB));
 
-  const button = createElement("button", "prediction-button", "Submit Prediction");
   button.addEventListener("click", () => {
     const selected = document.querySelector(
       `input[name="${groupName}"]:checked`,
     );
 
     if (!selected) {
-      status.textContent = "Choose your team first.";
+      status.textContent = "Choose your placeholder team first.";
       return;
     }
 
@@ -381,16 +402,16 @@ function createScorePredictionCard(match) {
   const scoreGrid = createElement("div", "score-grid");
   const teamAField = createScoreSelect(match.id, match.teamA);
   const teamBField = createScoreSelect(match.id, match.teamB);
+  const button = createElement("button", "prediction-button", "Submit Prediction");
 
   card.appendChild(createElement("h3", "", "Exact Score"));
   card.appendChild(
-    createElement("p", "prediction-question", "Predict 0-7 for each team."),
+    createElement("p", "prediction-question", "Select scores from 0-7."),
   );
 
   scoreGrid.appendChild(teamAField);
   scoreGrid.appendChild(teamBField);
 
-  const button = createElement("button", "prediction-button", "Submit Prediction");
   button.addEventListener("click", () => {
     savePredictionDraft(
       {
@@ -410,12 +431,11 @@ function createScorePredictionCard(match) {
   return card;
 }
 
-async function initializeTournamentPage() {
-  await loadTournamentData();
+function initializeTournamentPage() {
+  renderCounts();
   renderUpcomingMatches();
   renderMatchResults();
   renderQualifiedTeams();
-  renderBracket("round16", tournamentState.round16);
   renderBracket("quarterFinals", tournamentState.quarterFinals);
   renderBracket("semiFinals", tournamentState.semiFinals);
   renderBracket("finalMatch", tournamentState.final, true);
