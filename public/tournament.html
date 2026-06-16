@@ -339,6 +339,22 @@
         font-size: 13px;
       }
 
+      .empty-state {
+        margin: 0;
+        padding: 18px;
+        border: 1px dashed rgba(148, 163, 184, 0.38);
+        border-radius: 14px;
+        background: rgba(15, 23, 42, 0.48);
+        color: #cbd5e1;
+        line-height: 1.5;
+      }
+
+      .cards-grid .empty-state,
+      .qualified-grid .empty-state,
+      .bracket-grid .empty-state {
+        grid-column: 1 / -1;
+      }
+
       .home-link {
         text-align: center;
         margin: 28px 0 10px;
@@ -429,7 +445,7 @@
             <h2 id="upcomingTitle" class="section-title">Upcoming Matches</h2>
             <p class="section-note">Fixtures ready for prediction.</p>
           </div>
-          <div class="section-chip">Mock Schedule</div>
+          <div class="section-chip">Admin Schedule</div>
         </div>
         <div id="upcomingMatches" class="cards-grid"></div>
       </section>
@@ -451,9 +467,19 @@
             <h2 id="qualifiedTitle" class="section-title">Qualified Teams</h2>
             <p class="section-note">All teams currently in the tournament hub.</p>
           </div>
-          <div class="section-chip">48 Teams</div>
+          <div class="section-chip">Admin Managed</div>
         </div>
         <div id="qualifiedTeams" class="qualified-grid"></div>
+      </section>
+
+      <section class="section-panel" aria-labelledby="round16Title">
+        <div class="section-header">
+          <div>
+            <h2 id="round16Title" class="section-title">Round of 16</h2>
+            <p class="section-note">Admin assigned knockout matchups.</p>
+          </div>
+        </div>
+        <div id="round16" class="bracket-grid"></div>
       </section>
 
       <section class="section-panel" aria-labelledby="quarterFinalsTitle">
@@ -462,7 +488,7 @@
             <h2 id="quarterFinalsTitle" class="section-title">
               Quarter Finals
             </h2>
-            <p class="section-note">Placeholder bracket structure.</p>
+            <p class="section-note">Admin assigned knockout matchups.</p>
           </div>
         </div>
         <div id="quarterFinals" class="bracket-grid"></div>
