@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Team Owners - ShakarBakar</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/flags.css" />
+    <link rel="stylesheet" href="css/ownership.css" />
+
+    <style>
+      body {
+        margin: 0;
+        background-image: url("images/arena-background.jpg");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      .page {
+        max-width: 1100px;
+        margin: auto;
+        padding: 40px 20px;
+      }
+
+      .title {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        color: #fbbf24;
+        font-size: 52px;
+      }
+
+      .home-link {
+        text-align: center;
+        margin-top: 30px;
+      }
+
+      .home-link a {
+        color: #93c5fd;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="page">
+      <h1 id="teamTitle" class="title">Team Owners</h1>
+
+      <section id="ownersGrid" class="portfolio-grid"></section>
+
+      <div class="home-link">
+        <a href="my-teams.html">← Back to My Teams</a>
+      </div>
+
+      <div class="home-link">
+        <a href="index.html">← Back to Home</a>
+      </div>
+    </main>
+
+    <script src="js/flags.js"></script>
+    <script src="js/ownership-visibility.js"></script>
+    <script>
+      async function loadTeamOwners() {
+        const params = new URLSearchParams(window.location.search);
+        const teamId = params.get("teamId");
+        const title = document.getElementById("teamTitle");
+        const grid = document.getElementById("ownersGrid");
+
+        if (!teamId) {
+          grid.innerHTML = "<h2>Team not selected.</h2>";
+          return;
+        }
+
+        const response = await fetch("/api/ownership/team/" + teamId + "/owners");
+        const data = await response.json();
+
+        if (!data.success) {
+          grid.innerHTML = "<h2>Unable to load team owners.</h2>";
+          return;
+        }
+
+        title.replaceChildren();
+
+        const flag = createOwnershipFlag(data.team.name);
+
+        if (flag) {
+          title.appendChild(flag);
+        }
+
+        title.appendChild(document.createTextNode(data.team.name));
+        grid.replaceChildren();
+
+        if (data.owners.length === 0) {
+          grid.innerHTML = "<h2>No current owners yet.</h2>";
+          return;
+        }
+
+        data.owners.forEach((owner) => {
+          const card = document.createElement("article");
+          card.className = "portfolio-card";
+
+          const ownerLink = document.createElement("a");
+          ownerLink.className = "portfolio-card-title";
+          ownerLink.href = "profile.html?userId=" + encodeURIComponent(owner.userId);
+          ownerLink.textContent = owner.username;
+
+          const meta = document.createElement("div");
+          meta.className = "portfolio-meta";
+          meta.textContent =
+            "Owner:\n" +
+            owner.username +
+            "\n\nPurchased For:\n" +
+            formatBucks(owner.purchasePrice) +
+            "\n\nDate:\n" +
+            formatOwnershipDate(owner.purchaseDate);
+
+          card.appendChild(ownerLink);
+          card.appendChild(meta);
+          grid.appendChild(card);
+        });
+      }
+
+      loadTeamOwners();
+    </script>
+  </body>
+</html>

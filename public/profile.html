@@ -4,9 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>My Profile - ShakarBakar</title>
+    <title>User Profile - ShakarBakar</title>
 
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/flags.css" />
+    <link rel="stylesheet" href="css/ownership.css" />
 
     <style>
       body {
@@ -20,27 +22,58 @@
       }
 
       .page {
-        max-width: 1000px;
+        max-width: 1100px;
         margin: auto;
         padding: 40px 20px;
       }
 
       .title {
         text-align: center;
-        font-size: 52px;
         color: #fbbf24;
+        font-size: 52px;
       }
 
-      .card {
-        background: rgba(15, 23, 42, 0.82);
+      .profile-card {
+        padding: 26px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: 18px;
-        padding: 25px;
-        margin-bottom: 20px;
+        background: rgba(15, 23, 42, 0.82);
+        backdrop-filter: blur(8px);
       }
 
-      .row {
+      .profile-name {
+        color: #fbbf24;
+        font-size: 34px;
+        font-weight: bold;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 14px;
+        margin: 22px 0;
+      }
+
+      .stat-box {
+        padding: 16px;
+        border-radius: 14px;
+        background: rgba(15, 23, 42, 0.72);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .stat-label {
+        color: #94a3b8;
+      }
+
+      .stat-value {
+        margin-top: 6px;
+        color: white;
         font-size: 22px;
-        margin-bottom: 15px;
+        font-weight: bold;
+      }
+
+      .teams-section h2 {
+        color: #fbbf24;
       }
 
       .btn {
@@ -78,64 +111,158 @@
   </head>
 
   <body>
-    <div class="page">
-      <h1 class="title">👤 MY PROFILE</h1>
+    <main class="page">
+      <h1 class="title">👤 User Profile</h1>
 
-      <div class="card">
-        <div class="row">
-          Username:
-          <strong id="username">Loading...</strong>
+      <section class="profile-card">
+        <div id="profileName" class="profile-name">Loading...</div>
+
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-label">Joined</div>
+            <div id="joinedDate" class="stat-value">Loading...</div>
+          </div>
+
+          <div class="stat-box">
+            <div class="stat-label">Friends</div>
+            <div id="friendsCount" class="stat-value">0</div>
+          </div>
+
+          <div class="stat-box">
+            <div class="stat-label">Duels Won</div>
+            <div id="duelsWon" class="stat-value">0</div>
+          </div>
+
+          <div class="stat-box">
+            <div class="stat-label">Teams Owned</div>
+            <div id="totalTeams" class="stat-value">0</div>
+          </div>
         </div>
 
-        <div class="row">
-          Status:
-          <strong>🟢 Online</strong>
+        <div class="teams-section">
+          <h2>Teams</h2>
+          <div id="profileTeams" class="portfolio-grid"></div>
         </div>
 
-        <div class="row">
-          Bucks:
-          <strong id="bucksBalance">0</strong>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-label">Total Teams</div>
+            <div id="totalTeamsFooter" class="stat-value">0</div>
+          </div>
+
+          <div class="stat-box">
+            <div class="stat-label">Total Portfolio Value</div>
+            <div class="stat-value">Coming Soon</div>
+          </div>
         </div>
 
-        <button
-          class="btn chat-btn"
-          onclick="window.location.href = 'arena-chat.html'"
-        >
-          📩 Inbox & Chat
-        </button>
+        <div id="ownProfileActions">
+          <button
+            class="btn chat-btn"
+            onclick="window.location.href = 'arena-chat.html'"
+          >
+            📩 Inbox & Chat
+          </button>
 
-        <button
-          class="btn friends-btn"
-          onclick="window.location.href = 'friends.html'"
-        >
-          👥 Friends
-        </button>
+          <button
+            class="btn friends-btn"
+            onclick="window.location.href = 'friends.html'"
+          >
+            👥 Friends
+          </button>
 
-        <button class="btn logout-btn" onclick="logoutUser()">🚪 Logout</button>
-      </div>
+          <button
+            class="btn friends-btn"
+            onclick="window.location.href = 'my-teams.html'"
+          >
+            🏆 My Teams
+          </button>
+
+          <button class="btn logout-btn" onclick="logoutUser()">🚪 Logout</button>
+        </div>
+      </section>
 
       <div class="home-link">
         <a href="index.html">← Back to Home</a>
       </div>
-    </div>
+    </main>
 
+    <script src="js/flags.js"></script>
+    <script src="js/ownership-visibility.js"></script>
     <script>
-      const user = JSON.parse(localStorage.getItem("shakarbakar_user"));
+      async function loadProfile() {
+        const loggedUser = JSON.parse(localStorage.getItem("shakarbakar_user"));
+        const params = new URLSearchParams(window.location.search);
+        const profileUserId = params.get("userId") || (loggedUser && loggedUser.id);
 
-      if (!user) {
-        window.location.href = "login.html";
+        if (!profileUserId) {
+          window.location.href = "login.html";
+          return;
+        }
+
+        const response = await fetch("/api/ownership/user/" + profileUserId);
+        const data = await response.json();
+
+        if (!data.success) {
+          document.getElementById("profileName").textContent =
+            "Unable to load profile";
+          return;
+        }
+
+        const isOwnProfile =
+          loggedUser && String(loggedUser.id) === String(data.user.id);
+
+        document.getElementById("ownProfileActions").style.display = isOwnProfile
+          ? "block"
+          : "none";
+
+        document.getElementById("profileName").textContent = data.user.username;
+        document.getElementById("joinedDate").textContent =
+          formatOwnershipDate(data.user.createdAt);
+        document.getElementById("friendsCount").textContent =
+          data.user.friendsCount;
+        document.getElementById("duelsWon").textContent = data.user.duelWins;
+        document.getElementById("totalTeams").textContent =
+          data.summary.totalTeams;
+        document.getElementById("totalTeamsFooter").textContent =
+          data.summary.totalTeams;
+
+        const teams = document.getElementById("profileTeams");
+        teams.replaceChildren();
+
+        if (data.ownerships.length === 0) {
+          teams.innerHTML = "<p>No teams owned yet.</p>";
+          return;
+        }
+
+        data.ownerships.forEach((ownership) => {
+          const card = document.createElement("article");
+          card.className = "portfolio-card";
+
+          const title = document.createElement("div");
+          title.className = "portfolio-card-title";
+          title.appendChild(createTeamOwnerLink(ownership));
+
+          const meta = document.createElement("div");
+          meta.className = "portfolio-meta";
+          meta.innerHTML =
+            "Bought At: " +
+            formatBucks(ownership.purchasePrice) +
+            "<br>Purchased: " +
+            formatOwnershipDate(ownership.purchaseDate);
+
+          card.appendChild(title);
+          card.appendChild(meta);
+          teams.appendChild(card);
+        });
       }
-
-      document.getElementById("username").innerText = user.username;
-
-      document.getElementById("bucksBalance").innerText =
-        user.bucksBalance.toLocaleString();
 
       function logoutUser() {
         localStorage.removeItem("shakarbakar_user");
-
         window.location.href = "login.html";
       }
+
+      loadProfile();
     </script>
   </body>
 </html>

@@ -71,10 +71,17 @@ async function loadFriends() {
       return;
     }
 
+    const ownershipSummaries = await fetchOwnershipSummaries(
+      data.friends.map((friend) => String(friend.friendUserId)),
+    );
+
     data.friends.forEach((friend) => {
       const card = document.createElement("div");
 
       card.className = "friend-card";
+      card.onclick = function () {
+        openProfile(friend.friendUserId);
+      };
 
       card.innerHTML = `
         <div style="font-size:60px;text-align:center;margin-bottom:10px;">
@@ -91,26 +98,35 @@ async function loadFriends() {
 
         <button
           class="btn message-btn"
-          onclick="openPrivateChat('${friend.friendUserId}')"
+          onclick="event.stopPropagation(); openPrivateChat('${friend.friendUserId}')"
         >
           💬 Chat Friend
         </button>
 
         <button
           class="btn duel-btn"
-          onclick="challengeFriend('${friend.friendUserId}')"
+          onclick="event.stopPropagation(); challengeFriend('${friend.friendUserId}')"
         >
           ⚔️ Duel
         </button>
 
         <button
           class="btn remove-btn"
-          onclick="removeFriend('${friend.friendUserId}')"
+          onclick="event.stopPropagation(); removeFriend('${friend.friendUserId}')"
         >
           ❌ Remove
         </button>
       `;
 
+      const ownershipPreview = document.createElement("div");
+      ownershipPreview.className = "ownership-preview";
+
+      renderOwnershipPreview(
+        ownershipPreview,
+        ownershipSummaries[String(friend.friendUserId)],
+      );
+
+      card.insertBefore(ownershipPreview, card.querySelector(".message-btn"));
       grid.appendChild(card);
     });
   } catch (error) {
@@ -145,6 +161,10 @@ CHALLENGE FRIEND
 function challengeFriend(friendId) {
   window.location.href =
     "prediction-duels.html?opponent=" + encodeURIComponent(friendId);
+}
+
+function openProfile(userId) {
+  window.location.href = "profile.html?userId=" + encodeURIComponent(userId);
 }
 
 /*

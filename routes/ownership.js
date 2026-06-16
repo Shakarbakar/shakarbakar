@@ -15,11 +15,39 @@ GET /api/ownership?userId=
 */
 
 const express = require("express");
+const mongoose = require("mongoose");
 const router = express.Router();
 
 const User = require("../models/User");
 const Team = require("../models/Team");
 const Ownership = require("../models/Ownership");
+const Friend = require("../models/Friend");
+
+function formatOwnership(ownership) {
+  return {
+    id: ownership._id,
+    userId: ownership.userId,
+    username: ownership.username,
+    teamId: ownership.teamId,
+    teamName: ownership.teamName,
+    purchasePrice: ownership.purchasePrice,
+    purchaseDate: ownership.purchaseDate,
+    ownershipMessage: "I own " + ownership.teamName,
+  };
+}
+
+function buildPortfolioSummary(ownerships) {
+  return {
+    totalTeams: ownerships.length,
+    totalInvested: ownerships.reduce(
+      (total, ownership) => total + (ownership.purchasePrice || 0),
+      0,
+    ),
+    portfolioValue: null,
+    teamRanking: null,
+    ownershipHistoryReady: true,
+  };
+}
 
 /*
 ==================================================
@@ -235,9 +263,202 @@ router.get("/", async (req, res) => {
 
 /*
 ==================================================
-EXPORT ROUTE
+GET /api/ownership/user/:userId
 ==================================================
 */
+
+router.get("/user/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    if (!mongoose.isValidObjectId(userId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid userId is required",
+      });
+    }
+
+    const user = await User.findById(userId).select(
+      "_id username bucksBalance duelWins createdAt",
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const [ownerships, friendsCount] = await Promise.all([
+      Ownership.find({
+        userId,
+      }).sort({
+        purchaseDate: -1,
+      }),
+      Friend.countDocuments({
+        userId,
+      }),
+    ]);
+
+    const formattedOwnerships = ownerships.map(formatOwnership);
+
+    res.json({
+      success: true,
+      user: {
+        id: user._id,
+        username: user.username,
+        bucksBalance: user.bucksBalance,
+        duelWins: user.duelWins || 0,
+        createdAt: user.createdAt,
+        friendsCount,
+      },
+      ownerships: formattedOwnerships,
+      summary: buildPortfolioSummary(formattedOwnerships),
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+});
+
+/*
+==================================================
+GET /api/ownership/summaries?userIds=
+==================================================
+*/
+
+router.get("/summaries", async (req, res) => {
+  try {
+    const userIds = String(req.query.userIds || "")
+      .split(",")
+      .map((id) => id.trim())
+      .filter(Boolean);
+
+    const validUserIds = userIds.filter((id) => mongoose.isValidObjectId(id));
+
+    if (validUserIds.length === 0) {
+      return res.json({
+        success: true,
+        summaries: {},
+      });
+    }
+
+    const ownerships = await Ownership.find({
+      userId: {
+        $in: validUserIds,
+      },
+    }).sort({
+      purchaseDate: -1,
+    });
+
+    const summaries = {};
+
+    validUserIds.forEach((userId) => {
+      summaries[userId] = {
+        totalTeams: 0,
+        totalInvested: 0,
+        teams: [],
+        previewTeams: [],
+        moreCount: 0,
+        portfolioValue: null,
+      };
+    });
+
+    ownerships.forEach((ownership) => {
+      const userId = String(ownership.userId);
+      const summary = summaries[userId];
+
+      if (!summary) {
+        return;
+      }
+
+      const team = formatOwnership(ownership);
+
+      summary.totalTeams += 1;
+      summary.totalInvested += ownership.purchasePrice || 0;
+      summary.teams.push(team);
+    });
+
+    Object.values(summaries).forEach((summary) => {
+      summary.previewTeams = summary.teams.slice(0, 3);
+      summary.moreCount = Math.max(summary.totalTeams - 3, 0);
+    });
+
+    res.json({
+      success: true,
+      summaries,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+});
+
+/*
+==================================================
+GET /api/ownership/team/:teamId/owners
+==================================================
+*/
+
+router.get("/team/:teamId/owners", async (req, res) => {
+  try {
+    const { teamId } = req.params;
+
+    if (!mongoose.isValidObjectId(teamId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid teamId is required",
+      });
+    }
+
+    const [team, ownerships] = await Promise.all([
+      Team.findById(teamId),
+      Ownership.find({
+        teamId,
+      }).sort({
+        purchaseDate: -1,
+      }),
+    ]);
+
+    if (!team) {
+      return res.status(404).json({
+        success: false,
+        message: "Team not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      team: {
+        id: team._id,
+        name: team.name,
+        flag: team.flag,
+        currentPrice: team.price,
+      },
+      owners: ownerships.map(formatOwnership),
+      futureReady: {
+        richestCollectors: null,
+        mostTeamsOwned: null,
+        ownershipHistory: [],
+      },
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+});
 
 /*
 ==================================================

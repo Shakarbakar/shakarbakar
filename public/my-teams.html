@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>My Teams - ShakarBakar</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/flags.css" />
+    <link rel="stylesheet" href="css/ownership.css" />
+
+    <style>
+      body {
+        margin: 0;
+        background-image: url("images/arena-background.jpg");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      .page {
+        max-width: 1200px;
+        margin: auto;
+        padding: 40px 20px;
+      }
+
+      .title {
+        text-align: center;
+        color: #fbbf24;
+        font-size: 52px;
+      }
+
+      .summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+
+      .summary-card {
+        padding: 22px;
+        border-radius: 18px;
+        background: rgba(15, 23, 42, 0.82);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        text-align: center;
+      }
+
+      .summary-number {
+        color: #fbbf24;
+        font-size: 34px;
+        font-weight: bold;
+      }
+
+      .home-link {
+        text-align: center;
+        margin-top: 30px;
+      }
+
+      .home-link a {
+        color: #93c5fd;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="page">
+      <h1 class="title">🏆 My Teams</h1>
+
+      <section class="summary">
+        <div class="summary-card">
+          <div class="summary-number" id="totalTeams">0</div>
+          <div>Total Teams Owned</div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-number" id="totalInvested">0 Bucks</div>
+          <div>Total Invested</div>
+        </div>
+      </section>
+
+      <section id="teamsGrid" class="portfolio-grid"></section>
+
+      <div class="home-link">
+        <a href="marketplace.html">← Back to Marketplace</a>
+      </div>
+
+      <div class="home-link">
+        <a href="index.html">← Back to Home</a>
+      </div>
+    </main>
+
+    <script src="js/flags.js"></script>
+    <script src="js/ownership-visibility.js"></script>
+    <script>
+      async function loadMyTeams() {
+        const user = JSON.parse(localStorage.getItem("shakarbakar_user"));
+        const grid = document.getElementById("teamsGrid");
+
+        if (!user || !user.id) {
+          window.location.href = "login.html";
+          return;
+        }
+
+        const response = await fetch("/api/ownership/user/" + user.id);
+        const data = await response.json();
+
+        if (!data.success) {
+          grid.innerHTML = "<h2>Unable to load your teams.</h2>";
+          return;
+        }
+
+        document.getElementById("totalTeams").textContent =
+          data.summary.totalTeams;
+        document.getElementById("totalInvested").textContent = formatBucks(
+          data.summary.totalInvested,
+        );
+
+        grid.replaceChildren();
+
+        if (data.ownerships.length === 0) {
+          grid.innerHTML = "<h2>You do not own any teams yet.</h2>";
+          return;
+        }
+
+        data.ownerships.forEach((ownership) => {
+          const card = document.createElement("article");
+          card.className = "portfolio-card";
+
+          const title = document.createElement("div");
+          title.className = "portfolio-card-title";
+          title.appendChild(createTeamOwnerLink(ownership));
+
+          const meta = document.createElement("div");
+          meta.className = "portfolio-meta";
+          meta.innerHTML =
+            "Bought At: " +
+            formatBucks(ownership.purchasePrice) +
+            "<br>Purchased: " +
+            formatOwnershipDate(ownership.purchaseDate);
+
+          card.appendChild(title);
+          card.appendChild(meta);
+          grid.appendChild(card);
+        });
+      }
+
+      loadMyTeams();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,80 @@
+/*
+==================================================
+OWNERSHIP VISIBILITY
+==================================================
+*/
+
+.ownership-preview {
+  margin: 15px 0;
+  padding: 12px;
+  border: 1px solid rgba(251, 191, 36, 0.18);
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.58);
+  text-align: left;
+}
+
+.ownership-preview-title {
+  margin-bottom: 8px;
+  color: #fbbf24;
+  font-weight: bold;
+}
+
+.ownership-preview-list {
+  display: grid;
+  gap: 7px;
+}
+
+.ownership-team-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  text-decoration: none;
+}
+
+.ownership-team-link:hover {
+  color: #fbbf24;
+}
+
+.ownership-more,
+.ownership-empty,
+.ownership-portfolio {
+  color: #cbd5e1;
+  font-size: 14px;
+}
+
+.ownership-portfolio {
+  margin-top: 10px;
+  color: #86efac;
+  font-weight: bold;
+}
+
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.portfolio-card {
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(8px);
+}
+
+.portfolio-card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fbbf24;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.portfolio-meta {
+  margin-top: 12px;
+  color: #cbd5e1;
+  line-height: 1.7;
+  white-space: pre-line;
+}

@@ -26,20 +26,22 @@ async function loadPlayers() {
 
     const loggedUser = JSON.parse(localStorage.getItem("shakarbakar_user"));
 
-    data.users.forEach((user) => {
-      /*
-      ==========================================
-      DO NOT SHOW CURRENT USER
-      ==========================================
-      */
+    const visibleUsers = data.users.filter((user) => {
+      return !(loggedUser && user._id === loggedUser.id);
+    });
 
-      if (loggedUser && user._id === loggedUser.id) {
-        return;
-      }
+    const ownershipSummaries = await fetchOwnershipSummaries(
+      visibleUsers.map((user) => String(user._id)),
+    );
+
+    visibleUsers.forEach((user) => {
 
       const card = document.createElement("div");
 
       card.className = "player-card";
+      card.onclick = function () {
+        openProfile(user._id);
+      };
 
       card.innerHTML =
         '<div class="player-name">' +
@@ -63,6 +65,22 @@ async function loadPlayers() {
         "')\">" +
         "Challenge To Duel" +
         "</button>";
+
+      card.querySelectorAll("button").forEach((button) => {
+        button.addEventListener("click", (event) => {
+          event.stopPropagation();
+        });
+      });
+
+      const ownershipPreview = document.createElement("div");
+      ownershipPreview.className = "ownership-preview";
+
+      renderOwnershipPreview(
+        ownershipPreview,
+        ownershipSummaries[String(user._id)],
+      );
+
+      card.insertBefore(ownershipPreview, card.querySelector(".friend-btn"));
 
       grid.appendChild(card);
     });
@@ -127,6 +145,10 @@ CHALLENGE PLAYER
 
 function challengePlayer(userId) {
   window.location.href = "prediction-duels.html?opponentId=" + userId;
+}
+
+function openProfile(userId) {
+  window.location.href = "profile.html?userId=" + encodeURIComponent(userId);
 }
 
 /*
