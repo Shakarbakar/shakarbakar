@@ -67,7 +67,7 @@ Uses shared CSS (style.css) and shared JS (app.js).
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 20px;
+        padding: 14px;
         overflow-y: auto;
         background-image:
           radial-gradient(
@@ -92,10 +92,12 @@ Uses shared CSS (style.css) and shared JS (app.js).
       .login-updates-panel {
         position: relative;
         isolation: isolate;
-        width: min(760px, 100%);
-        max-height: calc(100vh - 40px);
-        overflow-y: auto;
-        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        width: min(700px, 100%);
+        max-height: calc(100vh - 28px);
+        overflow: hidden;
+        padding: 22px 24px;
         border: 1px solid rgba(96, 165, 250, 0.48);
         border-top-color: rgba(251, 191, 36, 0.7);
         border-radius: 24px;
@@ -136,34 +138,36 @@ Uses shared CSS (style.css) and shared JS (app.js).
         display: flex;
         align-items: flex-start;
         justify-content: space-between;
-        gap: 20px;
+        flex: 0 0 auto;
+        gap: 14px;
       }
 
       .login-updates-title {
-        margin: 10px 0 8px;
+        margin: 7px 0 5px;
         color: #fcd34d;
         text-align: left;
-        font-size: clamp(28px, 5vw, 38px);
+        font-size: clamp(24px, 4vw, 32px);
         letter-spacing: -0.02em;
         text-shadow: 0 0 24px rgba(251, 191, 36, 0.22);
       }
 
       .login-updates-subtitle {
-        margin: 0 0 22px;
+        margin: 0 0 13px;
         color: #bfdbfe;
         text-align: left;
+        font-size: 14px;
       }
 
       .login-updates-live-badge {
         display: inline-flex;
         align-items: center;
         gap: 7px;
-        padding: 6px 11px;
+        padding: 5px 9px;
         border: 1px solid rgba(251, 191, 36, 0.46);
         border-radius: 999px;
         background: rgba(15, 23, 42, 0.62);
         color: #fde68a;
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 800;
         letter-spacing: 0.12em;
         box-shadow: 0 0 18px rgba(251, 191, 36, 0.1);
@@ -181,15 +185,23 @@ Uses shared CSS (style.css) and shared JS (app.js).
 
       .login-updates-close-icon {
         flex: 0 0 auto;
-        width: 40px;
-        height: 40px;
+        width: 34px;
+        height: 34px;
         padding: 0;
         border: 1px solid rgba(147, 197, 253, 0.24);
         border-radius: 50%;
         background: rgba(15, 23, 42, 0.42);
         color: #dbeafe;
-        font-size: 28px;
+        font-size: 24px;
         line-height: 1;
+      }
+
+      #loginUpdatesList {
+        flex: 1 1 auto;
+        min-height: 0;
+        max-height: clamp(250px, 42vh, 390px);
+        overflow-y: auto;
+        padding-right: 4px;
       }
 
       .login-updates-close-icon:hover {
@@ -200,11 +212,11 @@ Uses shared CSS (style.css) and shared JS (app.js).
 
       .login-update-card {
         position: relative;
-        padding: 18px 20px 18px 23px;
-        margin-bottom: 13px;
+        padding: 12px 15px 12px 18px;
+        margin-bottom: 9px;
         overflow: hidden;
         border: 1px solid rgba(96, 165, 250, 0.22);
-        border-radius: 16px;
+        border-radius: 14px;
         background: linear-gradient(
           100deg,
           rgba(30, 64, 175, 0.25),
@@ -241,20 +253,20 @@ Uses shared CSS (style.css) and shared JS (app.js).
 
       .login-update-title {
         color: #f8fafc;
-        font-size: 20px;
+        font-size: 17px;
         font-weight: bold;
-        line-height: 1.35;
+        line-height: 1.25;
       }
 
       .login-update-category {
         display: inline-flex;
-        margin: 8px 0 11px;
-        padding: 4px 9px;
+        margin: 6px 0 7px;
+        padding: 3px 8px;
         border: 1px solid rgba(96, 165, 250, 0.3);
         border-radius: 999px;
         background: rgba(30, 64, 175, 0.3);
         color: #bfdbfe;
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 800;
         letter-spacing: 0.08em;
         text-transform: uppercase;
@@ -262,25 +274,32 @@ Uses shared CSS (style.css) and shared JS (app.js).
 
       .login-update-content {
         color: #e2e8f0;
-        line-height: 1.55;
+        display: -webkit-box;
+        overflow: hidden;
+        font-size: 14px;
+        line-height: 1.4;
         white-space: pre-wrap;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
       }
 
       .login-update-date {
-        margin-top: 12px;
+        margin-top: 8px;
         color: #93c5fd;
-        font-size: 13px;
+        font-size: 12px;
       }
 
       .login-updates-footer {
-        margin-top: 22px;
-        padding-top: 18px;
+        flex: 0 0 auto;
+        margin-top: 13px;
+        padding-top: 12px;
         border-top: 1px solid rgba(147, 197, 253, 0.2);
       }
 
       .login-updates-footer p {
-        margin: 0 0 8px;
+        margin: 0 0 6px;
         color: #cbd5e1;
+        font-size: 14px;
       }
 
       .login-updates-link {
@@ -298,14 +317,16 @@ Uses shared CSS (style.css) and shared JS (app.js).
       .login-updates-actions {
         display: flex;
         justify-content: center;
-        gap: 12px;
-        margin-top: 22px;
+        gap: 10px;
+        margin-top: 14px;
       }
 
       .login-updates-actions button {
-        min-width: 165px;
+        min-width: 150px;
+        padding: 11px 14px;
         border: 1px solid rgba(255, 255, 255, 0.08);
         box-shadow: 0 8px 22px rgba(2, 6, 23, 0.28);
+        font-size: 15px;
       }
 
       .login-updates-actions button:not(.login-updates-secondary) {
@@ -362,12 +383,12 @@ Uses shared CSS (style.css) and shared JS (app.js).
       @media (max-width: 600px) {
         .login-updates-overlay {
           align-items: flex-start;
-          padding: 12px;
+          padding: 10px;
         }
 
         .login-updates-panel {
-          max-height: calc(100vh - 24px);
-          padding: 20px 16px;
+          max-height: calc(100dvh - 20px);
+          padding: 16px 14px;
           border-radius: 18px;
         }
 
@@ -376,11 +397,24 @@ Uses shared CSS (style.css) and shared JS (app.js).
         }
 
         .login-updates-title {
-          font-size: 27px;
+          font-size: 24px;
+        }
+
+        #loginUpdatesList {
+          max-height: 44dvh;
         }
 
         .login-update-card {
-          padding: 16px 15px 16px 19px;
+          padding: 11px 12px 11px 16px;
+        }
+
+        .login-update-content {
+          -webkit-line-clamp: 3;
+        }
+
+        .login-updates-footer {
+          margin-top: 10px;
+          padding-top: 10px;
         }
 
         .login-updates-actions {
