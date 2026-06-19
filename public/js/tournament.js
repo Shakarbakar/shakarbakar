@@ -3,121 +3,14 @@
 SHAKARBAKAR TOURNAMENT HUB
 ==================================================
 
-Phase 4 frontend-only placeholder data.
-No backend calls, no scoring, and no rewards yet.
+Reads Tournament Manager data from localStorage and
+saves user predictions locally for stats/leaderboards.
 
 ==================================================
 */
 
-const tournamentState = {
-  upcomingMatches: [
-    {
-      id: "match-slot-1",
-      label: "Match Slot 1",
-      teamA: "Team A",
-      teamB: "Team B",
-      date: "Date Placeholder",
-      time: "Time Placeholder",
-      venue: "Stadium Placeholder",
-    },
-    {
-      id: "match-slot-2",
-      label: "Match Slot 2",
-      teamA: "Team A",
-      teamB: "Team B",
-      date: "Date Placeholder",
-      time: "Time Placeholder",
-      venue: "Stadium Placeholder",
-    },
-    {
-      id: "match-slot-3",
-      label: "Match Slot 3",
-      teamA: "Team A",
-      teamB: "Team B",
-      date: "Date Placeholder",
-      time: "Time Placeholder",
-      venue: "Stadium Placeholder",
-    },
-  ],
-  results: [
-    {
-      id: "result-slot-1",
-      label: "Result Slot 1",
-      teamA: "Team Placeholder",
-      teamB: "Team Placeholder",
-      score: "Score Placeholder",
-      date: "Match Date Placeholder",
-    },
-    {
-      id: "result-slot-2",
-      label: "Result Slot 2",
-      teamA: "Team Placeholder",
-      teamB: "Team Placeholder",
-      score: "Score Placeholder",
-      date: "Match Date Placeholder",
-    },
-    {
-      id: "result-slot-3",
-      label: "Result Slot 3",
-      teamA: "Team Placeholder",
-      teamB: "Team Placeholder",
-      score: "Score Placeholder",
-      date: "Match Date Placeholder",
-    },
-  ],
-  qualifiedTeams: [
-    "Team Placeholder 1",
-    "Team Placeholder 2",
-    "Team Placeholder 3",
-    "Team Placeholder 4",
-    "Team Placeholder 5",
-    "Team Placeholder 6",
-    "Team Placeholder 7",
-    "Team Placeholder 8",
-  ],
-  quarterFinals: [
-    {
-      label: "Quarter Final 1",
-      teamA: "Winner R16-1",
-      teamB: "Winner R16-2",
-    },
-    {
-      label: "Quarter Final 2",
-      teamA: "Winner R16-3",
-      teamB: "Winner R16-4",
-    },
-    {
-      label: "Quarter Final 3",
-      teamA: "Winner R16-5",
-      teamB: "Winner R16-6",
-    },
-    {
-      label: "Quarter Final 4",
-      teamA: "Winner R16-7",
-      teamB: "Winner R16-8",
-    },
-  ],
-  semiFinals: [
-    {
-      label: "Semi Final 1",
-      teamA: "Winner QF1",
-      teamB: "Winner QF2",
-    },
-    {
-      label: "Semi Final 2",
-      teamA: "Winner QF3",
-      teamB: "Winner QF4",
-    },
-  ],
-  final: [
-    {
-      label: "Final",
-      teamA: "Winner SF1",
-      teamB: "Winner SF2",
-    },
-  ],
-  predictionDrafts: [],
-};
+const tournamentStorage = window.ShakarBakarTournament;
+let tournamentState = tournamentStorage.getTournamentData();
 
 function createElement(tagName, className, textContent) {
   const element = document.createElement(tagName);
@@ -145,9 +38,21 @@ function createTeamInline(teamName) {
   const wrapper = createElement("span", "team-inline");
 
   wrapper.appendChild(createPlaceholderFlag());
-  wrapper.appendChild(document.createTextNode(teamName));
+  wrapper.appendChild(document.createTextNode(teamName || "TBD"));
 
   return wrapper;
+}
+
+function clearContainer(id) {
+  const container = document.getElementById(id);
+
+  container.textContent = "";
+
+  return container;
+}
+
+function renderEmpty(container, message) {
+  container.appendChild(createElement("p", "section-note", message));
 }
 
 function renderCounts() {
@@ -160,13 +65,20 @@ function renderCounts() {
 }
 
 function renderUpcomingMatches() {
-  const container = document.getElementById("upcomingMatches");
+  const container = clearContainer("upcomingMatches");
 
-  container.textContent = "";
+  if (!tournamentState.upcomingMatches.length) {
+    renderEmpty(container, "No upcoming matches available.");
+    return;
+  }
 
   tournamentState.upcomingMatches.forEach((match) => {
     const card = createElement("article", "match-card");
-    const label = createElement("div", "slot-label", match.label);
+    const label = createElement(
+      "div",
+      "slot-label",
+      tournamentStorage.getMatchLabel(match),
+    );
     const matchup = createElement("div", "matchup");
     const meta = createElement("div", "match-meta");
 
@@ -174,9 +86,9 @@ function renderUpcomingMatches() {
     matchup.appendChild(createElement("span", "versus", "VS"));
     matchup.appendChild(createTeamInline(match.teamB));
 
-    meta.appendChild(createElement("span", "", match.date));
-    meta.appendChild(createElement("span", "", match.time));
-    meta.appendChild(createElement("span", "", match.venue));
+    meta.appendChild(createElement("span", "", match.date || "Date TBD"));
+    meta.appendChild(createElement("span", "", match.time || "Time TBD"));
+    meta.appendChild(createElement("span", "", match.stadium || "Stadium TBD"));
 
     card.appendChild(label);
     card.appendChild(matchup);
@@ -186,20 +98,29 @@ function renderUpcomingMatches() {
 }
 
 function renderMatchResults() {
-  const container = document.getElementById("matchResults");
+  const container = clearContainer("matchResults");
 
-  container.textContent = "";
+  if (!tournamentState.results.length) {
+    renderEmpty(container, "No results available.");
+    return;
+  }
 
   tournamentState.results.forEach((result) => {
     const card = createElement("article", "result-card");
-    const label = createElement("div", "result-label", result.label);
+    const label = createElement("div", "result-label", result.label || "Result");
     const line = createElement("div", "result-line");
     const meta = createElement("div", "result-meta");
+    const hasScore =
+      Number.isFinite(Number(result.scoreA)) &&
+      Number.isFinite(Number(result.scoreB));
+    const scoreText = hasScore
+      ? `${result.scoreA} - ${result.scoreB}`
+      : "Score Pending";
 
     line.appendChild(createTeamInline(result.teamA));
-    line.appendChild(createElement("span", "score-placeholder", result.score));
+    line.appendChild(createElement("span", "score-placeholder", scoreText));
     line.appendChild(createTeamInline(result.teamB));
-    meta.appendChild(createElement("span", "", result.date));
+    meta.appendChild(createElement("span", "", result.date || "Match Date TBD"));
 
     card.appendChild(label);
     card.appendChild(line);
@@ -209,9 +130,12 @@ function renderMatchResults() {
 }
 
 function renderQualifiedTeams() {
-  const container = document.getElementById("qualifiedTeams");
+  const container = clearContainer("qualifiedTeams");
 
-  container.textContent = "";
+  if (!tournamentState.qualifiedTeams.length) {
+    renderEmpty(container, "No qualified teams yet.");
+    return;
+  }
 
   tournamentState.qualifiedTeams.forEach((teamName) => {
     const tile = createElement("div", "team-tile");
@@ -223,21 +147,24 @@ function renderQualifiedTeams() {
 }
 
 function renderBracket(containerId, matches, isFinal = false) {
-  const container = document.getElementById(containerId);
+  const container = clearContainer(containerId);
 
-  container.textContent = "";
+  if (!matches.length) {
+    renderEmpty(container, "TBD");
+    return;
+  }
 
   matches.forEach((match) => {
     const card = createElement(
       "article",
       isFinal ? "bracket-card final-card" : "bracket-card",
     );
-    const label = createElement("div", "bracket-label", match.label);
+    const label = createElement("div", "bracket-label", match.label || "TBD");
     const matchup = createElement("div", "bracket-matchup");
 
-    matchup.appendChild(createElement("span", "", match.teamA));
+    matchup.appendChild(createElement("span", "", match.teamA || "TBD"));
     matchup.appendChild(createElement("span", "versus", "VS"));
-    matchup.appendChild(createElement("span", "", match.teamB));
+    matchup.appendChild(createElement("span", "", match.teamB || "TBD"));
 
     card.appendChild(label);
     card.appendChild(matchup);
@@ -263,9 +190,9 @@ function createScoreSelect(matchId, teamName) {
   const field = createElement("div", "score-field");
   const label = document.createElement("label");
   const select = document.createElement("select");
-  const safeName = teamName.toLowerCase().replace(/\s+/g, "-");
+  const safeName = (teamName || "team").toLowerCase().replace(/\s+/g, "-");
 
-  label.textContent = `${teamName} Score`;
+  label.textContent = `${teamName || "Team"} Score`;
   label.htmlFor = `${matchId}-${safeName}-score`;
   select.id = label.htmlFor;
 
@@ -282,26 +209,31 @@ function createScoreSelect(matchId, teamName) {
   return field;
 }
 
-function savePredictionDraft(payload, statusElement) {
-  tournamentState.predictionDrafts.push({
-    ...payload,
-    submittedAt: new Date().toISOString(),
-  });
+function savePrediction(payload, statusElement) {
+  const saved = tournamentStorage.savePrediction(payload);
 
-  statusElement.textContent = "Prediction saved locally for future backend.";
+  statusElement.textContent =
+    `Prediction saved for ${saved.username} at ` +
+    new Date(saved.timestamp).toLocaleString();
 }
 
 function renderPredictionForms() {
-  const container = document.getElementById("predictionForms");
+  const container = clearContainer("predictionForms");
 
-  container.textContent = "";
+  if (!tournamentState.upcomingMatches.length) {
+    renderEmpty(container, "No active matches available for predictions.");
+    return;
+  }
 
   tournamentState.upcomingMatches.forEach((match) => {
     const panel = createElement("section", "prediction-match");
-    const title = createElement("h3", "prediction-match-title", "Upcoming Match");
+    const title = createElement(
+      "h3",
+      "prediction-match-title",
+      tournamentStorage.getMatchLabel(match),
+    );
     const layout = createElement("div", "prediction-layout");
 
-    layout.appendChild(createWinnerPredictionCard(match));
     layout.appendChild(createTeamPredictionCard(match));
     layout.appendChild(createScorePredictionCard(match));
 
@@ -311,16 +243,16 @@ function renderPredictionForms() {
   });
 }
 
-function createWinnerPredictionCard(match) {
+function createTeamPredictionCard(match) {
   const card = createElement("article", "prediction-card");
   const status = createElement("div", "prediction-status");
-  const groupName = `${match.id}-winner`;
+  const groupName = `${match.id}-team`;
   const options = createElement("div", "radio-list");
   const button = createElement("button", "prediction-button", "Submit Prediction");
 
-  card.appendChild(createElement("h3", "", "Who Will Win?"));
+  card.appendChild(createElement("h3", "", "Team Prediction"));
   card.appendChild(
-    createElement("p", "prediction-question", "Choose one placeholder result."),
+    createElement("p", "prediction-question", "Who will win?"),
   );
 
   options.appendChild(createRadioOption(groupName, match.teamA, match.teamA));
@@ -337,53 +269,16 @@ function createWinnerPredictionCard(match) {
       return;
     }
 
-    savePredictionDraft(
+    savePrediction(
       {
         matchId: match.id,
-        type: "winner",
-        selection: selected.value,
-      },
-      status,
-    );
-  });
-
-  card.appendChild(options);
-  card.appendChild(button);
-  card.appendChild(status);
-
-  return card;
-}
-
-function createTeamPredictionCard(match) {
-  const card = createElement("article", "prediction-card");
-  const status = createElement("div", "prediction-status");
-  const groupName = `${match.id}-team`;
-  const options = createElement("div", "radio-list");
-  const button = createElement("button", "prediction-button", "Submit Prediction");
-
-  card.appendChild(createElement("h3", "", "Choose Your Team"));
-  card.appendChild(
-    createElement("p", "prediction-question", "One selection only."),
-  );
-
-  options.appendChild(createRadioOption(groupName, match.teamA, match.teamA));
-  options.appendChild(createRadioOption(groupName, match.teamB, match.teamB));
-
-  button.addEventListener("click", () => {
-    const selected = document.querySelector(
-      `input[name="${groupName}"]:checked`,
-    );
-
-    if (!selected) {
-      status.textContent = "Choose your placeholder team first.";
-      return;
-    }
-
-    savePredictionDraft(
-      {
-        matchId: match.id,
+        match: tournamentStorage.getMatchLabel(match),
+        teamA: match.teamA,
+        teamB: match.teamB,
         type: "team",
-        selection: selected.value,
+        prediction: {
+          selection: selected.value,
+        },
       },
       status,
     );
@@ -413,12 +308,17 @@ function createScorePredictionCard(match) {
   scoreGrid.appendChild(teamBField);
 
   button.addEventListener("click", () => {
-    savePredictionDraft(
+    savePrediction(
       {
         matchId: match.id,
+        match: tournamentStorage.getMatchLabel(match),
+        teamA: match.teamA,
+        teamB: match.teamB,
         type: "score",
-        teamAScore: Number(teamAField.querySelector("select").value),
-        teamBScore: Number(teamBField.querySelector("select").value),
+        prediction: {
+          scoreA: Number(teamAField.querySelector("select").value),
+          scoreB: Number(teamBField.querySelector("select").value),
+        },
       },
       status,
     );
@@ -431,15 +331,23 @@ function createScorePredictionCard(match) {
   return card;
 }
 
-function initializeTournamentPage() {
+function renderTournamentPage() {
+  tournamentState = tournamentStorage.getTournamentData();
   renderCounts();
   renderUpcomingMatches();
   renderMatchResults();
   renderQualifiedTeams();
+  renderBracket("round16", tournamentState.round16);
   renderBracket("quarterFinals", tournamentState.quarterFinals);
   renderBracket("semiFinals", tournamentState.semiFinals);
   renderBracket("finalMatch", tournamentState.final, true);
   renderPredictionForms();
+}
+
+function initializeTournamentPage() {
+  renderTournamentPage();
+  window.addEventListener("storage", renderTournamentPage);
+  window.addEventListener("shakarbakar:tournament-updated", renderTournamentPage);
 }
 
 document.addEventListener("DOMContentLoaded", initializeTournamentPage);

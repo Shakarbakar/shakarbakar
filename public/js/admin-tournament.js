@@ -18,6 +18,7 @@ const bracketLabels = {
 const bracketSections = ["round16", "quarterFinals", "semiFinals", "final"];
 
 let tournamentData = { ...emptyTournamentData };
+const tournamentStorage = window.ShakarBakarTournament;
 
 function createId(prefix) {
   if (window.crypto && typeof window.crypto.randomUUID === "function") {
@@ -52,45 +53,17 @@ function normalizeClientData(data = {}) {
   };
 }
 
-async function loadTournamentData() {
-  try {
-    const response = await fetch("/api/admin/tournament");
-    const data = await response.json();
-
-    if (!data.success) {
-      throw new Error(data.message || "Unable to load tournament data");
-    }
-
-    tournamentData = normalizeClientData(data.tournament);
-    renderAll();
-  } catch (error) {
-    console.error(error);
-    setStatus("Could not load tournament data.", true);
-  }
+function loadTournamentData() {
+  tournamentData = normalizeClientData(tournamentStorage.getTournamentData());
+  renderAll();
 }
 
-async function saveTournamentData(successMessage) {
-  try {
-    const response = await fetch("/api/admin/tournament", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(tournamentData),
-    });
-    const data = await response.json();
-
-    if (!data.success) {
-      throw new Error(data.message || "Unable to save tournament data");
-    }
-
-    tournamentData = normalizeClientData(data.tournament);
-    renderAll();
-    setStatus(successMessage || "Tournament data saved.");
-  } catch (error) {
-    console.error(error);
-    setStatus("Could not save tournament data.", true);
-  }
+function saveTournamentData(successMessage) {
+  tournamentData = normalizeClientData(
+    tournamentStorage.saveTournamentData(tournamentData),
+  );
+  renderAll();
+  setStatus(successMessage || "Tournament data saved.");
 }
 
 function createElement(tagName, className, textContent) {
@@ -482,6 +455,95 @@ function renderAll() {
   renderResults();
   renderQualifiedTeams();
   bracketSections.forEach(renderBracketSection);
+  renderPredictionDashboard();
+}
+
+function renderMetric(id, value) {
+  const element = document.getElementById(id);
+
+  if (element) {
+    element.textContent = value;
+  }
+}
+
+function renderDashboardList(containerId, items, emptyMessage) {
+  const container = document.getElementById(containerId);
+
+  if (!container) {
+    return;
+  }
+
+  container.textContent = "";
+
+  if (!items.length) {
+    renderEmpty(container, emptyMessage);
+    return;
+  }
+
+  items.forEach((item) => {
+    container.appendChild(item);
+  });
+}
+
+function renderPredictionDashboard() {
+  const breakdown = tournamentStorage.getPredictionBreakdown();
+  const leaderboard = tournamentStorage.getLeaderboard();
+  const announcements = tournamentStorage.getTournamentAnnouncements();
+
+  renderMetric("totalPredictions", breakdown.total);
+  renderMetric("teamPredictionCount", breakdown.teamPredictions);
+  renderMetric("scorePredictionCount", breakdown.scorePredictions);
+  renderMetric("perfectPredictionCount", breakdown.perfectPrediction);
+
+  renderDashboardList(
+    "predictionBreakdownList",
+    [
+      createDashboardItem("Pending", `${breakdown.pending} predictions`),
+      createDashboardItem(
+        "Correct Winner",
+        `${breakdown.correctWinner} predictions`,
+      ),
+      createDashboardItem(
+        "Perfect Prediction",
+        `${breakdown.perfectPrediction} predictions`,
+      ),
+      createDashboardItem("Incorrect", `${breakdown.incorrect} predictions`),
+    ],
+    "No prediction breakdown yet.",
+  );
+
+  renderDashboardList(
+    "topPredictorsList",
+    leaderboard.slice(0, 5).map((entry) =>
+      createDashboardItem(
+        `#${entry.rank} ${entry.username}`,
+        `${entry.points} points`,
+      ),
+    ),
+    "No predictors yet.",
+  );
+
+  renderDashboardList(
+    "tournamentAnnouncementsList",
+    announcements.slice(0, 5).map((announcement) =>
+      createDashboardItem(
+        announcement.text,
+        new Date(announcement.timestamp).toLocaleString(),
+      ),
+    ),
+    "No tournament announcements yet.",
+  );
+}
+
+function createDashboardItem(title, meta) {
+  const item = createElement("article", "manager-item");
+  const content = createElement("div");
+
+  content.appendChild(createElement("div", "item-title", title));
+  content.appendChild(createElement("div", "item-meta", meta));
+  item.appendChild(content);
+
+  return item;
 }
 
 function initializeBracketManagers() {
@@ -514,6 +576,10 @@ function initializeTournamentManager() {
     .addEventListener("submit", handleQualifiedSubmit);
 
   loadTournamentData();
+
+  window.addEventListener("storage", loadTournamentData);
+  window.addEventListener("shakarbakar:predictions-updated", renderAll);
+  window.addEventListener("shakarbakar:tournament-announcements-updated", renderAll);
 }
 
 document.addEventListener("DOMContentLoaded", initializeTournamentManager);

@@ -510,6 +510,8 @@
         <a href="marketplace.html">Marketplace</a>
         <a href="arena.html">Arena</a>
         <a class="active" href="tournament.html">Tournament</a>
+        <a href="my-predictions.html">My Predictions</a>
+        <a href="leaderboard.html">Leaderboard</a>
         <a href="arena-announcements.html">Announcements</a>
       </div>
     </nav>
@@ -585,6 +587,18 @@
         <div id="qualifiedTeams" class="qualified-grid"></div>
       </section>
 
+      <section class="section-panel" aria-labelledby="round16Title">
+        <div class="section-header">
+          <div>
+            <h2 id="round16Title" class="section-title">Round of 16</h2>
+            <p class="section-note">
+              Admin-managed knockout matchups from Tournament Manager.
+            </p>
+          </div>
+        </div>
+        <div id="round16" class="bracket-grid"></div>
+      </section>
+
       <section class="section-panel" aria-labelledby="quarterFinalsTitle">
         <div class="section-header">
           <div>
@@ -631,8 +645,8 @@
               Fan Predictions
             </h2>
             <p class="section-note">
-              Frontend-only prediction drafts. No rewards, scoring, or backend
-              submission yet.
+              Predictions are saved locally for scoring, statistics, and the
+              leaderboard.
             </p>
           </div>
           <div class="section-chip">NO REWARDS YET</div>
@@ -644,9 +658,14 @@
     <footer class="tournament-footer">
       <a href="arena.html">Back to Arena</a>
       <span> | </span>
+      <a href="predictions.html">Prediction Stats</a>
+      <span> | </span>
+      <a href="leaderboard.html">Leaderboard</a>
+      <span> | </span>
       <a href="index.html">Back to Home</a>
     </footer>
 
+    <script src="js/tournament-storage.js"></script>
     <script src="js/tournament.js"></script>
   </body>
 </html>
