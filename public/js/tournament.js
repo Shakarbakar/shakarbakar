@@ -111,6 +111,8 @@ function renderMatchResults() {
     const line = createElement("div", "result-line");
     const meta = createElement("div", "result-meta");
     const hasScore =
+      result.scoreA !== "" &&
+      result.scoreB !== "" &&
       Number.isFinite(Number(result.scoreA)) &&
       Number.isFinite(Number(result.scoreB));
     const scoreText = hasScore
@@ -212,6 +214,11 @@ function createScoreSelect(matchId, teamName) {
 function savePrediction(payload, statusElement) {
   const saved = tournamentStorage.savePrediction(payload);
 
+  if (!saved) {
+    statusElement.textContent = "Prediction was not saved because this match is not valid.";
+    return;
+  }
+
   statusElement.textContent =
     `Prediction saved for ${saved.username} at ` +
     new Date(saved.timestamp).toLocaleString();
@@ -265,7 +272,7 @@ function createTeamPredictionCard(match) {
     );
 
     if (!selected) {
-      status.textContent = "Choose Team A, Draw, or Team B first.";
+      status.textContent = "Choose a match outcome first.";
       return;
     }
 

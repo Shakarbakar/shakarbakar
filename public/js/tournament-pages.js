@@ -117,7 +117,7 @@ function renderLeaderboard() {
         `Points: ${entry.points}`,
       ]),
     ),
-    "No leaderboard points yet.",
+    "No scored predictions yet.",
   );
 }
 

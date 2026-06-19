@@ -5,93 +5,13 @@
   const USER_KEY = "shakarbakar_user";
 
   const defaultTournamentData = {
-    upcomingMatches: [
-      {
-        id: "match-slot-1",
-        label: "Match Slot 1",
-        teamA: "Team A",
-        teamB: "Team B",
-        date: "Date Placeholder",
-        time: "Time Placeholder",
-        stadium: "Stadium Placeholder",
-      },
-      {
-        id: "match-slot-2",
-        label: "Match Slot 2",
-        teamA: "Team A",
-        teamB: "Team B",
-        date: "Date Placeholder",
-        time: "Time Placeholder",
-        stadium: "Stadium Placeholder",
-      },
-      {
-        id: "match-slot-3",
-        label: "Match Slot 3",
-        teamA: "Team A",
-        teamB: "Team B",
-        date: "Date Placeholder",
-        time: "Time Placeholder",
-        stadium: "Stadium Placeholder",
-      },
-    ],
-    results: [
-      {
-        id: "result-slot-1",
-        label: "Result Slot 1",
-        teamA: "Team Placeholder",
-        teamB: "Team Placeholder",
-        scoreA: "",
-        scoreB: "",
-        date: "Match Date Placeholder",
-      },
-    ],
-    qualifiedTeams: [
-      "Team Placeholder 1",
-      "Team Placeholder 2",
-      "Team Placeholder 3",
-      "Team Placeholder 4",
-      "Team Placeholder 5",
-      "Team Placeholder 6",
-      "Team Placeholder 7",
-      "Team Placeholder 8",
-    ],
+    upcomingMatches: [],
+    results: [],
+    qualifiedTeams: [],
     round16: [],
-    quarterFinals: [
-      {
-        id: "qf-1",
-        label: "Quarter Final 1",
-        teamA: "Winner R16-1",
-        teamB: "Winner R16-2",
-      },
-      {
-        id: "qf-2",
-        label: "Quarter Final 2",
-        teamA: "Winner R16-3",
-        teamB: "Winner R16-4",
-      },
-    ],
-    semiFinals: [
-      {
-        id: "sf-1",
-        label: "Semi Final 1",
-        teamA: "Winner QF1",
-        teamB: "Winner QF2",
-      },
-      {
-        id: "sf-2",
-        label: "Semi Final 2",
-        teamA: "Winner QF3",
-        teamB: "Winner QF4",
-      },
-    ],
-    final: [
-      {
-        id: "final-1",
-        label: "Final",
-        teamA: "Winner SF1",
-        teamB: "Winner SF2",
-      },
-    ],
+    quarterFinals: [],
+    semiFinals: [],
+    final: [],
   };
 
   function clone(value) {
@@ -128,32 +48,76 @@
     return typeof value === "string" ? value.trim() : "";
   }
 
+  function isPlaceholderText(value) {
+    const text = cleanString(value).toLowerCase();
+
+    return (
+      !text ||
+      text === "team a" ||
+      text === "team b" ||
+      text.startsWith("team placeholder") ||
+      text.startsWith("match slot") ||
+      text.startsWith("result slot") ||
+      text.startsWith("winner r16") ||
+      text.startsWith("winner qf") ||
+      text.startsWith("winner sf") ||
+      text.includes("placeholder")
+    );
+  }
+
+  function containsPlaceholderContent(value) {
+    const text = cleanString(value).toLowerCase();
+
+    return (
+      text.includes("match slot") ||
+      text.includes("team placeholder") ||
+      text.includes("team a") ||
+      text.includes("team b") ||
+      text.includes("placeholder") ||
+      text.includes("winner r16") ||
+      text.includes("winner qf") ||
+      text.includes("winner sf")
+    );
+  }
+
+  function isRealTeamName(value) {
+    return !isPlaceholderText(value);
+  }
+
+  function isRealUpcomingMatch(match) {
+    return isRealTeamName(match.teamA) && isRealTeamName(match.teamB);
+  }
+
+  function isRealResult(result) {
+    return isRealTeamName(result.teamA) && isRealTeamName(result.teamB);
+  }
+
   function normalizeMatchList(items) {
     return Array.isArray(items)
-      ? items.map((item, index) => ({
+      ? items.map((item) => ({
           id: cleanString(item.id) || createId("match"),
-          label: cleanString(item.label) || `Match Slot ${index + 1}`,
+          label: cleanString(item.label),
           teamA: cleanString(item.teamA),
           teamB: cleanString(item.teamB),
           date: cleanString(item.date),
           time: cleanString(item.time),
           stadium: cleanString(item.stadium || item.venue),
-        }))
+        })).filter(isRealUpcomingMatch)
       : [];
   }
 
   function normalizeResults(items) {
     return Array.isArray(items)
-      ? items.map((item, index) => ({
+      ? items.map((item) => ({
           id: cleanString(item.id) || createId("result"),
           matchId: cleanString(item.matchId),
-          label: cleanString(item.label) || `Result Slot ${index + 1}`,
+          label: cleanString(item.label),
           teamA: cleanString(item.teamA),
           teamB: cleanString(item.teamB),
           scoreA: item.scoreA === "" ? "" : Number(item.scoreA),
           scoreB: item.scoreB === "" ? "" : Number(item.scoreB),
           date: cleanString(item.date),
-        }))
+        })).filter(isRealResult)
       : [];
   }
 
@@ -164,7 +128,7 @@
           label: cleanString(item.label) || `Match ${index + 1}`,
           teamA: cleanString(item.teamA),
           teamB: cleanString(item.teamB),
-        }))
+        })).filter((item) => isRealTeamName(item.teamA) && isRealTeamName(item.teamB))
       : [];
   }
 
@@ -175,7 +139,7 @@
       upcomingMatches: normalizeMatchList(source.upcomingMatches),
       results: normalizeResults(source.results),
       qualifiedTeams: Array.isArray(source.qualifiedTeams)
-        ? [...new Set(source.qualifiedTeams.map(cleanString).filter(Boolean))]
+        ? [...new Set(source.qualifiedTeams.map(cleanString).filter(isRealTeamName))]
         : [],
       round16: normalizeBracketList(source.round16, "round16"),
       quarterFinals: normalizeBracketList(source.quarterFinals, "qf"),
@@ -190,8 +154,8 @@
       stored ? readJson(TOURNAMENT_DATA_KEY, defaultTournamentData) : defaultTournamentData,
     );
 
-    if (!stored) {
-      saveTournamentData(data);
+    if (!stored || JSON.stringify(data) !== stored) {
+      writeJson(TOURNAMENT_DATA_KEY, data);
     }
 
     return data;
@@ -214,15 +178,23 @@
   }
 
   function getPredictions() {
-    return readJson(TOURNAMENT_PREDICTIONS_KEY, []);
+    const predictions = readJson(TOURNAMENT_PREDICTIONS_KEY, []).filter(
+      isRealPrediction,
+    );
+
+    writeJson(TOURNAMENT_PREDICTIONS_KEY, predictions);
+
+    return predictions;
   }
 
   function savePredictions(predictions) {
-    writeJson(TOURNAMENT_PREDICTIONS_KEY, predictions);
+    const cleanedPredictions = predictions.filter(isRealPrediction);
+
+    writeJson(TOURNAMENT_PREDICTIONS_KEY, cleanedPredictions);
     refreshTournamentAnnouncements();
     window.dispatchEvent(new CustomEvent("shakarbakar:predictions-updated"));
 
-    return predictions;
+    return cleanedPredictions;
   }
 
   function savePrediction(prediction) {
@@ -231,13 +203,17 @@
       id: createId("prediction"),
       username: getLoggedInUsername(),
       matchId: cleanString(prediction.matchId),
-      match: cleanString(prediction.match),
+      match: getPredictionMatchName(prediction),
       teamA: cleanString(prediction.teamA),
       teamB: cleanString(prediction.teamB),
       type: cleanString(prediction.type),
       prediction: prediction.prediction,
       timestamp: new Date().toISOString(),
     };
+
+    if (!isRealPrediction(nextPrediction)) {
+      return null;
+    }
 
     predictions.push(nextPrediction);
     savePredictions(predictions);
@@ -254,7 +230,19 @@
       return "Upcoming Match";
     }
 
-    return match.label || `${match.teamA} vs ${match.teamB}`;
+    return `${match.teamA} vs ${match.teamB}`;
+  }
+
+  function getPredictionMatchName(prediction) {
+    return `${cleanString(prediction.teamA)} vs ${cleanString(prediction.teamB)}`;
+  }
+
+  function isRealPrediction(prediction) {
+    return (
+      prediction &&
+      isRealTeamName(prediction.teamA) &&
+      isRealTeamName(prediction.teamB)
+    );
   }
 
   function findResultForPrediction(prediction, data = getTournamentData()) {
@@ -360,6 +348,7 @@
 
     return [...scores.entries()]
       .map(([username, points]) => ({ username, points }))
+      .filter((entry) => entry.points > 0)
       .sort((first, second) => second.points - first.points || first.username.localeCompare(second.username))
       .map((entry, index) => ({
         rank: index + 1,
@@ -408,7 +397,7 @@
     const scoreStats = new Map();
 
     getPredictions().forEach((prediction) => {
-      const match = prediction.match || `${prediction.teamA} vs ${prediction.teamB}`;
+      const match = getPredictionMatchName(prediction);
 
       if (prediction.type === "score") {
         const score = `${prediction.prediction.scoreA}-${prediction.prediction.scoreB}`;
@@ -450,7 +439,13 @@
   }
 
   function getTournamentAnnouncements() {
-    return readJson(TOURNAMENT_ANNOUNCEMENTS_KEY, []);
+    const announcements = readJson(TOURNAMENT_ANNOUNCEMENTS_KEY, []).filter(
+      (announcement) => !containsPlaceholderContent(announcement.text),
+    );
+
+    writeJson(TOURNAMENT_ANNOUNCEMENTS_KEY, announcements);
+
+    return announcements;
   }
 
   function saveTournamentAnnouncements(announcements) {
@@ -480,7 +475,7 @@
 
   function refreshTournamentAnnouncements() {
     const data = normalizeTournamentData(readJson(TOURNAMENT_DATA_KEY, defaultTournamentData));
-    const predictions = readJson(TOURNAMENT_PREDICTIONS_KEY, []);
+    const predictions = getPredictions();
     const existing = getTournamentAnnouncements();
     const byId = new Map(existing.map((announcement) => [announcement.id, announcement]));
 
@@ -528,6 +523,8 @@
     getPublicPredictionStats,
     getTournamentAnnouncements,
     refreshTournamentAnnouncements,
+    isRealUpcomingMatch,
+    getPredictionMatchName,
     createId,
   };
 })();
