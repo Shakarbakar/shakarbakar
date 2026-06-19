@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Penalty Shootout - ShakarBakar</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/fun-zone.css" />
+  </head>
+  <body data-game="penalty-shootout">
+    <nav class="fun-nav">
+      <a class="fun-logo" href="index.html">SHAKARBAKAR</a>
+      <div class="fun-links">
+        <a href="fun-zone.html">Fun Zone</a>
+        <a href="arena.html">Arena</a>
+      </div>
+    </nav>
+    <main class="fun-page">
+      <section class="fun-hero">
+        <h1>Penalty Shootout</h1>
+        <p>Choose a corner. If the keeper dives elsewhere, you score.</p>
+      </section>
+      <section class="fun-panel game-stage">
+        <div class="answer-row">
+          <button data-shot="Left" class="fun-button">Left</button>
+          <button data-shot="Center" class="fun-button secondary">Center</button>
+          <button data-shot="Right" class="fun-button">Right</button>
+        </div>
+        <div id="scoreBox" class="score-line"></div>
+        <div id="gameStatus" class="game-status"></div>
+      </section>
+    </main>
+    <script src="js/fun-zone-data.js"></script>
+    <script src="js/fun-zone-games.js"></script>
+  </body>
+</html>

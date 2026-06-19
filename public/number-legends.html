@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Number Legends - ShakarBakar</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/fun-zone.css" />
+  </head>
+  <body data-game="number-legends">
+    <nav class="fun-nav">
+      <a class="fun-logo" href="index.html">SHAKARBAKAR</a>
+      <div class="fun-links">
+        <a href="fun-zone.html">Fun Zone</a>
+        <a href="arena.html">Arena</a>
+      </div>
+    </nav>
+    <main class="fun-page">
+      <section class="fun-hero">
+        <h1>Number Legends</h1>
+        <p>Pick a famous shirt, then guess the player.</p>
+      </section>
+      <section class="fun-panel game-stage">
+        <div id="legendGrid" class="choice-grid"></div>
+        <h2 id="challengeTitle">Pick a shirt</h2>
+        <div id="letterBoxes" class="letter-boxes"></div>
+        <div class="answer-row">
+          <input id="answerInput" type="text" placeholder="Player name" />
+          <button id="submitAnswer" class="fun-button">Guess</button>
+        </div>
+        <div id="gameStatus" class="game-status"></div>
+      </section>
+    </main>
+    <script src="js/fun-zone-data.js"></script>
+    <script src="js/fun-zone-games.js"></script>
+  </body>
+</html>

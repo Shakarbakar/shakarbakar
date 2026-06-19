@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Higher Or Lower - ShakarBakar</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/fun-zone.css" />
+  </head>
+  <body data-game="higher-lower">
+    <nav class="fun-nav">
+      <a class="fun-logo" href="index.html">SHAKARBAKAR</a>
+      <div class="fun-links">
+        <a href="fun-zone.html">Fun Zone</a>
+        <a href="arena.html">Arena</a>
+      </div>
+    </nav>
+    <main class="fun-page">
+      <section class="fun-hero">
+        <h1>Higher Or Lower</h1>
+        <p>Guess if the next team has higher or lower World Cup titles.</p>
+      </section>
+      <section class="fun-panel game-stage">
+        <h2 id="higherLowerPrompt">Loading...</h2>
+        <div class="answer-row">
+          <button id="higherButton" class="fun-button">Higher</button>
+          <button id="lowerButton" class="fun-button secondary">Lower</button>
+        </div>
+        <div id="scoreBox" class="score-line"></div>
+        <div id="gameStatus" class="game-status"></div>
+      </section>
+    </main>
+    <script src="js/fun-zone-data.js"></script>
+    <script src="js/fun-zone-games.js"></script>
+  </body>
+</html>
