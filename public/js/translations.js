@@ -1017,6 +1017,27 @@ function ensureLanguageStyles() {
       backdrop-filter: blur(12px);
     }
 
+    .navbar,
+    .fun-nav {
+      position: relative;
+      z-index: 20;
+      overflow: visible;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .nav-center,
+    .fun-links {
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .nav-right,
+    .fun-nav .languages {
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
     html[dir="rtl"] body {
       direction: rtl;
       text-align: right;
@@ -1119,6 +1140,7 @@ function createLanguageSelector() {
 
 function ensureLanguageSelector() {
   const languageContainers = document.querySelectorAll(".languages");
+  const funNav = document.querySelector(".fun-nav");
 
   if (languageContainers.length > 0) {
     languageContainers.forEach((container) => {
@@ -1126,6 +1148,11 @@ function ensureLanguageSelector() {
         container.replaceChildren(createLanguageSelector());
       }
     });
+  } else if (funNav && !funNav.querySelector(".language-selector")) {
+    const container = document.createElement("div");
+    container.className = "languages";
+    container.appendChild(createLanguageSelector());
+    funNav.appendChild(container);
   } else if (!document.querySelector(".language-selector")) {
     const floating = createLanguageSelector();
     floating.classList.add("language-selector-floating");

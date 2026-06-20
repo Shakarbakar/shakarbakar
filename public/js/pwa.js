@@ -113,12 +113,15 @@
 
     const navRight = document.querySelector(".nav-right");
     const languages = document.querySelector(".languages");
+    const funNav = document.querySelector(".fun-nav");
     const languageSelector = document.querySelector(".language-selector, .language-selector-floating");
 
     if (languages && languages.parentElement) {
       languages.parentElement.insertBefore(installButton, languages);
     } else if (navRight) {
       navRight.appendChild(installButton);
+    } else if (funNav) {
+      funNav.appendChild(installButton);
     } else if (languageSelector && languageSelector.parentElement) {
       languageSelector.parentElement.insertBefore(installButton, languageSelector);
     } else {
