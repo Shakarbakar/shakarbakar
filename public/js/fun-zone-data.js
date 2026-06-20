@@ -102,15 +102,33 @@ window.FunZoneData = {
   mysteryPlayers: [
     {
       answer: "Messi",
-      hints: ["I am from Argentina.", "I wear number 10.", "I am famous for dribbling.", "I won the World Cup."],
+      hints: [
+        "Country: Argentina",
+        "Position: Forward",
+        "Played for Barcelona",
+        "Known for dribbling and number 10",
+        "Won the World Cup",
+      ],
     },
     {
       answer: "Ronaldo",
-      hints: ["I am from Portugal.", "I wear number 7.", "I am known for powerful shots.", "Fans shout my celebration."],
+      hints: [
+        "Country: Portugal",
+        "Position: Forward",
+        "Played for Real Madrid",
+        "Known for number 7",
+        "Famous celebration: Siiuuu",
+      ],
     },
     {
       answer: "Mbappe",
-      hints: ["I am from France.", "I am very fast.", "I wear number 10.", "I scored in World Cup finals."],
+      hints: [
+        "Country: France",
+        "Position: Forward",
+        "Very fast runner",
+        "Wears number 10 for France",
+        "Scored in World Cup finals",
+      ],
     },
   ],
 };

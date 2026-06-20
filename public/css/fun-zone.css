@@ -198,6 +198,43 @@ body {
   text-transform: uppercase;
 }
 
+.letter-input {
+  width: 34px;
+  height: 42px;
+  border: 1px solid rgba(251, 191, 36, 0.45);
+  border-radius: 9px;
+  background: rgba(15, 23, 42, 0.88);
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.letter-input:focus {
+  border-color: #60a5fa;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.18);
+}
+
+.letter-box.fixed {
+  border-color: rgba(34, 197, 94, 0.55);
+  background: rgba(22, 101, 52, 0.42);
+  color: #86efac;
+}
+
+.letter-input.correct {
+  border-color: #22c55e;
+  background: rgba(22, 101, 52, 0.5);
+  color: #bbf7d0;
+}
+
+.letter-input.wrong {
+  border-color: #ef4444;
+  background: rgba(127, 29, 29, 0.55);
+  color: #fecaca;
+}
+
 .letter-space {
   width: 18px;
 }
@@ -239,6 +276,12 @@ body {
   font-size: 56px;
 }
 
+.choice-card img {
+  width: 100%;
+  max-height: 150px;
+  object-fit: contain;
+}
+
 .score-line {
   display: flex;
   flex-wrap: wrap;
@@ -246,6 +289,96 @@ body {
   gap: 14px;
   color: #fde68a;
   font-weight: bold;
+}
+
+.penalty-stage {
+  position: relative;
+  min-height: 260px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  background:
+    linear-gradient(rgba(15, 23, 42, 0.2), rgba(15, 23, 42, 0.82)),
+    radial-gradient(circle at center, rgba(34, 197, 94, 0.32), transparent 58%);
+}
+
+.goal-mouth {
+  position: absolute;
+  top: 28px;
+  left: 50%;
+  width: min(560px, 86%);
+  height: 150px;
+  border: 6px solid rgba(226, 232, 240, 0.82);
+  border-bottom: none;
+  transform: translateX(-50%);
+}
+
+.ball,
+.keeper,
+.penalty-result {
+  position: absolute;
+  z-index: 2;
+}
+
+.ball {
+  bottom: 24px;
+  left: 50%;
+  font-size: 42px;
+  transform: translateX(-50%);
+  transition: transform 0.55s ease;
+}
+
+.keeper {
+  top: 110px;
+  left: 50%;
+  font-size: 54px;
+  transform: translateX(-50%);
+  transition: transform 0.55s ease;
+}
+
+.penalty-result {
+  top: 24px;
+  left: 50%;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.85);
+  color: #fde68a;
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  transform: translateX(-50%);
+}
+
+.penalty-stage.shot-left .ball {
+  transform: translate(-190px, -130px) rotate(-80deg);
+}
+
+.penalty-stage.shot-center .ball {
+  transform: translate(-50%, -145px) scale(0.9);
+}
+
+.penalty-stage.shot-right .ball {
+  transform: translate(145px, -130px) rotate(80deg);
+}
+
+.penalty-stage.keeper-left .keeper {
+  transform: translate(-170px, -16px) rotate(-26deg);
+}
+
+.penalty-stage.keeper-center .keeper {
+  transform: translateX(-50%) translateY(-22px) scale(1.12);
+}
+
+.penalty-stage.keeper-right .keeper {
+  transform: translate(110px, -16px) rotate(26deg);
+}
+
+.penalty-stage.goal .penalty-result {
+  color: #86efac;
+}
+
+.penalty-stage.save .penalty-result {
+  color: #fecaca;
 }
 
 .hint-list {
@@ -277,5 +410,18 @@ body {
   .letter-box {
     width: 30px;
     height: 38px;
+  }
+
+  .letter-input {
+    width: 30px;
+    height: 38px;
+  }
+
+  .penalty-stage.shot-left .ball {
+    transform: translate(-110px, -125px) rotate(-80deg);
+  }
+
+  .penalty-stage.shot-right .ball {
+    transform: translate(70px, -125px) rotate(80deg);
   }
 }

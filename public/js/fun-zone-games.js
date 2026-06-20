@@ -33,34 +33,98 @@ function revealIndexes(answer) {
   return new Set(shuffled.slice(0, revealCount).map((item) => item.index));
 }
 
-function renderLetterBoxes(container, answer) {
+function getPuzzleValue(container) {
+  return [...container.querySelectorAll("[data-letter-index]")]
+    .map((node) => {
+      if (node.dataset.space === "true") {
+        return " ";
+      }
+
+      return node.value || node.textContent || "";
+    })
+    .join("");
+}
+
+function focusNextInput(input) {
+  const inputs = [...document.querySelectorAll(".letter-input")];
+  const index = inputs.indexOf(input);
+  const next = inputs[index + 1];
+
+  if (next) {
+    next.focus();
+  }
+}
+
+function renderEditableLetterBoxes(container, answer) {
   const revealed = revealIndexes(answer);
 
   container.textContent = "";
 
   [...answer].forEach((char, index) => {
     if (char === " ") {
-      container.appendChild(el("span", "letter-space", ""));
+      const space = el("span", "letter-space", "");
+      space.dataset.letterIndex = String(index);
+      space.dataset.space = "true";
+      container.appendChild(space);
       return;
     }
 
-    container.appendChild(
-      el("span", "letter-box", revealed.has(index) ? char : ""),
-    );
+    if (revealed.has(index)) {
+      const fixed = el("span", "letter-box fixed", char);
+      fixed.dataset.letterIndex = String(index);
+      container.appendChild(fixed);
+      return;
+    }
+
+    const input = document.createElement("input");
+    input.className = "letter-input";
+    input.maxLength = 1;
+    input.autocomplete = "off";
+    input.inputMode = "text";
+    input.dataset.letterIndex = String(index);
+    input.setAttribute("aria-label", `Letter ${index + 1}`);
+    input.addEventListener("input", () => {
+      input.value = input.value.slice(0, 1).toUpperCase();
+      input.classList.remove("correct", "wrong");
+      if (input.value) {
+        focusNextInput(input);
+      }
+    });
+    container.appendChild(input);
   });
 }
 
-function createNav() {
-  return `
-    <nav class="fun-nav">
-      <a class="fun-logo" href="index.html">SHAKARBAKAR</a>
-      <div class="fun-links">
-        <a href="index.html">Home</a>
-        <a href="arena.html">Arena</a>
-        <a class="active" href="fun-zone.html">Fun Zone</a>
-      </div>
-    </nav>
-  `;
+function markPuzzle(container, answer) {
+  let allCorrect = true;
+
+  [...container.querySelectorAll(".letter-input")].forEach((input) => {
+    const index = Number(input.dataset.letterIndex);
+    const expected = answer[index].toLowerCase();
+    const actual = input.value.toLowerCase();
+
+    input.classList.remove("correct", "wrong");
+
+    if (actual === expected) {
+      input.classList.add("correct");
+    } else {
+      input.classList.add("wrong");
+      allCorrect = false;
+    }
+  });
+
+  return allCorrect && normalizeAnswer(getPuzzleValue(container)) === normalizeAnswer(answer);
+}
+
+function setSubmitSuccess(button, isCorrect) {
+  if (isCorrect) {
+    button.textContent = "✓ Correct";
+    button.classList.add("secondary");
+    button.disabled = true;
+  } else {
+    button.textContent = "Submit";
+    button.classList.remove("secondary");
+    button.disabled = false;
+  }
 }
 
 function renderHub() {
@@ -78,6 +142,8 @@ function renderHub() {
 
     image.src = game.image;
     image.alt = game.name;
+    image.loading = "lazy";
+    image.decoding = "async";
     button.href = game.page;
 
     body.appendChild(el("h2", "", game.name));
@@ -89,36 +155,46 @@ function renderHub() {
   });
 }
 
-function setupGuessGame(items, titleBuilder, imageBuilder) {
-  let current = pick(items);
+function setupGuessGame(items, titleBuilder, visualBuilder) {
+  let index = Math.floor(Math.random() * items.length);
+  let current = items[index];
   const title = document.getElementById("challengeTitle");
   const visual = document.getElementById("challengeVisual");
   const boxes = document.getElementById("letterBoxes");
-  const input = document.getElementById("answerInput");
   const status = document.getElementById("gameStatus");
+  const submit = document.getElementById("submitAnswer");
   const next = document.getElementById("nextChallenge");
+  const previous = document.getElementById("previousChallenge");
 
-  function loadChallenge() {
-    current = pick(items);
+  function loadChallenge(nextIndex) {
+    index = (nextIndex + items.length) % items.length;
+    current = items[index];
     title.textContent = titleBuilder(current);
-    visual.replaceChildren(imageBuilder(current));
-    renderLetterBoxes(boxes, current.answer || current.country);
-    input.value = "";
+    visual.replaceChildren(visualBuilder(current));
+    renderEditableLetterBoxes(boxes, current.answer || current.country);
     status.textContent = "";
+    setSubmitSuccess(submit, false);
+    const firstInput = boxes.querySelector(".letter-input");
+    if (firstInput) {
+      firstInput.focus();
+    }
   }
 
-  document.getElementById("submitAnswer").addEventListener("click", () => {
+  submit.addEventListener("click", () => {
     const answer = current.answer || current.country;
+    const correct = markPuzzle(boxes, answer);
 
-    if (normalizeAnswer(input.value) === normalizeAnswer(answer)) {
-      status.textContent = "Correct! Nice one.";
+    if (correct) {
+      status.textContent = "✓ Perfect! You solved it.";
+      setSubmitSuccess(submit, true);
     } else {
-      status.textContent = "Try again. Look carefully at the boxes.";
+      status.textContent = "Red boxes need another try.";
     }
   });
 
-  next.addEventListener("click", loadChallenge);
-  loadChallenge();
+  next.addEventListener("click", () => loadChallenge(index + 1));
+  previous.addEventListener("click", () => loadChallenge(index - 1));
+  loadChallenge(index);
 }
 
 function imageFromItem(item) {
@@ -126,6 +202,8 @@ function imageFromItem(item) {
 
   image.src = item.image;
   image.alt = `${item.team || item.country} shirt`;
+  image.loading = "lazy";
+  image.decoding = "async";
 
   return image;
 }
@@ -189,23 +267,38 @@ function initPenaltyShootout() {
   let streak = 0;
   const status = document.getElementById("gameStatus");
   const score = document.getElementById("scoreBox");
+  const stage = document.getElementById("penaltyStage");
+  const result = document.getElementById("penaltyResult");
 
   function updateScore() {
     score.textContent = `Goals: ${goals} | Streak: ${streak}`;
+  }
+
+  function resetAnimationClasses() {
+    stage.className = "penalty-stage";
   }
 
   document.querySelectorAll("[data-shot]").forEach((button) => {
     button.addEventListener("click", () => {
       const shot = button.dataset.shot;
       const keeper = pick(directions);
+      const scored = shot !== keeper;
 
-      if (shot === keeper) {
-        streak = 0;
-        status.textContent = `Saved! Keeper dived ${keeper}.`;
-      } else {
+      resetAnimationClasses();
+      void stage.offsetWidth;
+      stage.classList.add(`shot-${shot.toLowerCase()}`);
+      stage.classList.add(`keeper-${keeper.toLowerCase()}`);
+      stage.classList.add(scored ? "goal" : "save");
+
+      if (scored) {
         goals += 1;
         streak += 1;
+        result.textContent = "GOAL";
         status.textContent = `Goal! Keeper dived ${keeper}.`;
+      } else {
+        streak = 0;
+        result.textContent = "SAVE";
+        status.textContent = `Saved! Keeper dived ${keeper}.`;
       }
 
       updateScore();
@@ -236,8 +329,9 @@ function initSpotFlag() {
       .forEach((team) => {
         const card = el("button", "choice-card");
 
+        card.title = "Choose this flag";
+        card.setAttribute("aria-label", "Flag option");
         card.appendChild(el("div", "flag-choice", team.flag));
-        card.appendChild(el("strong", "", team.country));
         card.addEventListener("click", () => {
           if (team.country === current.country) {
             status.textContent = "Correct flag!";
@@ -255,7 +349,7 @@ function initSpotFlag() {
 
 function initMysteryPlayer() {
   let current = pick(funData.mysteryPlayers);
-  let hintCount = 1;
+  let hintCount = 2;
   const hints = document.getElementById("hintList");
   const input = document.getElementById("answerInput");
   const status = document.getElementById("gameStatus");
@@ -269,7 +363,7 @@ function initMysteryPlayer() {
 
   function nextPlayer() {
     current = pick(funData.mysteryPlayers);
-    hintCount = 1;
+    hintCount = 2;
     input.value = "";
     status.textContent = "";
     renderHints();
@@ -277,12 +371,15 @@ function initMysteryPlayer() {
 
   document.getElementById("submitAnswer").addEventListener("click", () => {
     if (normalizeAnswer(input.value) === normalizeAnswer(current.answer)) {
-      status.textContent = "Correct mystery solved!";
+      status.textContent = "✓ Mystery solved!";
       return;
     }
 
     hintCount = Math.min(current.hints.length, hintCount + 1);
-    status.textContent = "Wrong guess. New hint unlocked.";
+    status.textContent =
+      hintCount === current.hints.length
+        ? "Last hint unlocked. You can do this."
+        : "Wrong guess. New hint unlocked.";
     renderHints();
   });
 
@@ -291,43 +388,72 @@ function initMysteryPlayer() {
 }
 
 function initNumberLegends() {
+  const pageSize = 4;
   const grid = document.getElementById("legendGrid");
   const title = document.getElementById("challengeTitle");
   const boxes = document.getElementById("letterBoxes");
-  const input = document.getElementById("answerInput");
   const status = document.getElementById("gameStatus");
+  const submit = document.getElementById("submitAnswer");
+  const previous = document.getElementById("previousChallenge");
+  const next = document.getElementById("nextChallenge");
+  let pageStart = 0;
+  let currentIndex = -1;
   let current = null;
 
-  funData.numberLegends.forEach((item) => {
-    const card = el("button", "choice-card");
-    const image = document.createElement("img");
+  function selectLegend(index) {
+    currentIndex = (index + funData.numberLegends.length) % funData.numberLegends.length;
+    current = funData.numberLegends[currentIndex];
+    title.textContent = `${current.team} #${current.number}`;
+    renderEditableLetterBoxes(boxes, current.answer);
+    status.textContent = "Type in the boxes.";
+    setSubmitSuccess(submit, false);
+  }
 
-    image.src = item.image;
-    image.alt = `${item.team} number ${item.number}`;
-    image.className = "game-image";
-    card.appendChild(image);
-    card.appendChild(el("strong", "", `${item.team} #${item.number}`));
-    card.addEventListener("click", () => {
-      current = item;
-      title.textContent = `${item.team} #${item.number}`;
-      renderLetterBoxes(boxes, item.answer);
-      input.value = "";
-      status.textContent = "Guess the legend.";
+  function renderShirtPage() {
+    grid.textContent = "";
+    funData.numberLegends.slice(pageStart, pageStart + pageSize).forEach((item, offset) => {
+      const card = el("button", "choice-card");
+      const image = document.createElement("img");
+
+      image.src = item.image;
+      image.alt = `${item.team} number ${item.number}`;
+      image.loading = "lazy";
+      image.decoding = "async";
+      image.className = "game-image";
+      card.appendChild(image);
+      card.appendChild(el("strong", "", `${item.team} #${item.number}`));
+      card.addEventListener("click", () => selectLegend(pageStart + offset));
+      grid.appendChild(card);
     });
-    grid.appendChild(card);
-  });
+  }
 
-  document.getElementById("submitAnswer").addEventListener("click", () => {
+  submit.addEventListener("click", () => {
     if (!current) {
       status.textContent = "Pick a shirt first.";
       return;
     }
 
-    status.textContent =
-      normalizeAnswer(input.value) === normalizeAnswer(current.answer)
-        ? "Correct legend!"
-        : "Not yet. Try the letters again.";
+    const correct = markPuzzle(boxes, current.answer);
+    if (correct) {
+      status.textContent = "✓ Correct legend!";
+      setSubmitSuccess(submit, true);
+    } else {
+      status.textContent = "Red boxes need another try.";
+    }
   });
+
+  previous.addEventListener("click", () => selectLegend(currentIndex - 1));
+  next.addEventListener("click", () => selectLegend(currentIndex + 1));
+  document.getElementById("previousShirts").addEventListener("click", () => {
+    pageStart = (pageStart - pageSize + funData.numberLegends.length) % funData.numberLegends.length;
+    renderShirtPage();
+  });
+  document.getElementById("nextShirts").addEventListener("click", () => {
+    pageStart = (pageStart + pageSize) % funData.numberLegends.length;
+    renderShirtPage();
+  });
+
+  renderShirtPage();
 }
 
 function initGame() {
