@@ -1,4 +1,4 @@
-const SHAKARBAKAR_LANGUAGE_KEY = "shakarbakar_language";
+﻿const SHAKARBAKAR_LANGUAGE_KEY = "shakarbakar_language";
 
 const languageLabels = {
   en: "English",
@@ -782,8 +782,8 @@ function stripDecorativePrefix(value) {
 
 function simplifyDecoratedText(value) {
   return stripDecorativePrefix(value)
-    .replace(/â†’|→|←/g, " ")
-    .replace(/â€¢|•/g, " ")
+    .replace(/→|→|←/g, " ")
+    .replace(/•|•/g, " ")
     .replace(/[^\p{L}\p{N}?!.:,']+/gu, " ")
     .replace(/\s+/g, " ")
     .trim();
