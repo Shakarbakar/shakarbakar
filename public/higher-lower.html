@@ -21,6 +21,11 @@
         <p>Guess if the next team has higher or lower World Cup titles.</p>
       </section>
       <section class="fun-panel game-stage">
+        <div class="higher-lower-board">
+          <article id="baseTeamCard" class="team-vs-card"></article>
+          <div class="versus-badge">VS</div>
+          <article id="nextTeamCard" class="team-vs-card"></article>
+        </div>
         <h2 id="higherLowerPrompt">Loading...</h2>
         <div class="answer-row">
           <button id="higherButton" class="fun-button">Higher</button>
@@ -30,6 +35,7 @@
         <div id="gameStatus" class="game-status"></div>
       </section>
     </main>
+    <script src="js/flags.js"></script>
     <script src="js/fun-zone-data.js"></script>
     <script src="js/fun-zone-games.js"></script>
   </body>

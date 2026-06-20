@@ -155,6 +155,23 @@ function renderHub() {
   });
 }
 
+function createFlagImage(country) {
+  const image = document.createElement("img");
+  const flagPath =
+    typeof getFlagSvg === "function" ? getFlagSvg(country) : null;
+
+  image.src = flagPath || "";
+  image.alt = `${country} flag`;
+  image.loading = "eager";
+  image.decoding = "async";
+
+  return image;
+}
+
+function getTeamInfo(teamName) {
+  return funData.teams.find((team) => team.country === teamName);
+}
+
 function setupGuessGame(items, titleBuilder, visualBuilder) {
   let index = Math.floor(Math.random() * items.length);
   let current = items[index];
@@ -220,7 +237,11 @@ function initGuessTeam() {
   setupGuessGame(
     funData.teams.map((team) => ({ ...team, answer: team.country })),
     () => "Guess the country",
-    (item) => el("div", "big-flag", item.flag),
+    (item) => {
+      const wrapper = el("div", "big-flag");
+      wrapper.appendChild(createFlagImage(item.country));
+      return wrapper;
+    },
   );
 }
 
@@ -231,10 +252,37 @@ function initHigherLower() {
   const prompt = document.getElementById("higherLowerPrompt");
   const status = document.getElementById("gameStatus");
   const scoreBox = document.getElementById("scoreBox");
+  const baseCard = document.getElementById("baseTeamCard");
+  const nextCard = document.getElementById("nextTeamCard");
+
+  function renderTeamCard(card, team, showTitles) {
+    const info = getTeamInfo(team.team);
+    const shirt = document.createElement("img");
+    const flag = createFlagImage(team.team);
+
+    card.textContent = "";
+    flag.className = "team-vs-flag";
+    card.appendChild(flag);
+
+    if (info) {
+      shirt.src = info.image;
+      shirt.alt = `${team.team} shirt`;
+      shirt.loading = "lazy";
+      shirt.decoding = "async";
+      card.appendChild(shirt);
+    }
+
+    card.appendChild(el("strong", "", team.team));
+    card.appendChild(
+      el("span", "fun-note", showTitles ? `${team.titles} titles` : "? titles"),
+    );
+  }
 
   function render() {
     prompt.textContent = `${next.team}: higher or lower than ${current.team}'s ${current.titles} titles?`;
     scoreBox.textContent = `Score: ${score}`;
+    renderTeamCard(baseCard, current, true);
+    renderTeamCard(nextCard, next, false);
   }
 
   function answer(choice) {
@@ -246,14 +294,19 @@ function initHigherLower() {
     if (correct) {
       score += 1;
       status.textContent = `Correct! ${next.team} has ${next.titles}.`;
+      nextCard.classList.add("correct-flash");
       current = next;
     } else {
       score = 0;
       status.textContent = `Oops! ${next.team} has ${next.titles}. Streak reset.`;
+      nextCard.classList.add("wrong-flash");
     }
 
-    next = pick(funData.worldCupTitles.filter((team) => team.team !== current.team));
-    render();
+    setTimeout(() => {
+      nextCard.classList.remove("correct-flash", "wrong-flash");
+      next = pick(funData.worldCupTitles.filter((team) => team.team !== current.team));
+      render();
+    }, 650);
   }
 
   document.getElementById("higherButton").addEventListener("click", () => answer("higher"));
@@ -288,7 +341,7 @@ function initPenaltyShootout() {
       void stage.offsetWidth;
       stage.classList.add(`shot-${shot.toLowerCase()}`);
       stage.classList.add(`keeper-${keeper.toLowerCase()}`);
-      stage.classList.add(scored ? "goal" : "save");
+        stage.classList.add(scored ? "goal" : "save");
 
       if (scored) {
         goals += 1;
@@ -297,8 +350,8 @@ function initPenaltyShootout() {
         status.textContent = `Goal! Keeper dived ${keeper}.`;
       } else {
         streak = 0;
-        result.textContent = "SAVE";
-        status.textContent = `Saved! Keeper dived ${keeper}.`;
+        result.textContent = "MISSED";
+        status.textContent = `Missed! Keeper blocked ${keeper}.`;
       }
 
       updateScore();
@@ -328,10 +381,14 @@ function initSpotFlag() {
       .sort(() => Math.random() - 0.5)
       .forEach((team) => {
         const card = el("button", "choice-card");
+        const flag = createFlagImage(team.country);
 
         card.title = "Choose this flag";
         card.setAttribute("aria-label", "Flag option");
-        card.appendChild(el("div", "flag-choice", team.flag));
+        flag.loading = "lazy";
+        const flagBox = el("div", "flag-choice");
+        flagBox.appendChild(flag);
+        card.appendChild(flagBox);
         card.addEventListener("click", () => {
           if (team.country === current.country) {
             status.textContent = "Correct flag!";
@@ -390,30 +447,17 @@ function initMysteryPlayer() {
 function initNumberLegends() {
   const pageSize = 4;
   const grid = document.getElementById("legendGrid");
-  const title = document.getElementById("challengeTitle");
-  const boxes = document.getElementById("letterBoxes");
   const status = document.getElementById("gameStatus");
-  const submit = document.getElementById("submitAnswer");
-  const previous = document.getElementById("previousChallenge");
-  const next = document.getElementById("nextChallenge");
   let pageStart = 0;
-  let currentIndex = -1;
-  let current = null;
-
-  function selectLegend(index) {
-    currentIndex = (index + funData.numberLegends.length) % funData.numberLegends.length;
-    current = funData.numberLegends[currentIndex];
-    title.textContent = `${current.team} #${current.number}`;
-    renderEditableLetterBoxes(boxes, current.answer);
-    status.textContent = "Type in the boxes.";
-    setSubmitSuccess(submit, false);
-  }
 
   function renderShirtPage() {
     grid.textContent = "";
     funData.numberLegends.slice(pageStart, pageStart + pageSize).forEach((item, offset) => {
-      const card = el("button", "choice-card");
+      const card = el("article", "choice-card legend-puzzle-card");
       const image = document.createElement("img");
+      const boxes = el("div", "letter-boxes");
+      const submit = el("button", "fun-button", "Submit");
+      const localStatus = el("div", "game-status", "");
 
       image.src = item.image;
       image.alt = `${item.team} number ${item.number}`;
@@ -422,32 +466,27 @@ function initNumberLegends() {
       image.className = "game-image";
       card.appendChild(image);
       card.appendChild(el("strong", "", `${item.team} #${item.number}`));
-      card.addEventListener("click", () => selectLegend(pageStart + offset));
+      renderEditableLetterBoxes(boxes, item.answer);
+      submit.addEventListener("click", () => {
+        const correct = markPuzzle(boxes, item.answer);
+        if (correct) {
+          localStatus.textContent = "✓ Correct!";
+          setSubmitSuccess(submit, true);
+        } else {
+          localStatus.textContent = "Try the red boxes again.";
+        }
+      });
+      card.appendChild(boxes);
+      card.appendChild(submit);
+      card.appendChild(localStatus);
       grid.appendChild(card);
     });
+    status.textContent = `Showing puzzles ${pageStart + 1}-${Math.min(
+      pageStart + pageSize,
+      funData.numberLegends.length,
+    )} of ${funData.numberLegends.length}.`;
   }
 
-  submit.addEventListener("click", () => {
-    if (!current) {
-      status.textContent = "Pick a shirt first.";
-      return;
-    }
-
-    const correct = markPuzzle(boxes, current.answer);
-    if (correct) {
-      status.textContent = "✓ Correct legend!";
-      setSubmitSuccess(submit, true);
-    } else {
-      status.textContent = "Red boxes need another try.";
-    }
-  });
-
-  previous.addEventListener("click", () => selectLegend(currentIndex - 1));
-  next.addEventListener("click", () => selectLegend(currentIndex + 1));
-  document.getElementById("previousShirts").addEventListener("click", () => {
-    pageStart = (pageStart - pageSize + funData.numberLegends.length) % funData.numberLegends.length;
-    renderShirtPage();
-  });
   document.getElementById("nextShirts").addEventListener("click", () => {
     pageStart = (pageStart + pageSize) % funData.numberLegends.length;
     renderShirtPage();
